@@ -1,0 +1,22 @@
+{
+    "Channels": "频道",
+    "Direct_messages": "直接消息",
+    "Add_channels": "添加频道",
+    "Add_members": "添加成员",
+    "Search": "搜索",
+    "Send_a_message_to": "发消息给",
+    "Edit_profile": "编辑个人资料",
+    "Preferences": "偏好设置",
+    "Change_password": "更改密码",
+    "Sign_out": "退出登录",
+    "Active": "活动",
+    "Invite_member": "邀请成员",
+    "Create_a_channel": "创建频道",
+    "Settings": "设置",
+    "To": "接受者",
+    "Send": "发送",
+    "Find_members": "寻找成员",
+    "New_message": "新消息",
+    "me": "我",
+    "owner": "所有者"
+}

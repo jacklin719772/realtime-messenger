@@ -1,0 +1,22 @@
+{
+    "Channels": "頻道",
+    "Direct_messages": "直接訊息",
+    "Add_channels": "添加頻道",
+    "Add_members": "添加成員",
+    "Search": "搜尋",
+    "Send_a_message_to": "發訊息給",
+    "Edit_profile": "編輯個人資料",
+    "Preferences": "偏好設定",
+    "Change_password": "更改密碼",
+    "Sign_out": "退出登錄",
+    "Active": "活動",
+    "Invite_member": "邀請成員",
+    "Create_a_channel": "創建頻道",
+    "Settings": "設定",
+    "To": "接受者",
+    "Send": "發送",
+    "Find_members": "尋找成員",
+    "New_message": "新消息",
+    "me": "我",
+    "owner": "擁有者"
+}

@@ -1,0 +1,68 @@
+{
+  "pins" : [
+    {
+      "identity" : "alamofire",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Alamofire/Alamofire",
+      "state" : {
+        "revision" : "b2fa556e4e48cbf06cf8c63def138c98f4b811fa",
+        "version" : "5.8.0"
+      }
+    },
+    {
+      "identity" : "gifu",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/kaishin/Gifu.git",
+      "state" : {
+        "revision" : "b6fc594b30d0949a788338c54b07c26ae40c3444",
+        "version" : "3.2.2"
+      }
+    },
+    {
+      "identity" : "graphqlite",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/relatedcode/GraphQLite",
+      "state" : {
+        "revision" : "5a2a85691efdc1eb48a7f627fb2b8bcf954d4a68",
+        "version" : "1.2.8"
+      }
+    },
+    {
+      "identity" : "inputbaraccessoryview",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/nathantannar4/InputBarAccessoryView",
+      "state" : {
+        "revision" : "17ced92a5dccb36512b408b6276353631d7cbe57",
+        "version" : "6.3.0"
+      }
+    },
+    {
+      "identity" : "passcodekit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/relatedcode/PasscodeKit",
+      "state" : {
+        "revision" : "505b78dda6edcb4c6ad36d8e85a90f319715de15",
+        "version" : "1.0.4"
+      }
+    },
+    {
+      "identity" : "progresshud",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/relatedcode/ProgressHUD",
+      "state" : {
+        "revision" : "5a7e1ba99652f429eb3bf60de0558cacc5c384be",
+        "version" : "14.1.0"
+      }
+    },
+    {
+      "identity" : "sidemenu",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/jonkykong/SideMenu",
+      "state" : {
+        "revision" : "8bd4fd128923cf5494fa726839af8afe12908ad9",
+        "version" : "6.5.0"
+      }
+    }
+  ],
+  "version" : 2
+}
