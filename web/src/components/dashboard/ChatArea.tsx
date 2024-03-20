@@ -120,6 +120,9 @@ function HeaderDirectMessage() {
         <ChevronDownIcon className="h-4 w-4 th-color-for" />
       </SelectChannel>
       <div>
+        <button className="th-bg-bg th-color-for inline-flex justify-center items-center text-sm w-10 h-10 rounded font-extrabold focus:z-10 focus:outline-none">
+          <img className="h-5 w-5" alt="add member" src={`${process.env.PUBLIC_URL}/add_user.png`} />
+        </button>
         <button
           className="th-bg-bg th-color-for inline-flex justify-center items-center text-sm w-10 h-10 rounded font-extrabold focus:z-10 focus:outline-none"
           onClick={() => setVisibleSearch(!visibleSearch)}

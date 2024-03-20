@@ -65,6 +65,7 @@ function EmojiDropdown({ onEmojiClick }: { onEmojiClick: any }) {
                     native
                     set="apple"
                     dynamicWidth={true}
+                    previewPosition="none"
                   />
                 </Popover.Panel>
               </div>

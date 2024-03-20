@@ -75,7 +75,7 @@ export default function Editor() {
   const [hasText, setHasText] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
-  const {voiceBlob} = useContext(ReactionsContext);
+  const {voiceBlob, videoBlob} = useContext(ReactionsContext);
 
   useEffect(() => {
     const type = dmId ? "directs" : "channels";
@@ -123,6 +123,12 @@ export default function Editor() {
       setFiles([voiceBlob]);
     }
   }, [voiceBlob]);
+
+  useEffect(() => {
+    if (videoBlob) {
+      setFiles([videoBlob]);
+    }
+  }, [videoBlob]);
 
   useEffect(() => {
     if (members && chat) {

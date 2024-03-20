@@ -1,75 +1,164 @@
 import { Dialog, Transition } from '@headlessui/react';
-import { StopIcon, XIcon } from '@heroicons/react/outline';
+import { DesktopComputerIcon, MicrophoneIcon, StopIcon, VideoCameraIcon, XIcon } from '@heroicons/react/outline';
 import { useTheme } from 'contexts/ThemeContext';
-import { Fragment, useContext, useEffect, useRef } from 'react'
+import { Fragment, useContext, useEffect, useRef, useState } from 'react'
 import { ReactionsContext } from 'contexts/ReactionsContext';
 import { useReactMediaRecorder } from 'react-media-recorder';
 import classNames from 'utils/classNames';
 
-export default function VoiceMessage() {
+export default function VideoMessage() {
   const { themeColors } = useTheme();
-  const {visibleAudioRecorder, setVisibleAudioRecorder, voiceBlob, setVoiceBlob} = useContext(ReactionsContext);
+  const {visibleVideoRecorder, setVisibleVideoRecorder, videoBlob, setVideoBlob} = useContext(ReactionsContext);
   const cancelButtonRef = useRef(null);
+  const [hasMic, setHasMic] = useState(true);
+  const [hasCamera, setHasCamera] = useState(true);
+  const [audio, setAudio] = useState(false);
+  const [video, setVideo] = useState(false);
+  const [screen, setScreen] = useState(false);
+  const [initialStream, setInitialStream] = useState<any>(null);
 
-  // const {
-  //   audioResult,
-  //   timer,
-  //   startRecording,
-  //   stopRecording,
-  //   pauseRecording,
-  //   resumeRecording,
-  //   status,
-  //   errorMessage,
-  // } = useAudioRecorder();
   const {
     status,
     startRecording,
     stopRecording,
     pauseRecording,
     resumeRecording,
-    // muteAudio,
-    // unMuteAudio,
+    isAudioMuted,
+    muteAudio,
+    unMuteAudio,
     mediaBlobUrl,
     clearBlobUrl,
     previewStream,
     error,
   } = useReactMediaRecorder({
-    audio: true,
+    video: video,
+    audio: audio, 
+    screen: screen,
+    blobPropertyBag: {
+      type: 'video/mp4',
+    },
   });
 
-  const audioFileBlob = async (url: string) => {
+  const VideoPreview = ({ stream }: { stream: MediaStream | null }) => {
+    const videoRef = useRef<HTMLVideoElement>(null);
+  
+    useEffect(() => {
+      if (videoRef.current && stream) {
+        videoRef.current.srcObject = stream;
+      }
+    }, [stream]);
+    useEffect(() => {
+      if (videoRef.current && initialStream) {
+        videoRef.current.srcObject = initialStream;
+      }
+    }, [initialStream]);
+    if (!stream) {
+      if (initialStream) {
+        return <video ref={videoRef} controls autoPlay className="w-full" />;
+      }
+      return <div className="text-sm font-bold py-24">Click the start button to record the video</div>;
+    }
+    return <video ref={videoRef} controls autoPlay className="w-full" />;
+  };
+
+  const videoFileBlob = async (url: string) => {
+    console.log(url);
     const obj = await fetch(url);
     console.log(obj);
     const blob = await obj.blob();
     console.log(blob);
     const extension = blob.type.split("/").length > 1 ? blob.type.split("/")[1] : "wav";
     const remadeFile = new File([blob], `record.${extension}`, {type: blob.type});
-    setVoiceBlob(remadeFile);
-    setVisibleAudioRecorder(false);
+    console.log(remadeFile);
+    setVideoBlob(remadeFile);
+    setVisibleVideoRecorder(false);
     clearBlobUrl();
+  }
+
+  const handleChange = (e: any) => {
+    console.log(typeof e.target.value, e.target.value);
+    if (e.target.value === "1") {
+      setVideo(true);
+      setAudio(true);
+      setScreen(false);
+      clearBlobUrl();
+      detectMediaDevice();
+    }
+    if (e.target.value === "2") {
+      setScreen(true);
+      setAudio(false);
+      setVideo(false);
+      clearBlobUrl();
+      setInitialStream(null);
+    }
+    if (e.target.value === "3") {
+      setScreen(true);
+      setAudio(true);
+      setVideo(false);
+      clearBlobUrl()
+      setInitialStream(null);
+    }
   }
 
   const handleClose = () => {
-    setVoiceBlob(null);
-    setVisibleAudioRecorder(false);
+    setVideoBlob(null);
+    setVisibleVideoRecorder(false);
     clearBlobUrl();
+    detectMediaDevice();
+  }
+
+  const detectMediaDevice =async () => {
+    navigator.mediaDevices
+      .getUserMedia({ audio: true })
+      .then(() => {
+        setHasMic(true);
+      })
+      .catch((error) => {
+        setHasMic(false);
+      });
+    navigator.mediaDevices
+      .getUserMedia({ video: true })
+      .then((stream) => {
+        setInitialStream(stream);
+        setHasCamera(true);
+      })
+      .catch((error) => {
+        setHasCamera(false);
+      })
   }
 
   useEffect(() => {
-    if (!visibleAudioRecorder) {
+    if (!hasCamera || !hasMic) {
+      console.log('user has no any device.');
+    }
+  }, [hasCamera, hasMic]);
+
+  useEffect(() => {
+    detectMediaDevice();
+    clearBlobUrl();
+    setVideo(true);
+    setAudio(true);
+    setScreen(false);
+  }, []);
+
+  useEffect(() => {
+    if (visibleVideoRecorder) {
+      detectMediaDevice();
+    }
+    if (!visibleVideoRecorder) {
       clearBlobUrl();
     }
-  }, [visibleAudioRecorder]);
+  }, [visibleVideoRecorder]);
   
   return (
-    <Transition.Root show={visibleAudioRecorder} as={Fragment}>
+    <Transition.Root show={visibleVideoRecorder} as={Fragment}>
       <Dialog
         as="div"
         static
         className="fixed z-10 bottom-0 left-0 right-0 overflow-y-auto"
-        style={{marginLeft: 318, maxHeight: "80vh"}}
+        style={{marginLeft: 318}}
         initialFocus={cancelButtonRef}
-        open={visibleAudioRecorder}
+        open={visibleVideoRecorder}
         onClose={() => {}}
       >
         <div className="flex items-end justify-center pt-4 px-4 pb-20 text-center sm:block sm:p-0">
@@ -112,7 +201,7 @@ export default function VoiceMessage() {
                   style={{ color: themeColors?.foreground }}
                   className="font-bold max-w-full truncate"
                 >
-                  Voice Recorder
+                  Video Recorder
                 </h5>
                 <div
                   role="button"
@@ -128,12 +217,22 @@ export default function VoiceMessage() {
               </div>
               <div>
                 <div
-                  className="space-y-6 pt-2 pb-8 border-t th-border-selbg rounded">
+                  className="space-y-6 py-2 border-t th-border-selbg rounded h-[500px] max-h-[500px]">
                   <div className="w-full px-5">
                     <div className="ml-2 flex items-center">
+                      <select
+                        disabled={(status === "idle" || status === "acquiring_media" || status === "stopped" || error) ? false : true}
+                        className="block appearance-none w-48 border th-border-for bg-color-for py-2 px-4 pr-8 mr-2 text-sm rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                        onChange={handleChange}
+                      >
+                        <option value={1}>Camera + Microphone</option>
+                        <option value={2}>Screen</option>
+                        <option value={3}>Screen + Microphone</option>
+                      </select>
                       {(status === "idle" ||
                         status === "acquiring_media" ||
                         status === "stopped" ||
+                        status === "paused" ||
                         error) ? (
                         <button className="button border th-border-for p-2 rounded disabled:opacity-50 mr-2" onClick={startRecording} title="start">
                           <img src={`${process.env.PUBLIC_URL}/start.png`} alt="start" className="w-4 h-4" />
@@ -143,7 +242,7 @@ export default function VoiceMessage() {
                           <img src={`${process.env.PUBLIC_URL}/recording.png`} alt="recording" className="w-4 h-4" />
                         </button>
                       )}
-                      {status === "recording" && (
+                      {(status === "recording" ) && (
                         <button className={classNames(
                           status === "recording" ? "border-2" : "border",
                           "button th-border-for p-2 rounded disabled:opacity-50 mr-2"
@@ -164,16 +263,26 @@ export default function VoiceMessage() {
                           <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 7.5A2.25 2.25 0 0 1 7.5 5.25h9a2.25 2.25 0 0 1 2.25 2.25v9a2.25 2.25 0 0 1-2.25 2.25h-9a2.25 2.25 0 0 1-2.25-2.25v-9Z" />
                         </svg>
                       </button>
-                      <button className="button border th-border-for p-2 rounded disabled:opacity-50 mr-2" disabled={status === "stopped" ? false : true} onClick={() => audioFileBlob(mediaBlobUrl || "")} title="save">
+                      <button className="button border th-border-for p-2 rounded disabled:opacity-50 mr-2" disabled={status === "stopped" ? false : true} onClick={() => videoFileBlob(mediaBlobUrl || "")} title="save">
                         <img src={`${process.env.PUBLIC_URL}/video_camera.png`} alt="save" className="w-4 h-4" />
                       </button>
                     </div>
                   </div>
-                  <div className="w-full flex flex-1 flex-col px-5">
+                  <div className="w-full flex flex-1 flex-col px-5 pt-1">
                     <div className="mx-2 pb-2">
                       <div>
-                        <div className="flex items-center justify-between">
-                          <audio controls src={mediaBlobUrl || ""} className="w-full" />
+                        <div className="flex items-center justify-center h-auto">
+                          {(status === "stopped" && mediaBlobUrl && mediaBlobUrl !== "") ?
+                            <video src={mediaBlobUrl} controls className="w-full" /> :
+                            (<>
+                              {((screen && !audio && !video) || 
+                              (screen && audio && !video && hasMic) || 
+                              (!screen && audio && video && hasMic && hasCamera)) ? 
+                                <VideoPreview stream={previewStream} /> :
+                                <div className="py-20"><img className="h-40" src={`${process.env.PUBLIC_URL}/no_device.png`} alt="no device" /></div>
+                              }
+                            </>)
+                          }
                         </div>
                         {error && 
                           <div className="bg-red-100 border-t-2 border-red-500 rounded-b text-red-900 px-4 py-3 shadow-md mt-2" role="alert">

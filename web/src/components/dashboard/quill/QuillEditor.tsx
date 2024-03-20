@@ -5,6 +5,7 @@ import {
   MicrophoneIcon,
   PhotographIcon,
   PlayIcon,
+  VideoCameraIcon,
   XIcon,
 } from "@heroicons/react/outline";
 import { PaperAirplaneIcon } from "@heroicons/react/solid";
@@ -35,6 +36,7 @@ import "quill-mention";
 import 'quill-mention/dist/quill.mention.min.css';
 import VoiceMessage from "../chat/VoiceMessage";
 import { ReactionsContext } from "contexts/ReactionsContext";
+import VideoMessage from "../chat/VideoMessage";
 
 // #2 register module
 // Quill.register("modules/imageUploader", ImageUploader);
@@ -105,6 +107,7 @@ function EmojiDropdown({
                     showPreview={false}
                     native
                     set="apple"
+                    previewPosition="none"
                   />
                 </Popover.Panel>
               </div>
@@ -211,7 +214,7 @@ function CustomToolbar({
   const { themeColors } = useTheme();
   const realText = editor?.getText() as string | null | undefined;
   const isText = realText?.trim();
-  const {setVisibleAudioRecorder} = useContext(ReactionsContext);
+  const {setVisibleAudioRecorder, setVisibleVideoRecorder, setVoiceBlob, setVideoBlob} = useContext(ReactionsContext);
 
   useEffect(() => {
     if (isText) {
@@ -228,6 +231,16 @@ function CustomToolbar({
     editor?.insertText(range, emojiObject.native);
   };
 
+  const handleOnVoiceClick = () => {
+    setVoiceBlob(null);
+    setVisibleAudioRecorder(true);
+  }
+
+  const handleOnVideoClick = () => {
+    setVideoBlob(null);
+    setVisibleVideoRecorder(true);
+  }
+
   return (
     <div id="toolbar" className="flex items-center justify-between w-full">
       <div className="flex items-center">
@@ -243,7 +256,8 @@ function CustomToolbar({
         {/* <button className="ql-image" /> */}
       </div>
       <div className="ml-auto flex items-center space-x-2">
-        <MicrophoneIcon className="h-5 w-5 cursor-pointer th-color-for" onClick={() => setVisibleAudioRecorder(true)} />
+        <img src={`${process.env.PUBLIC_URL}/video_camera.png`} alt="finish" className="mx-1 h-5 w-5 cursor-pointer th-color-for" onClick={handleOnVideoClick} />
+        <MicrophoneIcon className="h-5 w-5 cursor-pointer th-color-for" onClick={handleOnVoiceClick} />
         <StickersDropdown />
         <EmojiDropdown onEmojiClick={onEmojiClick} editor={editor} />
         <AttachFileIcon
@@ -774,6 +788,7 @@ function Editor({
           text={text}
         />
         <VoiceMessage />
+        <VideoMessage />
       </div>
     </div>
   );

@@ -32,6 +32,10 @@ export const ReactionsContext = createContext({
   setVisibleAudioRecorder: (() => {}) as any,
   voiceBlob: null as any,
   setVoiceBlob: (() => {}) as any,
+  videoBlob: null as any,
+  setVideoBlob: (() => {}) as any,
+  visibleVideoRecorder: null as any,
+  setVisibleVideoRecorder: (() => {}) as any,
 });
 
 export const ReactionsProvider = ({ children }: any) => {
@@ -49,7 +53,9 @@ export const ReactionsProvider = ({ children }: any) => {
   const [checkedMessages, setCheckedMessages] = useState<any[]>([]);
   const [visibleForwardMultiple, setVisibleForwardMultiple] = useState(false);
   const [visibleAudioRecorder, setVisibleAudioRecorder] = useState(false);
+  const [visibleVideoRecorder, setVisibleVideoRecorder] = useState(false);
   const [voiceBlob, setVoiceBlob] = useState<any>(null);
+  const [videoBlob, setVideoBlob] = useState<any>(null);
 
   const { data } = useQuery(queries.LIST_REACTIONS, {
     variables: {
@@ -109,8 +115,12 @@ export const ReactionsProvider = ({ children }: any) => {
         setVisibleForwardMultiple,
         visibleAudioRecorder,
         setVisibleAudioRecorder,
+        visibleVideoRecorder,
+        setVisibleVideoRecorder,
         voiceBlob,
         setVoiceBlob,
+        videoBlob,
+        setVideoBlob,
       }}
     >
       {children}

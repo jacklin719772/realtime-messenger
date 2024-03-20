@@ -1,5 +1,5 @@
 // Your app name
-export const APP_NAME = "Related:Chat";
+export const APP_NAME = "Flybird Chat";
 
 // The default theme of the web app
 export const DEFAULT_THEME = "theme01";

@@ -27,7 +27,9 @@ import { getHref } from "utils/get-file-url";
 function ProfileViewItem({ value, text }: { value: string; text: string }) {
   return (
     <div className="flex flex-col px-5 w-full">
-      <span className="font-bold text-sm th-color-for">{text}</span>
+      <span className="font-bold text-sm th-color-for flex items-center">
+        {text} {text === "Email address" && <img src={`${process.env.PUBLIC_URL}/send_email.png`} alt={value} className="ml-2 w-6 h-6 cursor-pointer" />}
+      </span>
       <span className="font-normal text-sm truncate w-full th-color-for">{value}</span>
     </div>
   );
@@ -52,37 +54,47 @@ function ProfileView() {
           className="h-5 w-5 cursor-pointer th-color-for"
         />
       </div>
-      <div className="flex-1 overflow-y-auto flex flex-col items-center">
-        <div
-          className="h-40 w-40 md:h-32 md:w-32 lg:h-44 lg:w-44 rounded mt-4 bg-cover"
-          style={{
-            backgroundImage: `url(${
-              photoURL || `${process.env.PUBLIC_URL}/blank_user.png`
-            })`,
-          }}
-        />
-        <div className="flex items-center justify-center mt-4 mb-2 w-full">
-          <span className="font-bold text-base truncate max-w-3/4 th-color-for">
-            {value?.fullName}
-          </span>
+      <div className="flex-1 overflow-y-auto flex flex-col items-center justify-between">
+        <div className="flex flex-col items-center w-full">
           <div
-            className={classNames(
-              isPresent
-                ? "bg-green-500"
-                : "bg-transparent border border-gray-500",
-              "h-2 w-2 rounded-full ml-2"
-            )}
+            className="h-40 w-40 md:h-32 md:w-32 lg:h-44 lg:w-44 rounded mt-4 bg-cover"
+            style={{
+              backgroundImage: `url(${
+                photoURL || `${process.env.PUBLIC_URL}/blank_user.png`
+              })`,
+            }}
           />
+          <div className="flex items-center justify-center mt-4 mb-2 w-full">
+            <span className="font-bold text-base truncate max-w-3/4 th-color-for">
+              {value?.fullName}
+            </span>
+            <div
+              className={classNames(
+                isPresent
+                  ? "bg-green-500"
+                  : "bg-transparent border border-gray-500",
+                "h-2 w-2 rounded-full ml-2"
+              )}
+            />
+          </div>
+          <div className="space-y-3 w-full">
+            <ProfileViewItem text="Display name" value={value?.displayName} />
+            <ProfileViewItem text="Email address" value={value?.email} />
+            {value?.phoneNumber && (
+              <ProfileViewItem text="Phone number" value={value?.phoneNumber} />
+            )}
+            {value?.title && (
+              <ProfileViewItem text="What I do?" value={value?.title} />
+            )}
+          </div>
         </div>
-        <div className="space-y-3 w-full">
-          <ProfileViewItem text="Display name" value={value?.displayName} />
-          <ProfileViewItem text="Email address" value={value?.email} />
-          {value?.phoneNumber && (
-            <ProfileViewItem text="Phone number" value={value?.phoneNumber} />
-          )}
-          {value?.title && (
-            <ProfileViewItem text="What I do?" value={value?.title} />
-          )}
+        <div className="w-full px-5 pt-2 flex items-center justify-between pb-8">
+          <button className="w-28 p-2 border th-border-blue rounded text-sm shadow">
+            Add as member
+          </button>
+          <button className="w-28 p-2 border th-border-for rounded text-sm shadow">
+            Visit his weboffice
+          </button>
         </div>
       </div>
     </div>
