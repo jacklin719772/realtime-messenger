@@ -1,4 +1,7 @@
 import { XIcon } from "@heroicons/react/outline";
+import AddMemberConfirm from "components/dashboard/chat/AddMemberConfirm";
+import RemoveMemberConfirm from "components/dashboard/chat/RemoveMemberConfirm";
+import VisitOfficeConfirm from "components/dashboard/chat/VisitOfficeConfirm";
 import ChatArea from "components/dashboard/ChatArea";
 import FileGalleryView from "components/dashboard/FileGalleryView";
 import Navbar from "components/dashboard/navbar/Navbar";
@@ -7,13 +10,15 @@ import Sidebar from "components/dashboard/sidebar/Sidebar";
 import Workspaces from "components/dashboard/workspaces/Workspaces";
 import LoadingScreen from "components/LoadingScreen";
 import { APP_NAME } from "config";
+import { DirectMessagesContext } from "contexts/DirectMessagesContext";
 import { ReactionsContext } from "contexts/ReactionsContext";
 import { useUser } from "contexts/UserContext";
 import { usePresenceByUserId } from "hooks/usePresence";
 import { useUserById } from "hooks/useUsers";
 import { useMyWorkspaces } from "hooks/useWorkspaces";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
+import toast from "react-hot-toast";
 import {
   Navigate,
   useLocation,
@@ -39,12 +44,56 @@ function ProfileView() {
   const location = useLocation();
   const navigate = useNavigate();
   const userId = location.pathname.split("/user_profile/")[1];
+  
+  const { value: dms } = useContext(DirectMessagesContext);
+  const { user } = useUser();
+  const { workspaceId, dmId } = useParams();
 
   const { value } = useUserById(userId);
   const { isPresent } = usePresenceByUserId(userId);
 
   const photoURL = getHref(value?.photoURL);
 
+  const dmUsers = dms.map((dm: any) => dm.members.filter((m: any) => m !== user?.uid)[0] ? dm.members.filter((m: any) => m !== user?.uid)[0] : dm.members[0]);
+
+  const [openAdd, setOpenAdd] = useState(false);
+  const [openRemove, setOpenRemove] = useState(false);
+  const [openOffice, setOpenOffice] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [webOfficeSrc, setWebOfficeSrc] = useState("");
+
+  useEffect(() => {
+    setWebOfficeSrc(`https://www.uteamwork.com/webmessenger/ecard.html?account=${value?.email}&lang=ch&server=https://www.uteamwork.com&name=${value?.displayName}`);
+  }, [value]);
+
+  const newMessage = async () => {
+    setLoading(true);
+    try {
+      const { directId } = await postData("/directs", {
+        workspaceId,
+        userId: value?.objectId,
+      });
+      navigate(`/dashboard/workspaces/${workspaceId}/dm/${directId}`);
+      setOpenAdd(false);
+    } catch (err: any) {
+      toast.error(err.message);
+    }
+    setLoading(false);
+  };
+
+  const closeConversation = async () => {
+    setLoading(true);
+    try {
+      const dm = dms.filter((dm: any) => dm.members.includes(user?.uid) && dm.members.includes(value?.objectId))[0];
+      const id = dm?.objectId;
+      await postData(`/directs/${dm?.objectId}/close`);
+      if (dmId === id) navigate(`/dashboard/workspaces/${workspaceId}`);
+    } catch (err: any) {
+      toast.error(err.message);
+    }
+    setLoading(false);
+  };
+  
   return (
     <div className="row-span-2 border-l flex flex-col overflow-hidden th-border-selbg">
       <div className="h-14 border-b flex items-center justify-between py-1 px-4 th-border-selbg">
@@ -89,14 +138,24 @@ function ProfileView() {
           </div>
         </div>
         <div className="w-full px-5 pt-2 flex items-center justify-between pb-8">
-          <button className="w-28 p-2 border th-border-blue rounded text-sm shadow">
-            Add as member
-          </button>
-          <button className="w-28 p-2 border th-border-for rounded text-sm shadow">
-            Visit his weboffice
+          {dmUsers.includes(value.objectId) && (
+            <button className="w-28 p-2 border border-red-500 th-color-brred rounded text-xs shadow" onClick={() => setOpenRemove(true)}>
+              Remove member
+            </button>
+          )}
+          {!dmUsers.includes(value.objectId) && (
+            <button className="w-28 p-2 border th-border-blue th-color-blue rounded text-xs shadow" onClick={() => setOpenAdd(true)}>
+              Add as member
+            </button>
+          )}
+          <button className="w-28 p-2 border th-border-for rounded text-xs shadow" onClick={() => setOpenOffice(true)}>
+            Visit weboffice
           </button>
         </div>
       </div>
+      <AddMemberConfirm open={openAdd} setOpen={setOpenAdd} addMember={newMessage} loading={loading} />
+      <RemoveMemberConfirm open={openRemove} setOpen={setOpenRemove} removeMember={closeConversation} loading={loading} />
+      <VisitOfficeConfirm open={openOffice} setOpen={setOpenOffice} officeSrc={webOfficeSrc} loading={loading} />
     </div>
   );
 }

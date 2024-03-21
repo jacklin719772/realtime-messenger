@@ -20,6 +20,10 @@ import ForwardMessage from "./chat/ForwardMessage";
 import ReplyMessage from "./chat/ReplyMessage";
 import SelectHeader from "./chat/SelectHeader";
 import SelectFooter from "./chat/SelectFooter";
+import toast from "react-hot-toast";
+import Spinner from "components/Spinner";
+import AddChannelConfirm from "./chat/AddChannelConfirm";
+import useAuth from "hooks/useAuth";
 
 const SelectChannel = styled.button`
   :hover {
@@ -86,15 +90,40 @@ function HeaderDirectMessage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { themeColors } = useTheme();
-  const { dmId } = useParams();
+  const { workspaceId, dmId } = useParams();
   const { value: dm } = useDirectMessageById(dmId);
   const { user } = useUser();
+  const { value: userData } = useUserById(user?.uid);
   const otherUserId = dm?.members.find((m: string) => m !== user?.uid);
   const { value } = useUserById(otherUserId || user?.uid);
 
   const photoURL = getHref(value?.thumbnailURL) || getHref(value?.photoURL);
   const { visibleSearch, setVisibleSearch } = useContext(ReactionsContext);
   const { visibleFileSearch, setVisibleFileSearch } = useContext(ReactionsContext);
+  const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  const createChannelAndInviteMember = async () => {
+    setLoading(true);
+    try {
+      const { channelId } = await postData("/channels", {
+        name: `${userData?.displayName.split(" ")[0]}, ${value?.displayName}`,
+        description: "",
+        workspaceId,
+      });
+      await postData(`/channels/${channelId}/members`, {
+        email: value?.email,
+      });
+      navigate(
+        `/dashboard/workspaces/${workspaceId}/channels/${channelId}`
+      );
+      toast.success("Channel created and member added.");
+    } catch (err: any) {
+      toast.error(err.message);
+    }
+    setOpen(false);
+    setLoading(false);
+  }
 
   return (
     <div className="w-full border-b flex items-center justify-between px-5 py-1 h-14 th-color-selbg th-border-selbg">
@@ -120,9 +149,12 @@ function HeaderDirectMessage() {
         <ChevronDownIcon className="h-4 w-4 th-color-for" />
       </SelectChannel>
       <div>
-        <button className="th-bg-bg th-color-for inline-flex justify-center items-center text-sm w-10 h-10 rounded font-extrabold focus:z-10 focus:outline-none">
-          <img className="h-5 w-5" alt="add member" src={`${process.env.PUBLIC_URL}/add_user.png`} />
-        </button>
+        {value?.objectId !== user?.uid && (
+          <button className="th-bg-bg th-color-for inline-flex justify-center items-center text-sm w-10 h-10 rounded font-extrabold focus:z-10 focus:outline-none" disabled={loading} onClick={() =>setOpen(true)}>
+            {loading ? <Spinner className="h-5 w-5" /> : 
+            <img className="h-5 w-5" alt="add member" src={`${process.env.PUBLIC_URL}/add_user.png`} />}
+          </button>
+        )}
         <button
           className="th-bg-bg th-color-for inline-flex justify-center items-center text-sm w-10 h-10 rounded font-extrabold focus:z-10 focus:outline-none"
           onClick={() => setVisibleSearch(!visibleSearch)}
@@ -138,6 +170,7 @@ function HeaderDirectMessage() {
           <img className="h-5 w-5" alt="gallery" src={`${process.env.PUBLIC_URL}/gallery.png`} />
         </button>
       </div>
+      <AddChannelConfirm open={open} setOpen={setOpen} addChannel={createChannelAndInviteMember} loading={loading} />
     </div>
   );
 }

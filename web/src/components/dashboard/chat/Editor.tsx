@@ -132,7 +132,7 @@ export default function Editor() {
 
   useEffect(() => {
     if (members && chat) {
-      const filteredMembers = members.filter((member: any) => member.objectId !== user?.uid && chat.members.includes(member.objectId)).map((item: any, index: number) => ({
+      const filteredMembers = members.filter((member: any) => chat.members.includes(member.objectId)).map((item: any, index: number) => ({
         id: index + 1,
         value: item.displayName
       }));
@@ -225,7 +225,7 @@ export default function Editor() {
               onSubmit={handleSubmit}
               className="w-full h-full flex items-center"
             >
-              <QuillEditor
+              {members.length > 1 && <QuillEditor
                 files={files}
                 setFiles={setFiles}
                 editorRef={editorRef}
@@ -244,8 +244,8 @@ export default function Editor() {
                 dropzone={dropzone}
                 isTyping={isTyping}
                 setIsTyping={setIsTyping}
-                mentionMembers={mentionMembers}
-              />
+                mentionMembers={members}
+              />}
             </form>
           )}
         </Formik>

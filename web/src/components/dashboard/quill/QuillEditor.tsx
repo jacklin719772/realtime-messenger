@@ -5,7 +5,6 @@ import {
   MicrophoneIcon,
   PhotographIcon,
   PlayIcon,
-  VideoCameraIcon,
   XIcon,
 } from "@heroicons/react/outline";
 import { PaperAirplaneIcon } from "@heroicons/react/solid";
@@ -20,13 +19,12 @@ import debounce from "lodash/debounce";
 import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { DropzoneState } from "react-dropzone";
 import toast from "react-hot-toast";
-import ReactQuill, { Quill } from "react-quill";
+import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { getGQLServerUrl } from "config";
 import { useParams } from "react-router-dom";
 import { postData } from "utils/api-helpers";
 import classNames from "utils/classNames";
-import { v4 as uuidv4 } from "uuid";
 import hexToRgbA from "utils/hexToRgbA";
 // import { uploadFile } from "gqlite-lib/dist/client/storage";
 // #1 import quill-image-uploader
@@ -37,11 +35,72 @@ import 'quill-mention/dist/quill.mention.min.css';
 import VoiceMessage from "../chat/VoiceMessage";
 import { ReactionsContext } from "contexts/ReactionsContext";
 import VideoMessage from "../chat/VideoMessage";
+import { getIdToken } from "gqlite-lib/dist/client/auth";
+import { UsersContext } from "contexts/UsersContext";
+import { useUser } from "contexts/UserContext";
 
 // #2 register module
 // Quill.register("modules/imageUploader", ImageUploader);
 // Quill.register('modules/imageResize', ImageResize);
 // Quill.register("modules/mention", Mention);
+
+const getChat = async (workspaceId: string, chatType: string) => {
+  const headers: any = {
+    "Content-Type": "application/json",
+  };
+  const idToken = await getIdToken();
+  if (idToken) {
+    headers.Authorization = `Bearer ${idToken}`;
+  }
+  if (chatType === "channels") {
+    const data = {
+      operationName: "ListChannels",
+      variables: {
+         workspaceId
+      },
+      query: "query ListChannels($updatedAt: Date, $userId: String, $workspaceId: String, $name: String) {\n  listChannels(\n    updatedAt: $updatedAt\n    userId: $userId\n    workspaceId: $workspaceId\n    name: $name\n  ) {\n    objectId\n    createdBy\n    details\n    isArchived\n    isDeleted\n    lastMessageCounter\n    lastMessageText\n    members\n    name\n    topic\n    typing\n    workspaceId\n    createdAt\n    updatedAt\n  }\n}"
+    }
+  
+    const res = await fetch(`${getGQLServerUrl()}/graphql`, {
+      method: "post",
+      headers,
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) {
+      const e: any = await res.json();
+      const error = new Error(e.error.message);
+      throw error;
+    } else {
+      const contentType = res.headers.get("content-type");
+      if (contentType && contentType.indexOf("application/json") !== -1)
+        return await res.json();
+    }
+  } else {
+    const data = {
+      operationName: "ListDirects",
+      variables: {
+         workspaceId
+      },
+      query: "query ListDirects($updatedAt: Date, $workspaceId: String, $userId: String) {\n  listDirects(updatedAt: $updatedAt, workspaceId: $workspaceId, userId: $userId) {\n    objectId\n    active\n    lastMessageCounter\n    lastMessageText\n    lastTypingReset\n    members\n    typing\n    workspaceId\n    createdAt\n    updatedAt\n  }\n}"
+    }
+  
+    const res = await fetch(`${getGQLServerUrl()}/graphql`, {
+      method: "post",
+      headers,
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) {
+      const e: any = await res.json();
+      const error = new Error(e.error.message);
+      throw error;
+    } else {
+      const contentType = res.headers.get("content-type");
+      if (contentType && contentType.indexOf("application/json") !== -1)
+        return await res.json();
+    }
+  }
+  return;
+}
 
 function EmojiDropdown({
   onEmojiClick,
@@ -256,7 +315,7 @@ function CustomToolbar({
         {/* <button className="ql-image" /> */}
       </div>
       <div className="ml-auto flex items-center space-x-2">
-        <img src={`${process.env.PUBLIC_URL}/video_camera.png`} alt="finish" className="mx-1 h-5 w-5 cursor-pointer th-color-for" onClick={handleOnVideoClick} />
+        <img src={`${process.env.PUBLIC_URL}/video_recorder.png`} alt="finish" className="mx-1 h-auto w-5 cursor-pointer th-color-for" onClick={handleOnVideoClick} />
         <MicrophoneIcon className="h-5 w-5 cursor-pointer th-color-for" onClick={handleOnVoiceClick} />
         <StickersDropdown />
         <EmojiDropdown onEmojiClick={onEmojiClick} editor={editor} />
@@ -453,11 +512,9 @@ function Editor({
 
   const { channelId, dmId } = useParams();
   const [refresh, setRefresh] = useState(false);
-  const [members, setMembers] = useState<any[] | null>(null);
   // const [modules, setModules] = useState(null);
-  // const { user } = useUser();
-  // const { value: members } = useContext(UsersContext);
-  // console.log(members);
+  const { user } = useUser();
+  const { value: members } = useContext(UsersContext);
   // const { value: channel } = useChannelById(channelId);
   // const { value: direct } = useDirectMessageById(dmId);
 
@@ -483,60 +540,83 @@ function Editor({
           },
         },
       },
-      // # 4 Add module and upload function
-      // imageUploader: {
-      //   upload: (file: File) => {
-      //     return new Promise(async (resolve, reject) => {
-      //       const messageId = uuidv4();
-      //       // const formData = new FormData();
-      //       // formData.append("image", file);
-      //       try {
-      //         const filePath = await uploadFile(
-      //           "messenger",
-      //           `Message/${messageId}/${Date.now()}.${file.name.split(".").pop()}`,
-      //           file
-      //         );
-      //         console.log(filePath);
-      //         resolve(`${getGQLServerUrl()}${filePath}`);
-      //       } catch (error) {
-      //         reject("Upload failed");
-      //         console.error("Error:", error);
-      //       }
-      //     });
-      //   }
-      // },
-      // imageResize: {
-      //   parchment: Quill.import('parchment'),
-      //   modules: ['Resize', 'DisplaySize', 'Toolbar']
-      // },
-      // mention: {
-      //   allowedChars: /^[A-Za-z\sÅÄÖåäö]*$/,
-      //   defaultMenuOrientation: 'top',
-      //   source: function(searchTerm: string, renderList: any) {
-      //     console.log('mentionMembers in Module: ', mentionMembers);
-      //     let values = [];
-      //     if (mentionMembers.length > 0) {
-      //       values = mentionMembers
-      //     }
-      //     // let values: any[] = [];
+      mention: {
+        allowedChars: /^[A-Za-z\sÅÄÖåäö]*$/,
+        defaultMenuOrientation: 'top',
+        source: async function(searchTerm: string, renderList: any) {
+          console.log('mentionMembers in Module: ', mentionMembers);
+          const location = window.location.href;
+          const workspaceId = location.split("/dashboard/workspaces/")[1]?.split("/")[0];
+          const chatType = location.split("/dashboard/workspaces/")[1]?.split("/")[1];
+          const chatId = location.split("/dashboard/workspaces/")[1]?.split("/")[2];
+
+          const chats = await getChat(workspaceId, chatType);
+          const chatMembers = chatType === "channels" ? chats.data.listChannels.filter((c: any) => c.objectId === chatId)[0].members : chats.data.listDirects.filter((c: any) => c.objectId === chatId)[0].members;
+          console.log(chatMembers);
+          const mentions = mentionMembers.filter((m: any) => chatMembers.includes(m.objectId));
+          console.log(mentionMembers);
+          console.log(mentions);
+
+          const filteredMembers = mentions.map((item: any, index: number) => ({
+            id: index + 1,
+            value: item.objectId === user?.uid ? `${item.displayName} (you)` : item.displayName
+          }));
+          filteredMembers.unshift({
+            id: 0,
+            value: "All"
+          });
+
+          let values: any[] = [];
+          if (mentionMembers.length > 0) {
+            values = filteredMembers
+          }
+          // let values: any[] = [];
   
-      //     if (searchTerm.length === 0) {
-      //       renderList(values, searchTerm);
-      //     } else {
-      //       const matches = [];
-      //       for (let i = 0; i < values.length; i++)
-      //         if (
-      //           ~values[i].value.toLowerCase().indexOf(searchTerm.toLowerCase())
-      //         )
-      //           matches.push(values[i]);
-      //       renderList(matches, searchTerm);
-      //     }
-      //   }
-      // },
+          if (searchTerm.length === 0) {
+            renderList(values, searchTerm);
+          } else {
+            const matches = [];
+            for (let i = 0; i < values.length; i++)
+              if (
+                ~values[i].value.toLowerCase().indexOf(searchTerm.toLowerCase())
+              )
+                matches.push(values[i]);
+            renderList(matches, searchTerm);
+          }
+        },
+        renderLoading: () => {
+          const htmlObj = document.createElement('div');
+          htmlObj.style.display = 'flex';
+          htmlObj.style.justifyContent = 'center';
+          htmlObj.style.alignItems = 'center';
+          htmlObj.style.height = '44px';
+          htmlObj.innerHTML = `<svg
+              class="animate-spin h-4 w-4 th-color-for"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              />
+            </svg>
+          `;
+          return htmlObj;
+        }
+      },
     }),
     []
   );
-  useEffect(() => setMembers(mentionMembers), [mentionMembers])
 
   // useEffect(() => {
   //   setModules({
@@ -771,7 +851,7 @@ function Editor({
             "blockquote",
             "code-block",
             // "image",
-            // "mention"
+            "mention"
           ]}
           theme="snow"
           id="chat-editor"

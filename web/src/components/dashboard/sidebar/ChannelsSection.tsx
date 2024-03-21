@@ -150,8 +150,8 @@ export default function ChannelsSection() {
         </div>
       ) : (
         <ul
-          className="w-full mt-6 overflow-y-scroll"
-          style={{ height: "460px" }}
+          className="w-full mt-6 overflow-y-auto"
+          style={{ height: 250, maxHeight: 250 }}
         >
           <li
             className="px-8 py-2 flex items-center cursor-pointer"

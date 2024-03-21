@@ -676,7 +676,7 @@ export default function Message({
       
                     {message?.fileType?.includes("audio/") && (
                       <div className="relative my-1">
-                        <audio controls controlsList="nodownload">
+                        <audio className="w-96" controls controlsList="nodownload">
                           <source src={fileURL} type={message?.fileType} />
                         </audio>
                       </div>

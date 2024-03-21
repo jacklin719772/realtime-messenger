@@ -1,5 +1,5 @@
 import { Dialog, Transition } from '@headlessui/react';
-import { DesktopComputerIcon, MicrophoneIcon, StopIcon, VideoCameraIcon, XIcon } from '@heroicons/react/outline';
+import { XIcon } from '@heroicons/react/outline';
 import { useTheme } from 'contexts/ThemeContext';
 import { Fragment, useContext, useEffect, useRef, useState } from 'react'
 import { ReactionsContext } from 'contexts/ReactionsContext';
@@ -16,6 +16,7 @@ export default function VideoMessage() {
   const [video, setVideo] = useState(false);
   const [screen, setScreen] = useState(false);
   const [initialStream, setInitialStream] = useState<any>(null);
+  const [recording, setRecording] = useState(false);
 
   const {
     status,
@@ -37,7 +38,21 @@ export default function VideoMessage() {
     blobPropertyBag: {
       type: 'video/mp4',
     },
+    onStart: () => {
+      setRecording(true);
+    },
+    onStop: () => {
+      setRecording(false);
+    }
   });
+
+  const ref = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    if (ref.current && initialStream) {
+      ref.current.srcObject = initialStream;
+    }
+  }, [initialStream]);
 
   const VideoPreview = ({ stream }: { stream: MediaStream | null }) => {
     const videoRef = useRef<HTMLVideoElement>(null);
@@ -47,15 +62,7 @@ export default function VideoMessage() {
         videoRef.current.srcObject = stream;
       }
     }, [stream]);
-    useEffect(() => {
-      if (videoRef.current && initialStream) {
-        videoRef.current.srcObject = initialStream;
-      }
-    }, [initialStream]);
     if (!stream) {
-      if (initialStream) {
-        return <video ref={videoRef} controls autoPlay className="w-full" />;
-      }
       return <div className="text-sm font-bold py-24">Click the start button to record the video</div>;
     }
     return <video ref={videoRef} controls autoPlay className="w-full" />;
@@ -78,25 +85,27 @@ export default function VideoMessage() {
   const handleChange = (e: any) => {
     console.log(typeof e.target.value, e.target.value);
     if (e.target.value === "1") {
+      // setInitialStream(null);
+      console.log(previewStream);
+      console.log(initialStream);
       setVideo(true);
       setAudio(true);
       setScreen(false);
       clearBlobUrl();
-      detectMediaDevice();
     }
     if (e.target.value === "2") {
       setScreen(true);
       setAudio(false);
       setVideo(false);
       clearBlobUrl();
-      setInitialStream(null);
+      // setInitialStream(null);
     }
     if (e.target.value === "3") {
       setScreen(true);
       setAudio(true);
       setVideo(false);
-      clearBlobUrl()
-      setInitialStream(null);
+      clearBlobUrl();
+      // setInitialStream(null);
     }
   }
 
@@ -104,18 +113,19 @@ export default function VideoMessage() {
     setVideoBlob(null);
     setVisibleVideoRecorder(false);
     clearBlobUrl();
-    detectMediaDevice();
+    removeAllStream();
+  }
+
+  const removeAllStream = () => {
+    initialStream.getTracks().forEach((t: any) => {
+      t.stop();
+    });
+    if (ref.current) {
+      ref.current.srcObject = null;
+    }
   }
 
   const detectMediaDevice =async () => {
-    navigator.mediaDevices
-      .getUserMedia({ audio: true })
-      .then(() => {
-        setHasMic(true);
-      })
-      .catch((error) => {
-        setHasMic(false);
-      });
     navigator.mediaDevices
       .getUserMedia({ video: true })
       .then((stream) => {
@@ -134,7 +144,6 @@ export default function VideoMessage() {
   }, [hasCamera, hasMic]);
 
   useEffect(() => {
-    detectMediaDevice();
     clearBlobUrl();
     setVideo(true);
     setAudio(true);
@@ -142,6 +151,7 @@ export default function VideoMessage() {
   }, []);
 
   useEffect(() => {
+    // setInitialStream(null);
     if (visibleVideoRecorder) {
       detectMediaDevice();
     }
@@ -275,12 +285,14 @@ export default function VideoMessage() {
                           {(status === "stopped" && mediaBlobUrl && mediaBlobUrl !== "") ?
                             <video src={mediaBlobUrl} controls className="w-full" /> :
                             (<>
-                              {((screen && !audio && !video) || 
-                              (screen && audio && !video && hasMic) || 
-                              (!screen && audio && video && hasMic && hasCamera)) ? 
-                                <VideoPreview stream={previewStream} /> :
-                                <div className="py-20"><img className="h-40" src={`${process.env.PUBLIC_URL}/no_device.png`} alt="no device" /></div>
-                              }
+                              {!hasCamera ? <div className="py-20"><img className="h-40" src={`${process.env.PUBLIC_URL}/no_device.png`} alt="no device" /></div> :
+                              (<>
+                                {(video && !recording && initialStream) && <video ref={ref} controls autoPlay className="w-full" />}
+                                {(video && !recording && !initialStream) && <div className="text-sm font-bold py-24">Click the start button to record the video</div>}
+                                {(video && recording) && <VideoPreview stream={previewStream} />}
+                                {(screen && !recording) && <div className="text-sm font-bold py-24">Click the start button to record the video</div>}
+                                {(screen && recording) && <VideoPreview stream={previewStream} />}
+                              </>)}
                             </>)
                           }
                         </div>

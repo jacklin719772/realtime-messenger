@@ -131,10 +131,11 @@ export default function CreateMessageModal() {
                   </RadioGroup.Option>
                 </RadioGroup>
                 <div
-                  className={classNames("space-y-6 pt-5 pb-8 border-t h-550")}
+                  className={classNames("space-y-6 pt-5 pb-8 border-t")}
                   style={{
                     backgroundColor: themeColors?.background,
                     borderColor: themeColors?.selectionBackground,
+                    height: 350, maxHeight: 350,
                   }}
                 >
                   {section === "channels" && <ChannelsSection />}

@@ -37,7 +37,7 @@ export default function EditChannelItems({
       <div
         role="button"
         tabIndex={0}
-        onClick={() => isOwner && (onClick ? onClick() : setOpen(true))}
+        onClick={() => onClick ? onClick() : setOpen(true)}
         className="th-border-selbg flex focus:outline-none flex-col space-y-1 first:rounded-t-xl p-4 border-b cursor-pointer last:border-0 last:rounded-b-xl"
       >
         <span
