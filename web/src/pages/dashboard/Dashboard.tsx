@@ -51,6 +51,7 @@ function ProfileView() {
 
   const { value } = useUserById(userId);
   const { isPresent } = usePresenceByUserId(userId);
+  const { value: userData } = useUserById(user?.uid);
 
   const photoURL = getHref(value?.photoURL);
 
@@ -63,7 +64,7 @@ function ProfileView() {
   const [webOfficeSrc, setWebOfficeSrc] = useState("");
 
   useEffect(() => {
-    setWebOfficeSrc(`https://www.uteamwork.com/webmessenger/ecard.html?account=${value?.email}&lang=ch&server=https://www.uteamwork.com&name=${value?.displayName}`);
+    setWebOfficeSrc(`https://www.uteamwork.com/webmessenger/ecard.html?account=${value?.email}&lang=ch&server=https://www.uteamwork.com&name=${userData?.displayName}&email=${userData?.email}`);
   }, [value]);
 
   const newMessage = async () => {
