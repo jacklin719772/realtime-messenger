@@ -6,6 +6,7 @@ import * as workspaces from "controllers/workspaces";
 import cors from "cors";
 import express from "express";
 import { verifyToken } from "utils/auth";
+import nodemailer from 'nodemailer';
 
 const app = express();
 
@@ -92,11 +93,47 @@ usersRouter.post("/:id", authMiddleware, users.updateUser);
 usersRouter.post("/:id/presence", authMiddleware, users.updatePresence);
 usersRouter.post("/:id/read", authMiddleware, users.read);
 
+const mailRouter = express.Router();
+mailRouter.post("/", async (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) => {
+  const { from, to, subject, html } = req.body;
+
+  const transporter = nodemailer.createTransport({
+    host: "mail.uteamwork.com",
+    port: 587,
+    secure: true,
+    auth: {
+      user: "dalianjx@163.com",
+      pass: "wn719772"
+    }
+  });
+
+  try {
+    await transporter.sendMail({
+      from,
+      to,
+      subject,
+      html
+    });
+    res.locals.data = {
+      success: true,
+    };
+    return next();
+  } catch (error) {
+    console.error('Error sending email:', error);
+    return next(error);
+  }
+});
+
 app.use("/users", usersRouter);
 app.use("/messages", messagesRouter);
 app.use("/channels", channelsRouter);
 app.use("/workspaces", workspacesRouter);
 app.use("/directs", directsRouter);
+app.use("/mail", mailRouter);
 
 app.use(
   (req: express.Request, res: express.Response, next: express.NextFunction) => {

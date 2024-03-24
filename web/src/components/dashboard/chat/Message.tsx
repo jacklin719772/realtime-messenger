@@ -26,6 +26,7 @@ import { useChannelById, useChannels } from "hooks/useChannels";
 import { useDirectMessageById } from "hooks/useDirects";
 import { DirectMessagesContext } from "contexts/DirectMessagesContext";
 import { channel } from "diagnostics_channel";
+import { ModalContext } from "contexts/ModalContext";
 
 const MessageDiv = styled.div`
   :hover {
@@ -163,6 +164,7 @@ export default function Message({
   
   const {isSelecting, setIsSelecting, setVisibleForward, setVisibleReply, setForwardMessage, originId, setOriginId} = useContext(ReactionsContext);
   // const [forward, setForward] = useState<any>(null);
+  const {setOpenMailSender} = useContext(ModalContext);
 
   const [loadingDelete, setLoadingDelete] = useState(false);
 
@@ -858,6 +860,15 @@ export default function Message({
             >
               <span className="sr-only">Forward</span>
               <img className="h-4 w-4" alt="forward" src={`${process.env.PUBLIC_URL}/forward.png`} />
+            </button>
+            
+            <button
+              type="button"
+              className="th-bg-bg th-border-selbg th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none"
+              onClick={() => setOpenMailSender(true)}
+            >
+              <span className="sr-only">Forward</span>
+              <img className="h-4 w-4" alt="forward" src={`${process.env.PUBLIC_URL}/send_email.png`} />
             </button>
           </div>
         )}

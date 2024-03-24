@@ -4,6 +4,7 @@ import RemoveMemberConfirm from "components/dashboard/chat/RemoveMemberConfirm";
 import VisitOfficeConfirm from "components/dashboard/chat/VisitOfficeConfirm";
 import ChatArea from "components/dashboard/ChatArea";
 import FileGalleryView from "components/dashboard/FileGalleryView";
+import MailComposer from "components/dashboard/MailComposer";
 import Navbar from "components/dashboard/navbar/Navbar";
 import SearchList from "components/dashboard/sidebar/SearchList";
 import Sidebar from "components/dashboard/sidebar/Sidebar";
@@ -11,6 +12,7 @@ import Workspaces from "components/dashboard/workspaces/Workspaces";
 import LoadingScreen from "components/LoadingScreen";
 import { APP_NAME } from "config";
 import { DirectMessagesContext } from "contexts/DirectMessagesContext";
+import { ModalContext } from "contexts/ModalContext";
 import { ReactionsContext } from "contexts/ReactionsContext";
 import { useUser } from "contexts/UserContext";
 import { usePresenceByUserId } from "hooks/usePresence";
@@ -30,10 +32,11 @@ import classNames from "utils/classNames";
 import { getHref } from "utils/get-file-url";
 
 function ProfileViewItem({ value, text }: { value: string; text: string }) {
+  const {openMailSender, setOpenMailSender} = useContext(ModalContext);
   return (
     <div className="flex flex-col px-5 w-full">
       <span className="font-bold text-sm th-color-for flex items-center">
-        {text} {text === "Email address" && <img src={`${process.env.PUBLIC_URL}/send_email.png`} alt={value} className="ml-2 w-6 h-6 cursor-pointer" />}
+        {text} {text === "Email address" && <img src={`${process.env.PUBLIC_URL}/send_email.png`} alt={value} className="ml-2 w-6 h-6 cursor-pointer" onClick={() => setOpenMailSender(true)} />}
       </span>
       <span className="font-normal text-sm truncate w-full th-color-for">{value}</span>
     </div>
@@ -64,7 +67,7 @@ function ProfileView() {
   const [webOfficeSrc, setWebOfficeSrc] = useState("");
 
   useEffect(() => {
-    setWebOfficeSrc(`https://www.uteamwork.com/webmessenger/ecard.html?account=${value?.email}&lang=ch&server=https://www.uteamwork.com&name=${userData?.displayName}&email=${userData?.email}`);
+    setWebOfficeSrc(`https://www.uteamwork.com/webmessenger/ecard1.html?account=${value?.email}&lang=ch&server=https://www.uteamwork.com&name=${userData?.displayName}&email=${userData?.email}`);
   }, [value]);
 
   const newMessage = async () => {
@@ -168,6 +171,7 @@ export default function Dashboard() {
   const location = useLocation();
   const profile = location.pathname?.includes("user_profile");
   const {visibleFileSearch, visibleGlobalSearch} = useContext(ReactionsContext);
+  const {openMailSender} = useContext(ModalContext);
 
   useEffect(() => {
     if (user?.uid) {
@@ -227,6 +231,7 @@ export default function Dashboard() {
         ) : <SearchList />}
         <ChatArea />
         {visibleFileSearch ? <FileGalleryView /> : profile && <ProfileView />}
+        {openMailSender && <MailComposer />}
       </div>
     </>
   );

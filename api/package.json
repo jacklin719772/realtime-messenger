@@ -5,6 +5,7 @@
     "dev": "concurrently \"tsc -w -p tsconfig.json\" \"NODE_PATH=./dist nodemon -r dotenv/config --delay 1 dist/app.js\""
   },
   "dependencies": {
+    "@types/nodemailer": "^6.4.14",
     "aws-sdk": "^2.1046.0",
     "axios": "^0.24.0",
     "cors": "^2.8.5",
@@ -18,6 +19,7 @@
     "jsonwebtoken": "^8.5.1",
     "mime": "^3.0.0",
     "node-fetch": "^2.6.6",
+    "nodemailer": "^6.9.13",
     "sharp": "^0.29.3",
     "uuid": "^8.3.2"
   },
