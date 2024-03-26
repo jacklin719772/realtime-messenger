@@ -55,13 +55,8 @@ export default function VisitOfficeConfirm({
             leaveFrom="opacity-100 translate-y-0 sm:scale-100"
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
-            <div className="th-bg-bg inline-block align-bottom rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-[1160px] sm:w-full">
-              <div className="th-bg-bg px-4 pt-5 pb-4 sm:p-6 sm:pb-4 flex justify-between items-center">
-                <div>
-                  <h5 className="font-bold th-color-for">
-                    Visit Web Office
-                  </h5>
-                </div>
+            <div className="th-bg-bg inline-block align-bottom rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-[1000px] sm:w-full">
+              <div className="th-bg-bg px-4 pt-2 pb-4 sm:p-2 sm:pr-4 flex justify-end items-center">
                 <div
                   role="button"
                   tabIndex={0}
@@ -71,13 +66,8 @@ export default function VisitOfficeConfirm({
                   <XIcon className="h-5 w-5 th-color-for" />
                 </div>
               </div>
-              <div className="px-4 pb-5 pt-1 w-full h-96">
+              <div className="px-4 pb-5 pt-1 w-full h-[500px]">
                 <iframe src={officeSrc} className="w-full h-full" />
-              </div>
-              <div className="px-4 pb-5 pt-1 border-t th-border-selbg sm:px-6 sm:flex sm:flex-row-reverse sm:justify-start">
-                <button onClick={() => setOpen(false)} className="th-bg-bg th-color-for th-border-for border text-sm w-20 h-10 rounded font-bold focus:z-10 focus:outline-none ml-2">
-                  Cancel
-                </button>
               </div>
             </div>
           </Transition.Child>

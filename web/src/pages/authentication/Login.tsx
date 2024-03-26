@@ -36,9 +36,14 @@ export default function Login() {
   const navigate = useNavigate();
   const { login } = useAuth();
   const [queryParameters] = useSearchParams();
+  const languages = {
+    "simplified_chinese": "zhs",
+    "traditional_chinese": "zht",
+    "english": "en",
+  };
   queryParameters.get("m") ? localStorage.setItem("m", queryParameters.get("m")) : localStorage.setItem("m", "");
   queryParameters.get("p") ? localStorage.setItem("p", queryParameters.get("p")) : localStorage.setItem("p", "");
-  queryParameters.get("l") ? localStorage.setItem("currentLanguage", queryParameters.get("l")) : localStorage.setItem("currentLanguage", "");
+  queryParameters.get("l") ? localStorage.setItem("currentLanguage", languages[queryParameters.get("l")]) : localStorage.setItem("currentLanguage", "");
   const email = queryParameters.get("m") ? queryParameters.get("m") : localStorage.getItem("m");
   const password = queryParameters.get("p") ? queryParameters.get("p") : localStorage.getItem("p");
 

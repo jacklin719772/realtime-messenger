@@ -129,58 +129,15 @@ export default function ForwardEdit({
       keyboard: {
         bindings: {
           tab: false,
-          custom: {
-            key: 13,
-            shiftKey: true,
-            handler: () => {
-              handleSubmit();
-            },
-          },
+          // custom: {
+          //   key: 13,
+          //   shiftKey: true,
+          //   handler: () => {
+          //     handleSubmit();
+          //   },
+          // },
         },
       },
-      // # 4 Add module and upload function
-    //   imageUploader: {
-    //     upload: file => {
-    //       return new Promise(async (resolve, reject) => {
-    //         const messageId = uuidv4();
-    //         // const formData = new FormData();
-    //         // formData.append("image", file);
-    //         try {
-    //           const filePath = await uploadFile(
-    //             "messenger",
-    //             `Message/${messageId}/${Date.now()}_file`,
-    //             file
-    //           );
-    //           console.log(filePath);
-    //           resolve(`${getGQLServerUrl()}${filePath}`);
-    //         } catch (error) {
-    //           reject("Upload failed");
-    //           console.error("Error:", error);
-    //         }
-  
-    //         // fetch(
-    //         //   "https://api.imgbb.com/1/upload?key=d36eb6591370ae7f9089d85875e56b22",
-    //         //   {
-    //         //     method: "POST",
-    //         //     body: formData
-    //         //   }
-    //         // )
-    //         //   .then(response => response.json())
-    //         //   .then(result => {
-    //         //     console.log(result);
-    //         //     resolve(result.data.url);
-    //         //   })
-    //         //   .catch(error => {
-    //         //     reject("Upload failed");
-    //         //     console.error("Error:", error);
-    //         //   });
-    //       });
-    //     }
-    //   },
-    //   imageResize: {
-    //     parchment: Quill.import('parchment'),
-    //     modules: ['Resize', 'DisplaySize', 'Toolbar']
-    //   }
     }),
     []
   );

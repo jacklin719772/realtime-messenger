@@ -104,9 +104,9 @@ mailRouter.post("/", async (
   const transporter = nodemailer.createTransport({
     host: "mail.uteamwork.com",
     port: 587,
-    secure: true,
+    secure: false,
     auth: {
-      user: "dalianjx@163.com",
+      user: "dalianjx@mail.uteamwork.com",
       pass: "wn719772"
     }
   });

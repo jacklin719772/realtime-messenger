@@ -27,6 +27,10 @@ export const ModalContext = createContext({
   setWorkspaceSettingsSection: null as any,
   openMailSender: false,
   setOpenMailSender: null as any,
+  emailRecipient: "",
+  setEmailRecipient: null as any,
+  emailBody: "",
+  setEmailBody: null as any,
 });
 
 export function ModalProvider({ children }: { children: React.ReactNode }) {
@@ -46,6 +50,8 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
     "members" | "settings"
   >("members");
   const [openMailSender, setOpenMailSender] = useState(false);
+  const [emailRecipient, setEmailRecipient] = useState("");
+  const [emailBody, setEmailBody] = useState("");
 
   return (
     <ModalContext.Provider
@@ -77,6 +83,11 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
 
         openMailSender,
         setOpenMailSender,
+
+        emailRecipient,
+        setEmailRecipient,
+        emailBody,
+        setEmailBody,
       }}
     >
       {children}

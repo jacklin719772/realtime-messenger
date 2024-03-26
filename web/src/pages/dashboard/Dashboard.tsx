@@ -32,11 +32,16 @@ import classNames from "utils/classNames";
 import { getHref } from "utils/get-file-url";
 
 function ProfileViewItem({ value, text }: { value: string; text: string }) {
-  const {openMailSender, setOpenMailSender} = useContext(ModalContext);
+  const {setEmailRecipient, setEmailBody, setOpenMailSender} = useContext(ModalContext);
+  const initializeEmail = () => {
+    setEmailRecipient(value);
+    setEmailBody("");
+    setOpenMailSender(true);
+  }
   return (
     <div className="flex flex-col px-5 w-full">
       <span className="font-bold text-sm th-color-for flex items-center">
-        {text} {text === "Email address" && <img src={`${process.env.PUBLIC_URL}/send_email.png`} alt={value} className="ml-2 w-6 h-6 cursor-pointer" onClick={() => setOpenMailSender(true)} />}
+        {text} {text === "Email address" && <img src={`${process.env.PUBLIC_URL}/send_email.png`} alt={value} className="ml-2 w-6 h-6 cursor-pointer" onClick={initializeEmail} />}
       </span>
       <span className="font-normal text-sm truncate w-full th-color-for">{value}</span>
     </div>

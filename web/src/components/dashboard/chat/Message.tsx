@@ -164,7 +164,7 @@ export default function Message({
   
   const {isSelecting, setIsSelecting, setVisibleForward, setVisibleReply, setForwardMessage, originId, setOriginId} = useContext(ReactionsContext);
   // const [forward, setForward] = useState<any>(null);
-  const {setOpenMailSender} = useContext(ModalContext);
+  const {setOpenMailSender, setEmailBody, setEmailRecipient} = useContext(ModalContext);
 
   const [loadingDelete, setLoadingDelete] = useState(false);
 
@@ -269,6 +269,20 @@ export default function Message({
     console.log(checkRef);
     checkRef?.current.click();
     setIsSelecting(true);
+  }
+
+  const initializeEmail = (message: any) => {
+    let messageBody = '';
+    if (message?.text) {
+      console.log(message?.text);
+      messageBody += message?.text;
+    }
+    if (message?.fileURL) {
+      messageBody += `<a href="${getHref(message?.fileURL + '&d=' + message?.fileName)}" target="_blank">${getHref(message?.fileURL + '&d=' + message?.fileName)}</a>`
+    }
+    setEmailBody(messageBody);
+    setEmailRecipient(value?.email);
+    setOpenMailSender(true);
   }
 
   const { value: forwardChannel } = useChannelById(forward?.chatId);
@@ -865,7 +879,7 @@ export default function Message({
             <button
               type="button"
               className="th-bg-bg th-border-selbg th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none"
-              onClick={() => setOpenMailSender(true)}
+              onClick={() => initializeEmail(message)}
             >
               <span className="sr-only">Forward</span>
               <img className="h-4 w-4" alt="forward" src={`${process.env.PUBLIC_URL}/send_email.png`} />
