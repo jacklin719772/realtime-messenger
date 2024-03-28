@@ -12,12 +12,14 @@ export default function Logout() {
     (async () => {
       const m = localStorage.getItem("m") || "";
       const p = localStorage.getItem("p") || "";
+      const t = localStorage.getItem("t") || "";
       const l = localStorage.getItem("currentLanguage") || "zhs";
       localStorage.removeItem("theme");
       localStorage.removeItem("backgroundColor");
       await logout();
       localStorage.setItem("m", m);
       localStorage.setItem("p", p);
+      localStorage.setItem("t", t);
       localStorage.setItem("currentLanguage", l);
       navigate("/authentication/login");
     })();

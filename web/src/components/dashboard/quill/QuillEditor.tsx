@@ -38,6 +38,7 @@ import VideoMessage from "../chat/VideoMessage";
 import { getIdToken } from "gqlite-lib/dist/client/auth";
 import { UsersContext } from "contexts/UsersContext";
 import { useUser } from "contexts/UserContext";
+import { getHref } from "utils/get-file-url";
 
 // #2 register module
 // Quill.register("modules/imageUploader", ImageUploader);
@@ -559,11 +560,15 @@ function Editor({
 
           const filteredMembers = mentions.map((item: any, index: number) => ({
             id: index + 1,
-            value: item.objectId === user?.uid ? `${item.displayName} (you)` : item.displayName
+            value: item.objectId === user?.uid ? `${item.displayName} (you)` : item.displayName,
+            fullName: item.fullName,
+            photoURL: getHref(item.photoURL) || getHref(item.thumbnailURL) || `${process.env.PUBLIC_URL}/blank_user.png`,
           }));
           filteredMembers.unshift({
             id: 0,
-            value: "All"
+            value: "All",
+            fullName: "All",
+            photoURL: `${process.env.PUBLIC_URL}/blank_user.png`,
           });
 
           let values: any[] = [];
@@ -610,6 +615,20 @@ function Editor({
                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
               />
             </svg>
+          `;
+          return htmlObj;
+        },
+        renderItem: (item: any) => {
+          const htmlObj = document.createElement('div');
+          htmlObj.style.display = 'flex';
+          htmlObj.style.justifyContent = 'flex-start';
+          htmlObj.style.alignItems = 'center';
+          htmlObj.style.height = '40px';
+          htmlObj.innerHTML = `<div class="w-8 h-8 pr-2 py-1">
+            <img src="${item.photoURL}" alt="${item.value}" class="w-full h-full" />
+          </div>
+          <div class="font-bold text-sm pr-2">${item.value}</div>
+          <div class="text-sm truncate">${item.fullName}</div>
           `;
           return htmlObj;
         }

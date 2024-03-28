@@ -21,6 +21,7 @@ import now from "utils/now";
 import { v4 as uuidv4 } from "uuid";
 import { postData } from "utils/api-helpers";
 import toast from "react-hot-toast";
+import { useModal } from "contexts/ModalContext";
 
 function MessageItem({
     message,
@@ -36,6 +37,7 @@ function MessageItem({
     const formattedTime = d?.toLocaleTimeString('zh-CN', {hour12: false});
 
     const [imageLoaded, setImageLoaded] = useState(false);
+    const {setEmailBody, setEmailRecipient, setOpenMailSender, setOpenFavorite, setFileURL} = useModal();
 
     const sizes = useMemo(() => {
       return {
@@ -47,9 +49,28 @@ function MessageItem({
     }, [message?.mediaHeight, message?.mediaWidth]);
     console.log(message);
 
+    const initializeEmail = (message: any) => {
+      let messageBody = '';
+      if (message?.text) {
+        console.log(message?.text);
+        messageBody += message?.text;
+      }
+      if (message?.fileURL) {
+        messageBody += `<a href="${getHref(message?.fileURL + '&d=' + message?.fileName)}" target="_blank">${message?.fileName}</a>`
+      }
+      setEmailBody(messageBody);
+      setEmailRecipient("");
+      setOpenMailSender(true);
+    }
+
+    const initializeFavorite = (message: any) => {
+      setFileURL(message?.fileURL);
+      setOpenFavorite(true);
+    }
+
     return (
-      <div className="flex flex-1 group py-1">
-        <div className="flex flex-col flex-1 pl-3">
+      <div className="flex flex-col group py-1">
+        <div className="flex flex-col flex-1 px-3">
           <div className="th-color-for flex items-center">
             <span
               role="button"
@@ -76,29 +97,21 @@ function MessageItem({
                   )}
                 >
                   <img
-                    className="bg-cover max-w-sm max-h-sm rounded relative focus:outline-none cursor-pointer"
+                    className="bg-cover w-full rounded relative focus:outline-none cursor-pointer"
                     onLoad={() => setImageLoaded(true)}
                     alt={message?.fileName}
                     src={fileURL}
-                    style={{
-                      height: sizes?.height,
-                      width: sizes?.width,
-                    }}
                   />
                 </div>
                 {!imageLoaded && (
                   <div
                     className="relative my-1 max-w-sm max-h-sm rounded bg-gray-100"
-                    style={{
-                      height: sizes?.height,
-                      width: sizes?.width,
-                    }}
                   />
                 )}
               </>
             )}
 
-            {(message?.fileType?.includes("video/") || message?.fileType?.includes("audio/")) && (
+            {message?.fileType?.includes("video/") && (
               <>
                 <div
                   className={classNames(
@@ -107,41 +120,24 @@ function MessageItem({
                   )}
                 >
                   <img
-                    className="bg-cover max-w-sm max-h-sm rounded relative focus:outline-none cursor-pointer"
+                    className="bg-cover w-full rounded relative focus:outline-none cursor-pointer"
                     onLoad={() => setImageLoaded(true)}
                     alt={message?.fileName}
                     src={fileURL}
-                    style={{
-                      height: sizes?.height,
-                      width: sizes?.width,
-                    }}
                   />
                 </div>
                 {!imageLoaded && (
                   <div
                     className="relative my-1 max-w-sm max-h-sm rounded bg-gray-100"
-                    style={{
-                      height: sizes?.height,
-                      width: sizes?.width,
-                    }}
                   />
                 )}
               </>
             )}
 
-            {/* {message?.fileType?.includes("audio/") && (
-              <div className="relative my-1">
-                <audio controls controlsList="nodownload">
-                  <source src={fileURL} type={message?.fileType} />
-                </audio>
-              </div>
-            )} */}
-
-            {!message?.fileType?.includes("audio/") &&
-              !message?.fileType?.includes("video/") &&
+            {!message?.fileType?.includes("video/") &&
               !message?.fileType?.includes("image/") && (
                 <div className="relative my-1">
-                  <div className="rounded h-16 w-52 relative group bg-gray-800 border border-gray-600 flex space-x-2 items-center p-1 overflow-hidden">
+                  <div className="rounded h-16 w-full relative group bg-gray-800 border border-gray-600 flex space-x-2 items-center p-1 overflow-hidden">
                     <DocumentTextIcon className="h-9 w-9 text-blue-500 flex-shrink-0" />
                     <div className="flex flex-col min-w-0">
                       <div className="text-gray-300 text-sm font-bold truncate">
@@ -157,7 +153,7 @@ function MessageItem({
             </>
           )}
         </div>
-        <div className="opacity-100 top-0 right-0 mx-5 flex flex-col justify-end items-center">
+        <div className="opacity-100 top-0 right-0 mx-5 flex items-center">
           <button
             type="button"
             title="Download"
@@ -226,6 +222,25 @@ function MessageItem({
               <EyeIcon className="h-4 w-4" />
             </button>
             
+          )}
+          <button
+            type="button"
+            title="Download"
+            className="th-bg-bg th-color-for relative inline-flex items-center px-3 py-1 h-8 text-sm font-medium focus:z-10 focus:outline-none"
+            onClick={() => initializeEmail(message)}
+          >
+            <span className="sr-only">Download</span>
+            <img className="h-4 w-4" alt="send-email" src={`${process.env.PUBLIC_URL}/send_email.png`} />
+          </button>
+          {message?.fileURL && (
+            <button
+              type="button"
+              className="th-bg-bg th-color-for relative inline-flex items-center px-3 py-1 h-8 text-sm font-medium focus:z-10 focus:outline-none"
+              onClick={() => setFileURL(message)}
+            >
+              <span className="sr-only">Favorite</span>
+              <img className="h-4 w-4" alt="forward" src={`${process.env.PUBLIC_URL}/favorite_add.png`} />
+            </button>
           )}
         </div>
       </div>

@@ -12,6 +12,7 @@ export default function TextField({
   required = false,
   focus = false,
   disabled = false,
+  readOnly = false,
 }: {
   label?: string;
   name: string;
@@ -24,6 +25,7 @@ export default function TextField({
   required?: boolean;
   focus?: boolean;
   disabled?: boolean;
+  readOnly?: boolean;
 }) {
   const inputRef = useRef(null);
   useEffect(() => {
@@ -48,6 +50,7 @@ export default function TextField({
         onChange={handleChange}
         ref={inputRef}
         disabled={disabled}
+        readOnly={readOnly}
         className="th-bg-bg th-border-brblack th-color-for th-border- mt-2 focus:ring-indigo-400 focus:border-indigo-500 block w-full shadow-sm text-sm rounded disabled:opacity-50"
       />
       <div className="text-xs font-normal mt-2 th-color-for">{infos}</div>

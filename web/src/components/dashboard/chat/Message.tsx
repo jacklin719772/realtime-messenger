@@ -164,7 +164,7 @@ export default function Message({
   
   const {isSelecting, setIsSelecting, setVisibleForward, setVisibleReply, setForwardMessage, originId, setOriginId} = useContext(ReactionsContext);
   // const [forward, setForward] = useState<any>(null);
-  const {setOpenMailSender, setEmailBody, setEmailRecipient} = useContext(ModalContext);
+  const {setOpenMailSender, setEmailBody, setEmailRecipient, setOpenFavorite, setFileURL} = useContext(ModalContext);
 
   const [loadingDelete, setLoadingDelete] = useState(false);
 
@@ -172,9 +172,12 @@ export default function Message({
 
   const [checked, setChecked] = useState(false);
 
-  const d = new Date(message?.createdAt);
-  d?.setHours(d?.getHours() + 8);
-  const formattedTime = d?.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})
+  const getFormattedDateTime = (str: string) => {
+    const d = new Date(str);
+    d?.setHours(d?.getHours() + 8);
+    const formattedTime = d?.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+    return formattedTime;
+  }
 
   const sizes = useMemo(() => {
     const ratio = message?.mediaWidth / message?.mediaHeight;
@@ -278,11 +281,16 @@ export default function Message({
       messageBody += message?.text;
     }
     if (message?.fileURL) {
-      messageBody += `<a href="${getHref(message?.fileURL + '&d=' + message?.fileName)}" target="_blank">${getHref(message?.fileURL + '&d=' + message?.fileName)}</a>`
+      messageBody += `<a href="${getHref(message?.fileURL + '&d=' + message?.fileName)}" target="_blank">${message?.fileName}</a>`
     }
     setEmailBody(messageBody);
-    setEmailRecipient(value?.email);
+    setEmailRecipient("");
     setOpenMailSender(true);
+  }
+
+  const initializeFavorite = (message: any) => {
+    setFileURL(message?.fileURL);
+    setOpenFavorite(true);
   }
 
   const { value: forwardChannel } = useChannelById(forward?.chatId);
@@ -328,7 +336,7 @@ export default function Message({
 
   const messageRender = useMemo(
     () => (
-      <div className="flex flex-1 group">
+      <div className="flex flex-1 group w-full">
         {displayProfilePicture && (
           <div className="flex flex-col items-start h-full pt-1 w-6">
             <div
@@ -358,13 +366,13 @@ export default function Message({
             </div>}
             <div className="flex flex-col items-start h-full pt-1 w-6 opacity-0 group-hover:opacity-100">
               <span className="font-light text-xs align-bottom th-color-for">
-                {formattedTime.slice(0, -3)}
+                {getFormattedDateTime(message?.createdAt)}
               </span>
             </div>
           </div>
         )}
 
-        <div className="flex flex-col flex-1 pl-3 w-full">
+        <div className="flex flex-col flex-1 pl-3 w-10/12">
           {displayProfilePicture && (
             <div
               className={classNames(
@@ -390,7 +398,7 @@ export default function Message({
                 {value?.displayName || "undefined"}
               </span>
               <span className="font-light text-xs ml-2 align-bottom">
-                {formattedTime}
+                {getFormattedDateTime(message?.createdAt)}
               </span>
             </div>
           )}
@@ -884,6 +892,18 @@ export default function Message({
               <span className="sr-only">Forward</span>
               <img className="h-4 w-4" alt="forward" src={`${process.env.PUBLIC_URL}/send_email.png`} />
             </button>
+
+            {message?.fileURL && (
+              <button
+                type="button"
+                className="th-bg-bg th-border-selbg th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none"
+                onClick={() => initializeFavorite(message)}
+              >
+                <span className="sr-only">Favorite</span>
+                <img className="h-4 w-4" alt="forward" src={`${process.env.PUBLIC_URL}/favorite_add.png`} />
+              </button>
+              
+            )}
           </div>
         )}
       </div>
@@ -919,7 +939,7 @@ export default function Message({
           backgroundColor: edit ? hexToRgbA(themeColors?.yellow, "0.7")! : "",
         }}
       >
-        <div className="flex flex-col flex-1">
+        <div className="flex flex-col flex-1 w-full">
           {messageRender}
           {!edit && <Reactions groupedReactions={groupedReactions} />}
         </div>

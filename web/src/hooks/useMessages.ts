@@ -92,15 +92,24 @@ export function useMessage(
   };
 }
 
-export function useMessages() {
+export function useMessages(
+  workspaceId: any
+) {
   const [messages, setMessages] = useState<any[]>([]);
 
   const { data, loading } = useQuery(queries.LIST_MESSAGES, {
+    variables: {
+      workspaceId,
+    },
+    skip: !workspaceId,
     fetchPolicy: "cache-and-network",
   });
 
   const { data: dataPush } = useSubscription(subscriptions.MESSAGE, {
-    
+    variables: {
+      workspaceId,
+    },
+    skip: !workspaceId,
   });
 
   useEffect(() => {

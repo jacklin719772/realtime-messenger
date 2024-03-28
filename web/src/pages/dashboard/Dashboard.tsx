@@ -3,6 +3,7 @@ import AddMemberConfirm from "components/dashboard/chat/AddMemberConfirm";
 import RemoveMemberConfirm from "components/dashboard/chat/RemoveMemberConfirm";
 import VisitOfficeConfirm from "components/dashboard/chat/VisitOfficeConfirm";
 import ChatArea from "components/dashboard/ChatArea";
+import Favorite from "components/dashboard/Favorite";
 import FileGalleryView from "components/dashboard/FileGalleryView";
 import MailComposer from "components/dashboard/MailComposer";
 import Navbar from "components/dashboard/navbar/Navbar";
@@ -176,7 +177,7 @@ export default function Dashboard() {
   const location = useLocation();
   const profile = location.pathname?.includes("user_profile");
   const {visibleFileSearch, visibleGlobalSearch} = useContext(ReactionsContext);
-  const {openMailSender} = useContext(ModalContext);
+  const {openMailSender, openFavorite} = useContext(ModalContext);
 
   useEffect(() => {
     if (user?.uid) {
@@ -237,6 +238,7 @@ export default function Dashboard() {
         <ChatArea />
         {visibleFileSearch ? <FileGalleryView /> : profile && <ProfileView />}
         {openMailSender && <MailComposer />}
+        {openFavorite && <Favorite />}
       </div>
     </>
   );

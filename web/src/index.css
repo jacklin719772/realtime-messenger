@@ -116,3 +116,15 @@ body {
 #preview .preview-placeholder {
   font-size: 12px;
 }
+
+.note-modal-footer {
+  height: 50px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  padding-right: 30px !important;
+}
+
+.ql-mention-list-item {
+  padding-left: 0.5rem !important;
+  padding-right: 0.5rem !important;
+}

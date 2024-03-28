@@ -1,11 +1,12 @@
 import { Dialog, Transition } from '@headlessui/react';
-import { XIcon } from '@heroicons/react/outline';
+import { DocumentTextIcon, PlayIcon, XIcon } from '@heroicons/react/outline';
 import { ModalContext } from 'contexts/ModalContext';
 import { useUser } from 'contexts/UserContext';
 import { Formik } from 'formik';
 import { useUserById } from 'hooks/useUsers';
 import { userInfo } from 'os';
-import React, { Fragment, useContext, useRef, useState } from 'react'
+import React, { Fragment, SetStateAction, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { ReactComponent as AttachFileIcon } from "icons/attach_file.svg"
 import toast from 'react-hot-toast';
 import { postData } from 'utils/api-helpers';
 import * as Yup from "yup";
@@ -15,6 +16,94 @@ import Style from 'components/Style';
 import SummernoteLite from "react-summernote-lite";
 // to see the default props for SummernoteLite
 import { DEFAULT_PROPS } from "react-summernote-lite";
+import Dropzone from 'react-dropzone';
+import { uploadFile } from 'gqlite-lib/dist/client/storage';
+import now from 'utils/now';
+import classNames from 'utils/classNames';
+import { getHref } from 'utils/get-file-url';
+import { TagsInput } from "react-tag-input-component";
+
+function FileViewer({
+  setFiles,
+  files,
+}: {
+  files: any[];
+  setFiles: React.Dispatch<React.SetStateAction<any[]>>;
+}) {
+  const filesViewer = useMemo(
+    () => (
+      <div
+        className={classNames(
+          files?.length ? "" : "hidden",
+          "w-4/5 h-16 px-3 flex py-2"
+        )}
+      >
+        {files?.length &&
+          Array.from(files).map((file) => (
+            <FileThumbnail file={file} key={file.lastModified}>
+              <div className="absolute top-0 right-0 bg-gray-700 p-1 rounded-full transform translate-x-1 -translate-y-1 opacity-0 group-hover:opacity-100">
+                <XIcon
+                  className="text-white h-3 w-3 cursor-pointer"
+                  onClick={() => {
+                    setFiles(files.filter((f: any) => f !== file));
+                  }}
+                />
+              </div>
+            </FileThumbnail>
+          ))}
+      </div>
+    ),
+    [files]
+  );
+  return filesViewer;
+}
+
+function FileThumbnail({
+  file,
+  children,
+}: {
+  file: File;
+  children: React.ReactNode;
+}) {
+  if (file.type.includes("image/"))
+    return (
+      <div
+        key={file.lastModified}
+        className="bg-cover rounded h-15 w-20 border th-border-for mr-2 relative group"
+        style={{ backgroundImage: `url(${URL.createObjectURL(file)})` }}
+      >
+        <div className="th-color-for font-bold text-xs truncate">
+          {file.name}
+        </div>
+        {children}
+      </div>
+    );
+  if (file?.type?.includes("video/") || file?.type?.includes("audio/"))
+    return (
+      <div
+        key={file.lastModified}
+        className="rounded h-15 w-20 relative group bg-gray-800 border th-border-for flex space-x-2 items-center p-1 mr-2"
+      >
+        <PlayIcon className="h-4 w-4 text-blue-500 flex-shrink-0" />
+        <div className="th-color-for font-bold text-xs truncate">
+          {file.name}
+        </div>
+        {children}
+      </div>
+    );
+  return (
+    <div
+      key={file.lastModified}
+      className="rounded h-15 w-20 relative group bg-gray-800 border border-gray-600 flex space-x-2 items-center p-1 mr-2"
+    >
+      <DocumentTextIcon className="h-4 w-4 text-blue-500 flex-shrink-0" />
+      <div className="text-gray-300 text-xs font-bold truncate">
+        {file.name}
+      </div>
+      {children}
+    </div>
+  );
+}
 
 function MailComposer() {
   const forceUpdate = useForceUpdate();
@@ -24,7 +113,42 @@ function MailComposer() {
   const { value } = useUserById(user?.uid);
   const editorRef = useRef(null);
   console.log(emailRecipient, emailBody);
-  const [imageFiles, setImageFiles] = useState([]);
+  const [files, setFiles] = useState<any[]>([]);
+  const [body, setBody] = useState("");
+  const [recipients, setRecipients] = useState<string[]>([]);
+  const [tempAddress, setTempAddress] = useState("");
+
+  useEffect(() => {
+    setBody(emailBody);
+    setRecipients([emailRecipient]);
+  }, [])
+
+  const onDrop = async (acceptedFiles: any[]) => {
+    setFiles(files.concat(acceptedFiles));
+    console.log(acceptedFiles);
+  }
+
+  const handleRecipients = (e: string[]) => {
+    setTempAddress("");
+    const validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+    if (e.length > 0) {
+      if (e[e.length - 1].match(validRegex)) {
+        console.log(e[e.length -1]);
+        setRecipients(e);
+      } else {
+        setRecipients(e.filter((i: any) => i.match(validRegex)));
+      }
+    } else {
+      setRecipients([]);
+    }
+  }
+
+  const handleTempAddress = (e: any) => {
+    const validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+    if (e.target.value && e.target.value !== "" && e.target.value.match(validRegex)) {
+      setTempAddress(e.target.value);
+    }
+  }
 
   return (
     <Transition.Root show={openMailSender} as={Fragment}>
@@ -34,7 +158,7 @@ function MailComposer() {
         className="fixed z-10 inset-0 overflow-y-auto"
         initialFocus={cancelButtonRef}
         open={openMailSender}
-        onClose={setOpenMailSender}
+        onClose={() => {}}
       >
         <Style css={`
           .quill-form .wrapper>div:nth-child(2) {
@@ -54,6 +178,45 @@ function MailComposer() {
           .ql-container.ql-snow {
             height: 200px;
             overflow-y: auto;
+          }
+          img {
+            display: inline-block;
+          }
+          .rti--container {
+            padding: 2px;
+            border-radius: 4px;
+            border: none;
+            width: 758px;
+            font-size: 12px;
+            --rti-bg: "#fff",
+            --rti-border: "#ccc",
+            --rti-main: "#3182ce",
+            --rti-radius: "0.25rem",
+            --rti-s: "0.5rem", /* spacing */
+            --rti-tag: "#edf2f7",
+            --rti-tag-remove: "#e53e3e",
+          }
+          .rti--container input {
+            border: none;
+            outline: none;
+            width: 200px;
+            background-color: transparent;
+          }
+          .rti--container input:focus {
+            border: none;
+            outline: none;
+          }
+          .note-link-popover .popover-content.note-children-container {
+            width: 800px !important;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+          .note-color.open .note-dropdown-menu {
+            display: flex;
+            align-items: center;
+          }
+          .note-para .note-dropdown-menu {
+            min-width: 237px !important;
           }
         `} />
         <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
@@ -85,7 +248,7 @@ function MailComposer() {
             leaveFrom="opacity-100 translate-y-0 sm:scale-100"
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
-            <div className="th-bg-bg inline-block align-bottom rounded-lg text-left shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full">
+            <div className="th-bg-bg inline-block align-bottom rounded-lg text-left shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full">
               <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4 flex justify-between items-center">
                 <div>
                   <h5 className="font-bold th-color-for">
@@ -108,24 +271,45 @@ function MailComposer() {
                   text: emailBody,
                 }}
                 validationSchema={Yup.object({
-                  to: Yup.string().max(100).required(),
                   subject: Yup.string().max(100).notRequired(),
-                  text: Yup.string().max(1000).notRequired(),
                 })}
                 enableReinitialize
                 onSubmit={async ({ to, subject, text }, { setSubmitting }) => {
+                  if (tempAddress === "" && recipients.length === 0) {
+                    return;
+                  }
                   setSubmitting(true);
+                  console.log(text);
                   try {
+                    let attachments = [];
+                    if (files) {
+                      if (files?.length) {
+                        for (let file of files) {
+                          let filePath: string | undefined;
+                          filePath = await uploadFile(
+                            "messenger",
+                            `${now()}.${file.name.split(".").pop()}`,
+                            file,
+                          );
+                          attachments.push({
+                            'filename': file.name,
+                            'path': getHref(filePath),
+                          });
+                        }
+                      }
+                    }
                     const { channelId } = await postData("/mail", {
                       from: value?.email,
-                      to,
+                      to: recipients.concat([tempAddress]),
                       subject,
-                      html: text,
+                      html: body,
+                      attachments
                     });
                     toast.success("E-mail sent.");
                     setOpenMailSender(false);
                     setEmailRecipient("");
                     setEmailBody("");
+                    setTempAddress("");
                   } catch (err: any) {
                     toast.error(err.message);
                   }
@@ -140,30 +324,24 @@ function MailComposer() {
                   handleSubmit,
                 }) => (
                   <form noValidate onSubmit={handleSubmit}>
-                    <div className="px-5 pb-2 border-t th-border-selbg w-full h-auto">
+                    <div className="px-5 border-t th-border-selbg w-full h-auto">
                       <div className="mt-2 w-full flex border th-border-for rounded">
                         <span className="flex select-none items-center w-24 px-3 th-color-for sm:text-sm border-r th-border-for bg-gray-200 rounded-l">Recipient</span>
-                        <input type="text" defaultValue={emailRecipient} name="to" id="to" onChange={handleChange} autoComplete="to" className="rounded block flex-1 border-0 bg-transparent py-1.5 pl-2 th-color-for placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6" placeholder="janesmith" />
+                        <TagsInput value={recipients} onChange={handleRecipients} onKeyUp={handleTempAddress} name="to" placeHolder="janesmith" />
                       </div>
                       <div className="mt-2 w-full flex border th-border-for rounded">
                         <span className="flex select-none items-center w-24 px-3 th-color-for sm:text-sm border-r th-border-for bg-gray-200 rounded-l">Subject</span>
                         <input type="text" name="subject" id="subject" onChange={handleChange} autoComplete="subject" className="rounded block flex-1 border-0 bg-transparent py-1.5 pl-2 th-color-for placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6" placeholder="janesmith" />
                       </div>
+                      
                       <div className="mt-2 w-full rounded border th-border-for quill-form">
-                        {/* <QuillForwardEdit
-                          editorRef={editorRef}
-                          text={values.text}
-                          setFieldValue={setFieldValue}
-                          placeholder="Enter text"
-                          handleSubmit={handleSubmit}
-                          forceUpdate={forceUpdate}
-                        /> */}
                         <SummernoteLite
+                          name="text"
                           defaultCodeValue={values.text}
                           placeholder={"Write something here..."}
                           tabsize={2}
                           lang="zh-CN" // only if you want to change the default language
-                          height={350 || "50vh"}
+                          height={150}
                           dialogsInBody={true}
                           blockquoteBreakingLevel={0}
                           toolbar={[
@@ -175,7 +353,7 @@ function MailComposer() {
                             ['para', ['ul', 'ol', 'paragraph']],
                             ['table', ['table']],
                             ['insert', ['link', 'picture', 'video']],
-                            ['view', ['fullscreen', 'codeview', 'help']]
+                            ['view', ['fullscreen', 'codeview']]
                           ]}
                           fontNames={[
                             "Arial",
@@ -183,15 +361,25 @@ function MailComposer() {
                             "Verdana",
                           ]}
                           callbacks={{
-                            onImageUpload: function (files: any) {
-                              console.log(files);
-                              setImageFiles(files);
-                            },
-                            onKeyup: function (e: any){},
-                            onKeyDown: function (e: any){},
-                            onPaste: function (e: any){}
+                            onChange: (content: any) => {
+                              setBody(content);
+                            }
                           }}
                         />
+                      </div>
+                      <div className="flex items-center">
+                        <Dropzone onDrop={acceptedFiles => onDrop(acceptedFiles)}>
+                          {({getRootProps, getInputProps}) => (
+                            <section className="py-2 pr-4 w-1/5" style={{cursor: 'pointer'}}>
+                              <div className="rounded w-full h-12 th-bg-brwhite flex justify-between border th-border-for items-center px-4" {...getRootProps()}>
+                                <input {...getInputProps()} />
+                                <p>Files</p>
+                                <AttachFileIcon className="h-5 w-5 cursor-pointer th-color-for" />
+                              </div>
+                            </section>
+                          )}
+                        </Dropzone>
+                        <FileViewer files={files} setFiles={setFiles} />
                       </div>
                     </div>
                     <div className="px-4 pb-5 pt-1 border-t th-border-selbg sm:px-6 sm:flex sm:flex-row-reverse sm:justify-start">

@@ -6,7 +6,7 @@ import { useModal } from "contexts/ModalContext";
 import { useTheme } from "contexts/ThemeContext";
 import { useUser } from "contexts/UserContext";
 import { Fragment, useContext, useMemo, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import classNames from "utils/classNames";
 import { getHref } from "utils/get-file-url";
@@ -51,11 +51,12 @@ export default function Navbar() {
   const [openEditProfile, setOpenEditProfile] = useState(false);
   const { setOpenPreferences } = useModal();
   const { setOpenEditPassword } = useModal();
+  const { workspaceId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
   const profile = location.pathname?.includes("user_profile");
   const {visibleFileSearch} = useContext(ReactionsContext);
-  const { value: messages, loading } = useMessages();
+  const { value: messages, loading } = useMessages(workspaceId);
   const { value: users } = useContext(UsersContext);
   const { setOriginId } = useContext(ReactionsContext);
   const [deleteLoading, setDeleteLoading] = useState(false);
@@ -80,9 +81,10 @@ export default function Navbar() {
 
   const clearAllNotifications = async () => {
     const repliedMessages = messages.filter((m: any) => (m.replyId && m.replySenderId === userdata?.objectId && m.replySenderId !== m.senderId && !m.isNoticeRead));
-    if (repliedMessages.length > 0) {
+    const mentionedMessages = messages.filter((m: any) => (m.senderId !== userdata?.objectId && m.text.includes(`<span contenteditable="false">@${userdata.displayName}</span>`) && !m.isNoticeRead));
+    if (repliedMessages.concat(mentionedMessages).length > 0) {
       setDeleteLoading(true);
-      for (const m of repliedMessages) {
+      for (const m of repliedMessages.concat(mentionedMessages)) {
         await postData(`/messages/${m?.objectId}/notifications`);
       }
       setDeleteLoading(false);
@@ -91,7 +93,7 @@ export default function Navbar() {
 
   const notifications = useMemo(() => {
     const repliedMessages = messages.filter((m: any) => (m.replyId && m.replySenderId === userdata?.objectId && m.replySenderId !== m.senderId && !m.isNoticeRead));
-    return repliedMessages.map((r: any, index: number) => (
+    const repliedHtml = repliedMessages.map((r: any, index: number) => (
       <div className="flex p-2 th-bg-bg th-color-for border-b cursor-pointer hover:bg-gray-200 w-full" key={index} onClick={() => goMessage(r)}>
         <div className="flex justify-center items-center w-10 pr-2">
           <img src={getHref(users.filter((m: any) => m?.objectId === r?.senderId)[0].thumbnailURL) || 
@@ -105,6 +107,22 @@ export default function Navbar() {
         </div>
       </div>
     ));
+    const mentionedMessages = messages.filter((m: any) => (m.senderId !== userdata?.objectId && m.text.includes(`<span contenteditable="false">@${userdata.displayName}</span>`) && !m.isNoticeRead));
+    const mentionedHtml = mentionedMessages.map((r: any, index: number) => (
+      <div className="flex p-2 th-bg-bg th-color-for border-b cursor-pointer hover:bg-gray-200 w-full" key={index} onClick={() => goMessage(r)}>
+        <div className="flex justify-center items-center w-10 pr-2">
+          <img src={getHref(users.filter((m: any) => m?.objectId === r?.senderId)[0].thumbnailURL) || 
+            getHref(users.filter((m: any) => m?.objectId === r?.senderId)[0].photoURL) || 
+            `${process.env.PUBLIC_URL}/blank_user.png`} alt={r?.senderId} className="w-full" />
+        </div>
+        <div className="w-60">
+          <div className="font-bold text-sm">{users.filter((m: any) => m?.objectId === r?.senderId)[0].displayName} mentioned you:</div>
+          <div className="font-medium text-xs truncate">{r.text.replace(/(<([^>]+)>)/ig, '')}</div>
+          <div className="font-medium text-xs">{new Date(r.createdAt).toLocaleString()}</div>
+        </div>
+      </div>
+    ));
+    return mentionedHtml.concat(repliedHtml);
   }, [messages, loading]);
 
   const handleLanguageChange = (newLang: string) => {

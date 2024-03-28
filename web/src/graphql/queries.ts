@@ -53,8 +53,8 @@ export const LIST_DIRECTS = gql`
 `;
 
 export const LIST_MESSAGES = gql`
-  query ListMessages($updatedAt: Date, $chatId: String, $limit: Int, $nextToken: String) {
-    listMessages(updatedAt: $updatedAt, chatId: $chatId, limit: $limit, nextToken: $nextToken) {
+  query ListMessages($updatedAt: Date, $chatId: String, $workspaceId: String, $limit: Int, $nextToken: String) {
+    listMessages(updatedAt: $updatedAt, chatId: $chatId, workspaceId: $workspaceId, limit: $limit, nextToken: $nextToken) {
       objectId
       chatId
       chatType

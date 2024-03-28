@@ -75,6 +75,10 @@ export default function Reader({
           .ql-bubble .ql-editor a:hover {
             text-decoration: underline;
           }
+
+          .ql-editor p {
+            line-height: 1.6 !important
+          }
         `}
       />
       <ReactQuill
