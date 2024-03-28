@@ -59,6 +59,7 @@ export const LIST_MESSAGES = gql`
       chatId
       chatType
       counter
+      favorites
       fileName
       fileSize
       fileType
@@ -105,6 +106,7 @@ export const GET_MESSAGE = gql`
       chatId
       chatType
       counter
+      favorites
       fileName
       fileSize
       fileType

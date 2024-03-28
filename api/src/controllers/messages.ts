@@ -19,7 +19,7 @@ import {
   LIST_MESSAGES
 } from "graphql/queries";
 import { getMessageType, lastMessageTextGenerator, sha256 } from "utils";
-import { arrayRemove } from "utils/array-helpers";
+import { arrayRemove, arrayUnion } from "utils/array-helpers";
 import graphQLClient from "utils/graphql";
 import { getFileMetadata, saveImageThumbnail } from "utils/storage";
 import { v4 as uuidv4 } from "uuid";
@@ -327,6 +327,84 @@ export const editMessage = async (
           })
         );
       }
+    }
+
+    await Promise.all(promises);
+
+    res.locals.data = {
+      success: true,
+    };
+    return next();
+  } catch (err) {
+    return next(err);
+  }
+};
+
+export const addFavorite = async (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) => {
+  try {
+    const { id } = req.params;
+    const { uid } = res.locals;
+
+    const { getMessage: message } = await graphQLClient(
+      res.locals.token
+    ).request(GET_MESSAGE, {
+      objectId: id,
+    });
+
+    const promises = [];
+
+    if (!message.favorites.includes(uid)) {
+      promises.push(
+        await graphQLClient(res.locals.token).request(UPDATE_MESSAGE, {
+          input: {
+            objectId: id,
+            favorites: arrayUnion(message.favorites, uid),
+          },
+        })
+      );
+    }
+
+    await Promise.all(promises);
+
+    res.locals.data = {
+      success: true,
+    };
+    return next();
+  } catch (err) {
+    return next(err);
+  }
+};
+
+export const deleteFavorite = async (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) => {
+  try {
+    const { id } = req.params;
+    const { uid } = res.locals;
+
+    const { getMessage: message } = await graphQLClient(
+      res.locals.token
+    ).request(GET_MESSAGE, {
+      objectId: id,
+    });
+
+    const promises = [];
+
+    if (message.favorites.includes(uid)) {
+      promises.push(
+        await graphQLClient(res.locals.token).request(UPDATE_MESSAGE, {
+          input: {
+            objectId: id,
+            favorites: arrayRemove(message.members, uid),
+          },
+        })
+      );
     }
 
     await Promise.all(promises);

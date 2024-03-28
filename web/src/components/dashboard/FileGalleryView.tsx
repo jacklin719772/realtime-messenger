@@ -29,6 +29,7 @@ function MessageItem({
     message: any;
 }) {
     const {value} = useUserById(message?.senderId);
+    const {user} = useUser();
     const fileURL = getHref(message?.thumbnailURL) || getHref(message?.fileURL);
     const downloadRef = useRef<any>(null);
     const previewRef = useRef<any>(null);
@@ -66,6 +67,15 @@ function MessageItem({
     const initializeFavorite = (message: any) => {
       setFileURL(message?.fileURL);
       setOpenFavorite(true);
+    }
+
+    const removeFavorite = async () => {
+      try {
+        await postData(`/messages/${message?.objectId}/favorites/${user?.uid}`);
+        toast.success("File favorite is removed.");
+      } catch (error: any) {
+        toast.error(error.message);
+      }
     }
 
     return (
@@ -232,15 +242,31 @@ function MessageItem({
             <span className="sr-only">Download</span>
             <img className="h-4 w-4" alt="send-email" src={`${process.env.PUBLIC_URL}/send_email.png`} />
           </button>
+
           {message?.fileURL && (
-            <button
-              type="button"
-              className="th-bg-bg th-color-for relative inline-flex items-center px-3 py-1 h-8 text-sm font-medium focus:z-10 focus:outline-none"
-              onClick={() => setFileURL(message)}
-            >
-              <span className="sr-only">Favorite</span>
-              <img className="h-4 w-4" alt="forward" src={`${process.env.PUBLIC_URL}/favorite_add.png`} />
-            </button>
+            <>
+            {message?.favorites.includes(user?.uid) ? (
+              <button
+                type="button"
+                className="th-bg-bg th-color-for relative inline-flex items-center px-3 py-1 h-8 text-sm font-medium focus:z-10 focus:outline-none"
+                onClick={removeFavorite}
+              >
+                <span className="sr-only">Favorite</span>
+                <img className="h-4 w-4" alt="forward" src={`${process.env.PUBLIC_URL}/favorite_remove.png`} />
+              </button>
+              
+            ) : (
+              <button
+                type="button"
+                className="th-bg-bg th-color-for relative inline-flex items-center px-3 py-1 h-8 text-sm font-medium focus:z-10 focus:outline-none"
+                onClick={() => initializeFavorite(message)}
+              >
+                <span className="sr-only">Favorite</span>
+                <img className="h-4 w-4" alt="forward" src={`${process.env.PUBLIC_URL}/favorite_add.png`} />
+              </button>
+              
+            )}
+            </>
           )}
         </div>
       </div>

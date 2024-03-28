@@ -48,6 +48,7 @@ type Message {
   fileSize: Int
   fileType: String
   fileURL: String
+  favorites: [String]
   forwardId: String
   forwardChatId: String
   forwardChatType: String
@@ -159,7 +160,7 @@ type Query {
   listChannels(updatedAt: Date, workspaceId: String, userId: String, name: String): [Channel]
   listDetails(updatedAt: Date, workspaceId: String, userId: String): [Detail]
   listDirects(updatedAt: Date, workspaceId: String, userId: String): [Direct]
-  listMessages(updatedAt: Date, chatId: String, limit: Int, nextToken: String): [Message]
+  listMessages(updatedAt: Date, chatId: String, workspaceId: String, limit: Int, nextToken: String): [Message]
   listPresences(updatedAt: Date): [Presence]
   listUsers(updatedAt: Date, workspaceId: String): [User]
   listWorkspaces(updatedAt: Date): [Workspace]
@@ -220,6 +221,7 @@ input CreateMessageInput {
   chatId: String
   chatType: String
   counter: Int
+  favorites: [String]
   fileName: String
   fileSize: Int
   fileType: String
@@ -339,6 +341,7 @@ input UpdateMessageInput {
   chatId: String
   chatType: String
   counter: Int
+  favorites: [String]
   fileName: String
   fileSize: Int
   fileType: String

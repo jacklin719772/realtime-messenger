@@ -18,17 +18,23 @@ import { TagsInput } from "react-tag-input-component";
 import TextField from 'components/TextField';
 import TextArea from 'components/TextArea';
 import { use } from 'i18next';
+import TreeView from "react-accessible-treeview";
+import { FolderIcon, FolderOpenIcon } from '@heroicons/react/solid';
+import Spinner from 'components/Spinner';
 
 function Favorite() {
   const cancelButtonRef = useRef(null);
-  const {openFavorite, setOpenFavorite, fileURL} = useContext(ModalContext);
+  const {openFavorite, setOpenFavorite, fileURL, setFileURL, fileMessage, setFileMessage} = useContext(ModalContext);
   const { user } = useUser();
   const { value } = useUserById(user?.uid);
-  const [files, setFiles] = useState<any[]>([]);
+  const [file, setFile] = useState<any>(null);
   const [body, setBody] = useState("");
   const [recipients, setRecipients] = useState<string[]>([]);
   const [tempAddress, setTempAddress] = useState("");
   const [fileCategory, setFileCategory] = useState<any[]>([]);
+  const [categoryId, setCategoryId] = useState("");
+  const [categoryName, setCategoryName] = useState("");
+  const [filePath, setFilePath] = useState("");
 
   const getFileObject = async (url: string) => {
     const formattedURL = getHref(url);
@@ -39,11 +45,13 @@ function Favorite() {
       console.log(blob);
       const filename = url.split("?")[0].split("/")[url.split("?")[0].split("/").length -1];
       console.log(filename);
+      setFilePath(filename);
       const file = new File([blob], filename);
       console.log(file);
-      return file;
+      setFile(file);
+    } else {
+      setFile(null);
     }
-    return null;
   }
 
   const getFileCategory = async () => {
@@ -59,8 +67,9 @@ function Favorite() {
       console.log(data);
       const treeArray = getTreeArray(data.result);
       setFileCategory(treeArray);
+    } else {
+      setFileCategory([]);
     }
-    setFileCategory([]);
   }
 
   const getTreeArray = (ary: any[]) => {
@@ -79,6 +88,11 @@ function Favorite() {
     return treeArray;
   }
 
+  const setCategoryValue = (element: any) => {
+    setCategoryName(element.name);
+    setCategoryId(element.id);
+  }
+
   useEffect(() => {
     getFileObject(fileURL);
   }, [fileURL]);
@@ -86,6 +100,10 @@ function Favorite() {
   useEffect(() => {
     getFileCategory();
   }, []);
+
+  useEffect(() => {
+    console.log(fileCategory);
+  }, [fileCategory]);
 
   return (
     <Transition.Root show={openFavorite} as={Fragment}>
@@ -204,48 +222,61 @@ function Favorite() {
               </div>
               <Formik
                 initialValues={{
-                  to: "",
-                  subject: "",
-                  text: "",
-                  fileId: `${new Date().getTime()}`,
-                  file_version: "",
+                  document_id: `${new Date().getTime()}`,
+                  version: "",
+                  file_path: filePath,
+                  keyword1: "",
+                  keyword2: "",
+                  keyword3: "",
+                  keyword4: "",
+                  title: "",
+                  abstract: "",
                 }}
                 validationSchema={Yup.object({
                   subject: Yup.string().max(100).notRequired(),
                 })}
                 enableReinitialize
-                onSubmit={async ({ subject, text }, { setSubmitting }) => {
-                  if (tempAddress === "" && recipients.length === 0) {
+                onSubmit={async ({ document_id, version, title, keyword1, keyword2, keyword3, keyword4, file_path, abstract }, { setSubmitting }) => {
+                  if (!file || document_id === "" || categoryId === "" || title === "" || keyword1 === "" || keyword2 === "" || keyword3 === "" || keyword4 === "" || filePath === "") {
                     return;
                   }
                   setSubmitting(true);
-                  console.log(text);
                   try {
-                    let attachments = [];
-                    if (files) {
-                      if (files?.length) {
-                        for (let file of files) {
-                          let filePath: string | undefined;
-                          filePath = await uploadFile(
-                            "messenger",
-                            `${now()}.${file.name.split(".").pop()}`,
-                            file,
-                          );
-                          attachments.push({
-                            'filename': file.name,
-                            'path': getHref(filePath),
-                          });
-                        }
-                      }
+                    let formData = new FormData();
+                    const newFileName = `${new Date().getTime()}.${filePath.split(".")[filePath.split(".").length - 1]}`;
+                    const data = {
+                      document_id,
+                      category_id: categoryId,
+                      title,
+                      keyword1,
+                      keyword2,
+                      keyword3,
+                      keyword4,
+                      file_path,
+                      path: `_public/cloud/${newFileName}`,
+                      id: null,
+                      version,
+                      group: "",
+                      recording_file_id: 0,
+                      recording_file_name: "",
                     }
-                    const { channelId } = await postData("/mail", {
-                      from: value?.email,
-                      to: recipients.concat([tempAddress]),
-                      subject,
-                      html: body,
-                      attachments
+                    const Obkey = Object.keys(data);
+                    Obkey.forEach(t => {
+                      formData.append(t, data[t]);
                     });
-                    toast.success("E-mail sent.");
+                    formData.append("files", file, newFileName);
+                    const response = await fetch("https://www.uteamwork.com/_api/cloudDiskController/upload", {
+                      method: 'POST',
+                      body: formData,
+                      headers: {
+                        "Authorization": `Bearer ${localStorage.getItem("t")}`,
+                      }
+                    });
+                    const result = await response.json();
+                    await postData(`/messages/${fileMessage?.objectId}/favorites`);
+                    toast.success(result.message);
+                    setFileURL("");
+                    setFileMessage(null);
                     setOpenFavorite(false);
                     setTempAddress("");
                   } catch (err: any) {
@@ -265,25 +296,25 @@ function Favorite() {
                       <div className="pt-3 w-full flex items-center">
                         <div className="w-1/3 pr-2">
                           <TextField
-                            value={values.fileId}
+                            value={values.document_id}
                             handleChange={handleChange}
                             type="text"
                             required
                             label="File ID"
-                            name="fileId"
-                            autoComplete="fileId"
+                            name="document_id"
+                            autoComplete="document_id"
                             placeholder="12345678"
                             readOnly
                           />
                         </div>
                         <div className="w-1/3 px-2">
                           <TextField
-                            value={values.file_version}
+                            value={values.version}
                             handleChange={handleChange}
                             type="text"
                             label="File Version"
-                            name="file_version"
-                            autoComplete="file_version"
+                            name="version"
+                            autoComplete="version"
                             placeholder="v1.0"
                           />
                         </div>
@@ -297,8 +328,8 @@ function Favorite() {
                                     className="relative mr-2 cursor-pointer appearance-none"
                                   >
                                     <TextField
-                                      value={''}
-                                      handleChange={handleChange}
+                                      value={categoryName}
+                                      handleChange={() => {}}
                                       type="text"
                                       required
                                       label="Directory"
@@ -324,7 +355,35 @@ function Favorite() {
                                     className="th-bg-bg border th-border-for origin-top-right z-20 absolute left-0 mt-2 w-full rounded-md shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none py-3"
                                   >
                                     <div className="px-5 flex py-2">
-                                      fff-fff
+                                      {fileCategory.length > 0 ?
+                                      <TreeView
+                                        data={fileCategory}
+                                        aria-label="directory tree"
+                                        onNodeSelect={({element}: any) => setCategoryValue(element)}
+                                        nodeRenderer={({
+                                          element,
+                                          isBranch,
+                                          isExpanded,
+                                          getNodeProps,
+                                          level,
+                                        }: {
+                                          element: any;
+                                          isBranch: boolean;
+                                          isExpanded: boolean | undefined;
+                                          getNodeProps: any;
+                                          level: number;
+                                        }) => (
+                                          <div {...getNodeProps()} className="flex items-center cursor-pointer hover:th-bg-selbg" style={{ paddingLeft: 20 * (level - 1) }}>
+                                            {isExpanded ?
+                                            <FolderOpenIcon className="w-4 h-4" /> :
+                                            <FolderIcon className="w-4 h-4" />}
+                                            {element.name}
+                                          </div>
+                                        )}
+                                      /> :
+                                      <div className="w-full h-20 flex justify-center items-center">
+                                        <Spinner className="h-4 w-4 th-color-for" />
+                                      </div>}
                                     </div>
                                   </Menu.Items>
                                 </Transition>
@@ -334,54 +393,21 @@ function Favorite() {
                         </div>
                       </div>
                       <div className="w-full">
-                          <Menu as="div" className="relative">
-                            {({ open }) => (
-                              <>
-                                <div>
-                                  <Menu.Button
-                                    as="div"
-                                    className="relative mr-2 cursor-pointer appearance-none"
-                                  >
-                                    <TextField
-                                      value={''}
-                                      handleChange={handleChange}
-                                      type="text"
-                                      required
-                                      label="Directory"
-                                      name="directory"
-                                      autoComplete="directory"
-                                      placeholder=""
-                                      readOnly
-                                    />
-                                  </Menu.Button>
-                                </div>
-                                <Transition
-                                  show={open}
-                                  as={Fragment}
-                                  enter="transition ease-out duration-100"
-                                  enterFrom="transform opacity-0 scale-95"
-                                  enterTo="transform opacity-100 scale-100"
-                                  leave="transition ease-in duration-75"
-                                  leaveFrom="transform opacity-100 scale-100"
-                                  leaveTo="transform opacity-0 scale-95"
-                                >
-                                  <Menu.Items
-                                    static
-                                    className="th-bg-bg border th-border-selbg origin-top-right z-20 absolute left-0 mt-2 w-60 rounded-md shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none py-3"
-                                  >
-                                    <div className="px-5 flex py-2">
-                                      fff-fff
-                                    </div>
-                                  </Menu.Items>
-                                </Transition>
-                              </>
-                            )}
-                          </Menu>
+                        <TextField
+                          value={values.title}
+                          handleChange={handleChange}
+                          type="text"
+                          required
+                          label="Title"
+                          name="title"
+                          autoComplete="title"
+                          placeholder=""
+                        />
                       </div>
                       <div className="w-full columns-2 gap-4">
                         <div className="columns-4">
                           <TextField
-                            value={''}
+                            value={values.keyword1}
                             handleChange={handleChange}
                             type="text"
                             required
@@ -392,7 +418,7 @@ function Favorite() {
                           />
                           <div className="pt-5">
                             <TextField
-                              value={''}
+                              value={values.keyword2}
                               handleChange={handleChange}
                               type="text"
                               required
@@ -404,7 +430,7 @@ function Favorite() {
                           </div>
                           <div className="pt-5">
                             <TextField
-                              value={''}
+                              value={values.keyword3}
                               handleChange={handleChange}
                               type="text"
                               required
@@ -416,7 +442,7 @@ function Favorite() {
                           </div>
                           <div className="pt-5">
                             <TextField
-                              value={''}
+                              value={values.keyword4}
                               handleChange={handleChange}
                               type="text"
                               required
@@ -429,20 +455,21 @@ function Favorite() {
                         </div>
                         <div className="w-full">
                           <TextField
-                            value={''}
+                            value={values.file_path}
                             handleChange={handleChange}
                             type="text"
                             required
                             label="File"
-                            name="file"
-                            autoComplete="file"
+                            name="file_path"
+                            autoComplete="file_path"
                             placeholder=""
+                            readOnly
                           />
                         </div>
                       </div>
                       <div className="w-full">
                         <TextArea
-                          value={''}
+                          value={values.abstract}
                           handleChange={handleChange}
                           infos=""
                           label="Abstract"

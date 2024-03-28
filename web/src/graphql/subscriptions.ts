@@ -107,6 +107,7 @@ export const MESSAGE = gql`
       chatId
       chatType
       counter
+      favorites
       fileName
       fileSize
       fileType

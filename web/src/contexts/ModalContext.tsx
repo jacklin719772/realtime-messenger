@@ -35,6 +35,8 @@ export const ModalContext = createContext({
   setOpenFavorite: null as any,
   fileURL: "",
   setFileURL: null as any,
+  fileMessage: null as any,
+  setFileMessage: null as any,
 });
 
 export function ModalProvider({ children }: { children: React.ReactNode }) {
@@ -58,6 +60,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
   const [emailBody, setEmailBody] = useState("");
   const [openFavorite, setOpenFavorite] = useState(false);
   const [fileURL, setFileURL] = useState("");
+  const [fileMessage, setFileMessage] = useState<any>(null);
 
   return (
     <ModalContext.Provider
@@ -100,6 +103,9 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
 
         fileURL,
         setFileURL,
+
+        fileMessage,
+        setFileMessage,
       }}
     >
       {children}

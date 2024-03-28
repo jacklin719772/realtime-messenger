@@ -86,6 +86,8 @@ messagesRouter.post("/:id", messages.editMessage);
 messagesRouter.delete("/:id", messages.deleteMessage);
 messagesRouter.post("/:id/reactions", messages.editMessageReaction);
 messagesRouter.post("/:id/notifications", messages.editMessageNotification);
+messagesRouter.post("/:id/favorites", messages.addFavorite);
+messagesRouter.post("/:id/favorites/:userId", messages.addFavorite);
 
 const usersRouter = express.Router();
 usersRouter.post("/", users.createUser);

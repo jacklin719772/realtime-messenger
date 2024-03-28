@@ -164,7 +164,7 @@ export default function Message({
   
   const {isSelecting, setIsSelecting, setVisibleForward, setVisibleReply, setForwardMessage, originId, setOriginId} = useContext(ReactionsContext);
   // const [forward, setForward] = useState<any>(null);
-  const {setOpenMailSender, setEmailBody, setEmailRecipient, setOpenFavorite, setFileURL} = useContext(ModalContext);
+  const {setOpenMailSender, setEmailBody, setEmailRecipient, setOpenFavorite, setFileURL, setFileMessage} = useContext(ModalContext);
 
   const [loadingDelete, setLoadingDelete] = useState(false);
 
@@ -290,7 +290,17 @@ export default function Message({
 
   const initializeFavorite = (message: any) => {
     setFileURL(message?.fileURL);
+    setFileMessage(message);
     setOpenFavorite(true);
+  }
+
+  const removeFavorite = async () => {
+    try {
+      await postData(`/messages/${message?.objectId}/favorites/${user?.uid}`);
+      toast.success("File favorite is removed.");
+    } catch (error: any) {
+      toast.error(error.message);
+    }
   }
 
   const { value: forwardChannel } = useChannelById(forward?.chatId);
@@ -894,15 +904,29 @@ export default function Message({
             </button>
 
             {message?.fileURL && (
-              <button
-                type="button"
-                className="th-bg-bg th-border-selbg th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none"
-                onClick={() => initializeFavorite(message)}
-              >
-                <span className="sr-only">Favorite</span>
-                <img className="h-4 w-4" alt="forward" src={`${process.env.PUBLIC_URL}/favorite_add.png`} />
-              </button>
-              
+              <>
+              {(message?.fileURL && message?.favorites.includes(user?.uid)) ? (
+                <button
+                  type="button"
+                  className="th-bg-bg th-border-selbg th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none"
+                  onClick={removeFavorite}
+                >
+                  <span className="sr-only">Favorite</span>
+                  <img className="h-4 w-4" alt="forward" src={`${process.env.PUBLIC_URL}/favorite_remove.png`} />
+                </button>
+                
+              ) : (
+                <button
+                  type="button"
+                  className="th-bg-bg th-border-selbg th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none"
+                  onClick={() => initializeFavorite(message)}
+                >
+                  <span className="sr-only">Favorite</span>
+                  <img className="h-4 w-4" alt="forward" src={`${process.env.PUBLIC_URL}/favorite_add.png`} />
+                </button>
+                
+              )}
+              </>
             )}
           </div>
         )}

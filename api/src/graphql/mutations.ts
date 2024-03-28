@@ -111,6 +111,7 @@ export const CREATE_MESSAGE = gql`
       chatId
       chatType
       counter
+      favorites
       fileName
       fileSize
       fileType
@@ -157,6 +158,7 @@ export const UPDATE_MESSAGE = gql`
       chatId
       chatType
       counter
+      favorites
       fileName
       fileSize
       fileType
