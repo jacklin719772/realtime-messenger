@@ -12,7 +12,7 @@ import { useMyWorkspaces, WorkspacesContext } from "hooks/useWorkspaces";
 import { TabLists } from "pages/dashboard/NewWorkspace";
 import React, { Fragment, useContext, useRef } from "react";
 import toast from "react-hot-toast";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { postData } from "utils/api-helpers";
 import classNames from "utils/classNames";
 import { getHref } from "utils/get-file-url";
@@ -251,7 +251,7 @@ function WorkspaceItem({
   const { themeColors } = useTheme();
   const { workspaceId } = useParams();
   const navigate = useNavigate();
-  const selected = objectId === workspaceId;
+  const selected = workspaceId && objectId === workspaceId;
   const photoURL = src;
   return (
     <div
@@ -299,6 +299,10 @@ function AddWorkspaces() {
 
 export default function Workspaces() {
   const { value } = useMyWorkspaces();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { themeColors } = useTheme();
+  const calendar = location.pathname.includes("calendar");
   return (
     <div className="row-span-2 border-r flex flex-col items-center space-y-5 py-2 flex-1 overflow-y-auto th-bg-selbg th-border-bg">
       {value?.map((doc: any) => (
@@ -309,6 +313,27 @@ export default function Workspaces() {
           src={getHref(doc.thumbnailURL) || getHref(doc.photoURL)}
         />
       ))}
+      <div
+        role="button"
+        tabIndex={0}
+        className={classNames(
+          "flex items-center justify-center cursor-pointer focus:outline-none"
+        )}
+        title="My Schedule"
+        onClick={() =>
+          navigate(`/dashboard/calendar`)
+        }
+      >
+        <img
+          src={`${process.env.PUBLIC_URL}/calendar.png`}
+          alt="workspace"
+          className={classNames(
+            calendar ? "border-2" : "",
+            "h-8 w-8 rounded-md p-px"
+          )}
+          style={{ borderColor: calendar ? themeColors?.blue : "" }}
+        />
+      </div>
       {/* <AddWorkspaces />
       <CreateWorkspace /> */}
     </div>

@@ -22,6 +22,7 @@ import { v4 as uuidv4 } from "uuid";
 import { postData } from "utils/api-helpers";
 import toast from "react-hot-toast";
 import { useModal } from "contexts/ModalContext";
+import { toast as toastr } from "react-toastify";
 
 function MessageItem({
     message,
@@ -38,7 +39,7 @@ function MessageItem({
     const formattedTime = d?.toLocaleTimeString('zh-CN', {hour12: false});
 
     const [imageLoaded, setImageLoaded] = useState(false);
-    const {setEmailBody, setEmailRecipient, setOpenMailSender, setOpenFavorite, setFileURL} = useModal();
+    const {setEmailBody, setEmailRecipient, setOpenMailSender, setOpenFavorite, setFileURL, setFileMessage} = useModal();
 
     const sizes = useMemo(() => {
       return {
@@ -66,15 +67,34 @@ function MessageItem({
 
     const initializeFavorite = (message: any) => {
       setFileURL(message?.fileURL);
+      setFileMessage(message);
       setOpenFavorite(true);
     }
 
     const removeFavorite = async () => {
       try {
         await postData(`/messages/${message?.objectId}/favorites/${user?.uid}`);
-        toast.success("File favorite is removed.");
+        toastr.success('The file has been removed from your private folder.', {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
       } catch (error: any) {
-        toast.error(error.message);
+        toastr.error(error.message, {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
       }
     }
 

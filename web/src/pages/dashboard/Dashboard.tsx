@@ -31,6 +31,9 @@ import {
 import { postData } from "utils/api-helpers";
 import classNames from "utils/classNames";
 import { getHref } from "utils/get-file-url";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import CalendarView from "components/dashboard/calendar/CalendarView";
 
 function ProfileViewItem({ value, text }: { value: string; text: string }) {
   const {setEmailRecipient, setEmailBody, setOpenMailSender} = useContext(ModalContext);
@@ -176,6 +179,7 @@ export default function Dashboard() {
   const { user } = useUser();
   const location = useLocation();
   const profile = location.pathname?.includes("user_profile");
+  const calendar = location.pathname?.includes("calendar");
   const {visibleFileSearch, visibleGlobalSearch} = useContext(ReactionsContext);
   const {openMailSender, openFavorite} = useContext(ModalContext);
 
@@ -201,7 +205,7 @@ export default function Dashboard() {
 
   if (value?.length === 0) return <Navigate to="/dashboard/new_workspace" />;
 
-  if (!workspaceId || !value.find((w: any) => w.objectId === workspaceId))
+  if ((!workspaceId || !value.find((w: any) => w.objectId === workspaceId)) && !calendar)
     return (
       <Navigate
         to={`/dashboard/workspaces/${value[0].objectId}/channels/${value[0].channelId}`}
@@ -229,16 +233,37 @@ export default function Dashboard() {
         )}
       >
         <Navbar />
-        {!visibleGlobalSearch ? (
+        {(!workspaceId && calendar) ? (
           <>
             <Workspaces />
-            <Sidebar />
+            <CalendarView />
           </>
-        ) : <SearchList />}
-        <ChatArea />
-        {visibleFileSearch ? <FileGalleryView /> : profile && <ProfileView />}
-        {openMailSender && <MailComposer />}
-        {openFavorite && <Favorite />}
+        ) : (
+          <>
+            {!visibleGlobalSearch ? (
+              <>
+                <Workspaces />
+                <Sidebar />
+              </>
+            ) : <SearchList />}
+            <ChatArea />
+            {visibleFileSearch ? <FileGalleryView /> : profile && <ProfileView />}
+            {openMailSender && <MailComposer />}
+            {openFavorite && <Favorite />}
+          </>
+        )}
+        <ToastContainer
+          position="top-right"
+          autoClose={2000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss={false}
+          draggable
+          pauseOnHover
+          theme="dark"
+        />
       </div>
     </>
   );

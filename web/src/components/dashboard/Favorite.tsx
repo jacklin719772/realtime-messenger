@@ -21,6 +21,11 @@ import { use } from 'i18next';
 import TreeView from "react-accessible-treeview";
 import { FolderIcon, FolderOpenIcon } from '@heroicons/react/solid';
 import Spinner from 'components/Spinner';
+import { toast as toastr } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+import classNames from 'utils/classNames';
+import axios from "axios";
+import ProgressBar from "@ramonak/react-progress-bar";
 
 function Favorite() {
   const cancelButtonRef = useRef(null);
@@ -35,6 +40,8 @@ function Favorite() {
   const [categoryId, setCategoryId] = useState("");
   const [categoryName, setCategoryName] = useState("");
   const [filePath, setFilePath] = useState("");
+  const [completed, setCompleted] = useState(0);
+  let percentage = 0;
 
   const getFileObject = async (url: string) => {
     const formattedURL = getHref(url);
@@ -224,20 +231,47 @@ function Favorite() {
                 initialValues={{
                   document_id: `${new Date().getTime()}`,
                   version: "",
-                  file_path: filePath,
+                  category_id: "",
+                  category_name: "",
+                  file_path: fileMessage?.fileName,
                   keyword1: "",
                   keyword2: "",
                   keyword3: "",
                   keyword4: "",
-                  title: "",
+                  title: fileMessage?.fileName.split(`.${fileMessage?.fileName.split(".")[fileMessage?.fileName.split(".").length - 1]}`)[0],
                   abstract: "",
+                  completed: "0",
                 }}
                 validationSchema={Yup.object({
                   subject: Yup.string().max(100).notRequired(),
                 })}
                 enableReinitialize
-                onSubmit={async ({ document_id, version, title, keyword1, keyword2, keyword3, keyword4, file_path, abstract }, { setSubmitting }) => {
-                  if (!file || document_id === "" || categoryId === "" || title === "" || keyword1 === "" || keyword2 === "" || keyword3 === "" || keyword4 === "" || filePath === "") {
+                onSubmit={async ({ document_id, version, category_id, title, keyword1, keyword2, keyword3, keyword4, file_path, abstract }, { setSubmitting, setFieldValue }) => {
+                  if (!file || document_id === "" || category_id === "" || title === "" || (keyword1 === "" && keyword2 === "" && keyword3 === "" && keyword4 === "") || file_path === "") {
+                    if (document_id === "" || category_id === "" || title === "" || (keyword1 === "" && keyword2 === "" && keyword3 === "" && keyword4 === "")) {
+                      toastr.error('Please input all required fields.', {
+                        position: "top-right",
+                        autoClose: 2000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "dark",
+                      });
+                    }
+                    if (!file || file_path === "") {
+                      toastr.error('Please select file correctly.', {
+                        position: "top-right",
+                        autoClose: 2000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "dark",
+                      });
+                    }
                     return;
                   }
                   setSubmitting(true);
@@ -246,7 +280,7 @@ function Favorite() {
                     const newFileName = `${new Date().getTime()}.${filePath.split(".")[filePath.split(".").length - 1]}`;
                     const data = {
                       document_id,
-                      category_id: categoryId,
+                      category_id,
                       title,
                       keyword1,
                       keyword2,
@@ -259,28 +293,62 @@ function Favorite() {
                       group: "",
                       recording_file_id: 0,
                       recording_file_name: "",
+                      abstract,
                     }
                     const Obkey = Object.keys(data);
                     Obkey.forEach(t => {
                       formData.append(t, data[t]);
                     });
                     formData.append("files", file, newFileName);
-                    const response = await fetch("https://www.uteamwork.com/_api/cloudDiskController/upload", {
-                      method: 'POST',
-                      body: formData,
+                    const response = await axios.post("https://www.uteamwork.com/_api/cloudDiskController/upload", formData, {
+                      onUploadProgress: (progressEvent) => {
+                        const { loaded, total } = progressEvent;
+                        percentage = Math.floor((loaded * 100) / total);
+                        console.log(percentage);
+                        setFieldValue("completed", percentage.toString());
+                      },
                       headers: {
                         "Authorization": `Bearer ${localStorage.getItem("t")}`,
-                      }
+                      },
                     });
-                    const result = await response.json();
+                    if (response.statusText !== "OK") {
+                      toastr.error('Copying file to your private folder has been failed.', {
+                        position: "top-right",
+                        autoClose: 2000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "dark",
+                      });
+                    }
                     await postData(`/messages/${fileMessage?.objectId}/favorites`);
-                    toast.success(result.message);
+                    toastr.success('The file has been successfully bookmarked to your private folder.', {
+                      position: "top-right",
+                      autoClose: 2000,
+                      hideProgressBar: false,
+                      closeOnClick: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                      progress: undefined,
+                      theme: "dark",
+                    });
                     setFileURL("");
                     setFileMessage(null);
                     setOpenFavorite(false);
                     setTempAddress("");
                   } catch (err: any) {
-                    toast.error(err.message);
+                    toastr.error(err.message, {
+                      position: "top-right",
+                      autoClose: 2000,
+                      hideProgressBar: false,
+                      closeOnClick: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                      progress: undefined,
+                      theme: "dark",
+                    });
                   }
                   setSubmitting(false);
                 }}
@@ -290,6 +358,7 @@ function Favorite() {
                   handleChange,
                   isSubmitting,
                   handleSubmit,
+                  setFieldValue,
                 }) => (
                   <form noValidate onSubmit={handleSubmit}>
                     <div className="px-5 border-t th-border-selbg w-full h-auto">
@@ -300,7 +369,7 @@ function Favorite() {
                             handleChange={handleChange}
                             type="text"
                             required
-                            label="File ID"
+                            label="File ID *"
                             name="document_id"
                             autoComplete="document_id"
                             placeholder="12345678"
@@ -328,13 +397,13 @@ function Favorite() {
                                     className="relative mr-2 cursor-pointer appearance-none"
                                   >
                                     <TextField
-                                      value={categoryName}
+                                      value={values.category_name}
                                       handleChange={() => {}}
                                       type="text"
                                       required
-                                      label="Directory"
-                                      name="directory"
-                                      autoComplete="directory"
+                                      label="Directory *"
+                                      name="category_name"
+                                      autoComplete="category_name"
                                       placeholder=""
                                       readOnly
                                     />
@@ -352,14 +421,17 @@ function Favorite() {
                                 >
                                   <Menu.Items
                                     static
-                                    className="th-bg-bg border th-border-for origin-top-right z-20 absolute left-0 mt-2 w-full rounded-md shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none py-3"
+                                    className="th-bg-bg border th-border-for origin-top-right z-20 absolute left-0 mt-2 w-full rounded-md shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none"
                                   >
                                     <div className="px-5 flex py-2">
                                       {fileCategory.length > 0 ?
                                       <TreeView
                                         data={fileCategory}
                                         aria-label="directory tree"
-                                        onNodeSelect={({element}: any) => setCategoryValue(element)}
+                                        onNodeSelect={({element}: any) => {
+                                          setFieldValue("category_name", element.name);
+                                          setFieldValue("category_id", element.id);
+                                        }}
                                         nodeRenderer={({
                                           element,
                                           isBranch,
@@ -392,13 +464,22 @@ function Favorite() {
                           </Menu>
                         </div>
                       </div>
+                      <TextField
+                        value={values.category_id}
+                        handleChange={handleChange}
+                        type="hidden"
+                        label=""
+                        name="category_id"
+                        autoComplete="category_id"
+                        placeholder=""
+                      />
                       <div className="w-full">
                         <TextField
                           value={values.title}
                           handleChange={handleChange}
                           type="text"
                           required
-                          label="Title"
+                          label="Title *"
                           name="title"
                           autoComplete="title"
                           placeholder=""
@@ -411,7 +492,7 @@ function Favorite() {
                             handleChange={handleChange}
                             type="text"
                             required
-                            label="Keywords"
+                            label="Keywords *"
                             name="keyword1"
                             autoComplete="keyword1"
                             placeholder=""
@@ -459,7 +540,7 @@ function Favorite() {
                             handleChange={handleChange}
                             type="text"
                             required
-                            label="File"
+                            label="File *"
                             name="file_path"
                             autoComplete="file_path"
                             placeholder=""
@@ -478,12 +559,28 @@ function Favorite() {
                           placeholder=""
                         />
                       </div>
+                      <div className="w-full">
+                        <TextField
+                          value={`${values.completed}`}
+                          // handleChange={handleChange}
+                          type="hidden"
+                          required
+                          label=""
+                          name="completed"
+                          autoComplete="complted"
+                          placeholder=""
+                          readOnly
+                        />
+                      </div>
+                      <div className="w-full pb-2">
+                        {isSubmitting && <ProgressBar completed={parseInt(values.completed)} className="w-full" />}
+                      </div>
                     </div>
                     <div className="px-4 pb-5 pt-1 border-t th-border-selbg sm:px-6 sm:flex sm:flex-row-reverse sm:justify-start">
                       <button onClick={() => setOpenFavorite(false)} className="th-bg-bg th-color-for th-border-for border text-sm w-20 h-10 rounded font-bold focus:z-10 focus:outline-none ml-2">
                         Cancel
                       </button>
-                      <button type="submit" className="th-bg-bg th-color-blue th-border-blue border text-sm w-20 h-10 rounded font-bold focus:z-10 focus:outline-none ml-2 flex items-center justify-center">
+                      <button type="submit" className={classNames(isSubmitting ? "w-24" : "w-20", "th-bg-bg th-color-blue th-border-blue border text-sm h-10 rounded font-bold focus:z-10 focus:outline-none ml-2 flex items-center justify-center")}>
                         {isSubmitting &&
                         <svg
                           className="animate-spin -ml-1 mr-2 h-4 w-4 th-color-brwhite"
@@ -505,7 +602,7 @@ function Favorite() {
                             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                           />
                         </svg>}
-                        Copy
+                        Favorite
                       </button>
                     </div>
                   </form>

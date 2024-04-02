@@ -27,6 +27,7 @@ import { useDirectMessageById } from "hooks/useDirects";
 import { DirectMessagesContext } from "contexts/DirectMessagesContext";
 import { channel } from "diagnostics_channel";
 import { ModalContext } from "contexts/ModalContext";
+import { toast as toastr } from "react-toastify";
 
 const MessageDiv = styled.div`
   :hover {
@@ -297,9 +298,27 @@ export default function Message({
   const removeFavorite = async () => {
     try {
       await postData(`/messages/${message?.objectId}/favorites/${user?.uid}`);
-      toast.success("File favorite is removed.");
+      toastr.success('The file has been removed from your private folder.', {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
     } catch (error: any) {
-      toast.error(error.message);
+      toastr.error(error.message, {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
     }
   }
 

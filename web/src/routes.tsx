@@ -51,6 +51,14 @@ const routes = [
         ),
       },
       {
+        path: "calendar",
+        element: (
+          <AuthGuard>
+            <Dashboard />
+          </AuthGuard>
+        ),
+      },
+      {
         path: "new_workspace",
         element: (
           <AuthGuard>
