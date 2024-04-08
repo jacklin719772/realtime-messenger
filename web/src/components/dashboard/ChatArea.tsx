@@ -32,9 +32,10 @@ const SelectChannel = styled.button`
 `;
 
 function HeaderChannel() {
+  const navigate = useNavigate();
   const { themeColors } = useTheme();
   const [open, setOpen] = useState(false);
-  const { channelId } = useParams();
+  const { workspaceId, channelId } = useParams();
   const { value } = useChannelById(channelId);
   const { visibleSearch, setVisibleSearch } = useContext(ReactionsContext);
   const { visibleFileSearch, setVisibleFileSearch } = useContext(ReactionsContext);
@@ -67,6 +68,12 @@ function HeaderChannel() {
         />
       </div>
       <div>
+        <button
+          className="th-bg-bg th-color-for inline-flex justify-center items-center text-sm w-10 h-10 rounded font-extrabold focus:z-10 focus:outline-none"
+          onClick={() => navigate(`/dashboard/workspaces/${workspaceId}/channels/${channelId}/teamcal`)}
+        >
+          <img className="h-5 w-5" alt="gallery" src={`${process.env.PUBLIC_URL}/calendar_channel.png`} />
+        </button>
         <button
           className="th-bg-bg th-color-for inline-flex justify-center items-center text-sm w-10 h-10 rounded font-extrabold focus:z-10 focus:outline-none"
           onClick={() => setVisibleSearch(!visibleSearch)}
@@ -155,6 +162,12 @@ function HeaderDirectMessage() {
             <img className="h-5 w-5" alt="add member" src={`${process.env.PUBLIC_URL}/add_user.png`} />}
           </button>
         )}
+        {/* <button
+          className="th-bg-bg th-color-for inline-flex justify-center items-center text-sm w-10 h-10 rounded font-extrabold focus:z-10 focus:outline-none"
+          onClick={() => navigate(`/dashboard/workspaces/${workspaceId}/dm/${dmId}/teamcal`)}
+        >
+          <img className="h-5 w-5" alt="gallery" src={`${process.env.PUBLIC_URL}/calendar.png`} />
+        </button> */}
         <button
           className="th-bg-bg th-color-for inline-flex justify-center items-center text-sm w-10 h-10 rounded font-extrabold focus:z-10 focus:outline-none"
           onClick={() => setVisibleSearch(!visibleSearch)}

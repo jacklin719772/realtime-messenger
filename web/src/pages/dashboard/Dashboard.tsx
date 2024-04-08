@@ -18,7 +18,7 @@ import { ReactionsContext } from "contexts/ReactionsContext";
 import { useUser } from "contexts/UserContext";
 import { usePresenceByUserId } from "hooks/usePresence";
 import { useUserById } from "hooks/useUsers";
-import { useMyWorkspaces } from "hooks/useWorkspaces";
+import { useMyWorkspaces, useWorkspaceById } from "hooks/useWorkspaces";
 import { useContext, useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import toast from "react-hot-toast";
@@ -34,6 +34,8 @@ import { getHref } from "utils/get-file-url";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CalendarView from "components/dashboard/calendar/CalendarView";
+import { useChannelById } from "hooks/useChannels";
+import EtherpadModal from "components/dashboard/EtherpadModal";
 
 function ProfileViewItem({ value, text }: { value: string; text: string }) {
   const {setEmailRecipient, setEmailBody, setOpenMailSender} = useContext(ModalContext);
@@ -176,12 +178,31 @@ function ProfileView() {
 export default function Dashboard() {
   const { workspaceId, channelId, dmId } = useParams();
   const { value, loading } = useMyWorkspaces();
-  const { user } = useUser();
+  const { user, userdata } = useUser();
+  const { value: channel } = useChannelById(channelId || value[0].channelId || value.find((w: any) => w.objectId === workspaceId)?.channelId);
+  console.log(channel);
+  const { value: owner } = useUserById(channel?.createdBy);
+  console.log(owner);
   const location = useLocation();
   const profile = location.pathname?.includes("user_profile");
   const calendar = location.pathname?.includes("calendar");
+  const teamcal = location.pathname?.includes("teamcal");
   const {visibleFileSearch, visibleGlobalSearch} = useContext(ReactionsContext);
-  const {openMailSender, openFavorite} = useContext(ModalContext);
+  const {openMailSender, openFavorite, uteamworkUserData, openEtherpad} = useContext(ModalContext);
+  const [isOwner, setIsOwner] = useState(false);
+  const [ownerData, setOwnerData] = useState<any>(null);
+
+  useEffect(() => {
+    if (owner) {
+      setIsOwner(owner?.email === userdata.email);
+    }
+  }, [owner, userdata]);
+
+  useEffect(() => {
+    if (uteamworkUserData.length > 0) {
+      setOwnerData(uteamworkUserData.filter((u: any) => u.email === owner?.email)[0]);
+    }
+  }, [owner, uteamworkUserData]);
 
   useEffect(() => {
     if (user?.uid) {
@@ -205,6 +226,32 @@ export default function Dashboard() {
 
   if (value?.length === 0) return <Navigate to="/dashboard/new_workspace" />;
 
+  if ((!workspaceId || !value.find((w: any) => w.objectId === workspaceId)) && teamcal) {
+    return (
+      <Navigate
+        to={`/dashboard/workspaces/${value[0].objectId}/channels/${value[0].channelId}/teamcal`}
+      />
+    );
+  }
+
+  if (workspaceId && !channelId && !dmId && teamcal) {
+    return (
+      <Navigate
+        to={`/dashboard/workspaces/${workspaceId}/channels/${
+          value.find((w: any) => w.objectId === workspaceId)?.channelId
+        }/teamcal`}
+      />
+    );
+  }
+
+  // if (workspaceId && !channelId && dmId && teamcal) {
+  //   return (
+  //     <Navigate
+  //       to={`/dashboard/workspaces/${workspaceId}/dm/${dmId}/teamcal`}
+  //     />
+  //   );
+  // }
+
   if ((!workspaceId || !value.find((w: any) => w.objectId === workspaceId)) && !calendar)
     return (
       <Navigate
@@ -212,7 +259,7 @@ export default function Dashboard() {
       />
     );
 
-  if (workspaceId && !channelId && !dmId)
+  if (workspaceId && !channelId && !dmId && !teamcal)
     return (
       <Navigate
         to={`/dashboard/workspaces/${workspaceId}/channels/${
@@ -236,7 +283,7 @@ export default function Dashboard() {
         {(!workspaceId && calendar) ? (
           <>
             <Workspaces />
-            <CalendarView />
+            <CalendarView isOwner={isOwner} ownerData={ownerData} />
           </>
         ) : (
           <>
@@ -246,10 +293,11 @@ export default function Dashboard() {
                 <Sidebar />
               </>
             ) : <SearchList />}
-            <ChatArea />
+            {teamcal ? <CalendarView isOwner={isOwner} ownerData={ownerData} /> : <ChatArea />}
             {visibleFileSearch ? <FileGalleryView /> : profile && <ProfileView />}
             {openMailSender && <MailComposer />}
             {openFavorite && <Favorite />}
+            {openEtherpad && <EtherpadModal />}
           </>
         )}
         <ToastContainer

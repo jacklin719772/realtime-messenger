@@ -111,7 +111,6 @@ export function useMessages(
     },
     skip: !workspaceId,
   });
-  console.log(dataPush);
 
   useEffect(() => {
     if (data) {

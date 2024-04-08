@@ -171,7 +171,7 @@ type Subscription {
   onUpdateChannel(objectId: String, workspaceId: String): Channel
   onUpdateDetail(objectId: String, workspaceId: String, userId: String): Detail
   onUpdateDirect(objectId: String, workspaceId: String): Direct
-  onUpdateMessage(objectId: String, chatId: String): Message
+  onUpdateMessage(objectId: String, chatId: String, workspaceId: String): Message
   onUpdatePresence(objectId: String): Presence
   onUpdateUser(objectId: String): User
   onUpdateWorkspace(objectId: String): Workspace

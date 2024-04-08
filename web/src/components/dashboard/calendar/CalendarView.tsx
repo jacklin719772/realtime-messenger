@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import locale from '@fullcalendar/core/locales/zh-cn';
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -9,6 +9,16 @@ import HeaderCalendar from './HeaderCalendar';
 import axios from 'axios';
 import { StandardEvent } from '@fullcalendar/core/internal';
 import Style from 'components/Style';
+import ScheduleView from './ScheduleView';
+import { useModal } from 'contexts/ModalContext';
+import EditSchedule from './EditSchedule';
+import PrivateFiles from './PrivateFiles';
+import RecordingFiles from './RecordingFiles';
+import EditMeeting from './EditMeeting';
+import { useLocation } from 'react-router-dom';
+import classNames from 'utils/classNames';
+import DeleteConfirm from './DeleteConfirm';
+import { toast } from 'react-toastify';
 
 const renderEventContent = (eventInfo: any) => {
   return (
@@ -28,25 +38,52 @@ interface EventProps {
   textColor: string;
 }
 
-function CalendarView() {
+function CalendarView({
+  isOwner,
+  ownerData,
+}: {
+  isOwner: boolean;
+  ownerData?: any;
+}) {
+  const location = useLocation();
+  const teamcal = location.pathname?.includes("teamcal");
 
   const [allMeeting, setAllMeeting] = useState<any[]>([]);
   const [events, setEvents] = useState<EventProps[]>([]);
   const [dateEvents, setDateEvents] = useState<any[]>([]);
   const [selectedDate, setSelectedDate] = useState(new Date().toLocaleDateString("zh-CN", {day: "numeric", month: "long"}));
   const [selectedDay, setSelectedDay] = useState(new Date().toLocaleDateString("zh-CN", {weekday: "long"}));
+  const [selectedEvent, setSelectedEvent] = useState<any>(null);
+  const [open, setOpen] = useState(false);
+  const {openEditSchedule, setOpenEditSchedule, openEditMeeting, setOpenEditMeeting, openPrivateFiles, openRecordingFiles, openDeleteEvent, setOpenDeleteEvent} = useModal();
+  console.log(!teamcal || isOwner);
+
+  const calendarRef = useRef(null);
 
   const getAllMeeting =async () => {
     try {
-      const response = await axios.post("https://www.uteamwork.com/_api/meeting/getAllMeeting", {}, {
-        headers: {
-          "Accept": "application/json, text/plain, */*",
-          "Authorization": `Bearer ${localStorage.getItem("t")}`,
-        },
-      });
+      let response;
+      if (!teamcal || isOwner) {
+        response = await axios.post("https://www.uteamwork.com/_api/meeting/getAllMeeting", {}, {
+          headers: {
+            "Accept": "application/json, text/plain, */*",
+            "Authorization": `Bearer ${localStorage.getItem("t")}`,
+          },
+        });
+      } else {
+        response = await axios.post("https://www.uteamwork.com/_api/meeting/getAllMeeting2", {
+          id: ownerData.memberId,
+          email: ownerData.email,
+        }, {
+          headers: {
+            "Accept": "application/json, text/plain, */*",
+          },
+        });
+      }
       console.log(response.data);
-      setAllMeeting(response.data.result);
-      const todayEvents = response.data.result.filter((m: any) => new Date(m.start_time).toLocaleDateString() === new Date().toLocaleDateString());
+      const filteredResult = teamcal ? response.data.result.filter((m: any) => m.title.includes("--teamcal")) : response.data.result.filter((m: any) => !m.title.includes("--teamcal"));
+      setAllMeeting(filteredResult);
+      const todayEvents = filteredResult.filter((m: any) => new Date(m.start_time).toLocaleDateString() === new Date().toLocaleDateString());
       setDateEvents(todayEvents);
     } catch (error) {
       setAllMeeting([]);
@@ -60,13 +97,74 @@ function CalendarView() {
     setSelectedDay(info.date.toLocaleDateString("zh-CN", {weekday: "long"}));
   }
 
-  const handleEventClick = (info: any) => {
-    console.log(info);
+  const handleEventClick = (id: any) => {
+    setSelectedEvent(allMeeting.filter((m: any) => (m.meetingId ? m.meetingId.toString() === id.toString() : m.id.toString() === id.toString()))[0]);
+    if (!teamcal || isOwner) {
+      setOpen(true);
+    }
+  }
+
+  const handleDelete = async (event: any) => {
+    try {
+      const response = await axios.post("https://www.uteamwork.com/_api/event/del", {
+        id: event.id,
+        is_all_repeat: event.is_all_repeat ? 1 : 0,
+      }, {
+        headers: {
+          "Accept": "application/json, text/plain, */*",
+          "Authorization": `Bearer ${localStorage.getItem("t")}`,
+        },
+      });
+      if (response.statusText !== "OK") {
+        toast.error('Deleting the event has been failed.', {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+      }
+      if (response.statusText === "OK") {
+        toast.success('The event has been successfully deleted.', {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+      }
+      setOpenDeleteEvent(false);
+    } catch (error: any) {
+      toast.error(error.message, {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+    }
   }
 
   useEffect(() => {
-    getAllMeeting();
-  }, []);
+    if (!openEditSchedule && !openEditMeeting) {
+      getAllMeeting();
+    }
+  }, [openEditSchedule, openEditMeeting]);
+
+  useEffect(() => {
+    if (!openDeleteEvent) {
+      getAllMeeting();
+    }
+  }, [openDeleteEvent]);
 
   useEffect(() => {
     if (allMeeting.length > 0) {
@@ -84,10 +182,10 @@ function CalendarView() {
   }, [allMeeting])
 
   return (
-    <div className="col-span-2 flex flex-col row-span-2 overflow-hidden">
+    <div className={classNames(teamcal ? "" : "col-span-2", "flex flex-col row-span-2 overflow-hidden")}>
       <Style css={`
         .fc .fc-view-harness {
-          height: 430px !important;
+          height: 360px !important;
           overflow-y: auto;
         }
         .fc .fc-view-harness > .fc-dayGridMonth-view.fc-view.fc-daygrid {
@@ -118,7 +216,7 @@ function CalendarView() {
           background-color: rgb(86, 139, 253);
           border-color: rgb(86, 139, 253);
         }
-        .fc-day-sun a {
+        .fc-day-sun a, .fc-day-sat a {
           color: #ff4040 !important;
         }
       `} />
@@ -135,9 +233,9 @@ function CalendarView() {
               events={events}
               eventContent={renderEventContent}
               headerToolbar={{
-                left: 'prev,next today',
+                left: 'prev,next todayButton',
                 center: 'title',
-                right: 'dayGridMonth,timeGridWeek,timeGridDay,multiMonthYear myCustomButton'
+                right: (!teamcal || isOwner) ? 'dayGridMonth,timeGridWeek,timeGridDay,multiMonthYear myCustomButton' : 'dayGridMonth,timeGridWeek,timeGridDay,multiMonthYear'
               }}
               eventTimeFormat={{
                 hour: '2-digit',
@@ -147,18 +245,41 @@ function CalendarView() {
               eventDisplay=''
               customButtons={{
                 myCustomButton: {
-                  text: 'New',
+                  text: '+ Event',
                   click: () => {
-                    console.log('clicked the new button');
+                    setSelectedEvent(null);
+                    setOpenEditSchedule(true);
+                  }
+                },
+                myCustomButton2: {
+                  text: '+ Meeting',
+                  click: () => {
+                    setSelectedEvent(null);
+                    setOpenEditMeeting(true);
+                  }
+                },
+                todayButton: {
+                  text: 'Today',
+                  click: () => {
+                    if (calendarRef.current) {
+                      console.log(calendarRef.current.getApi().view);
+                      if (calendarRef.current.getApi().view.type === "multiMonthYear") {
+                        calendarRef.current.getApi().changeView('dayGridMonth', new Date().toISOString().split("T")[0]);
+                      } else {
+                        calendarRef.current.getApi().today();
+                      }
+                    }
                   }
                 }
               }}
               dateClick={(info: any) => handleDateClick(info)}
-              eventClick={(info: any) => handleEventClick(info)}
+              eventClick={(info: any) => handleEventClick(info.event.id)}
               eventBackgroundColor='#378006'
               eventBorderColor='#378006'
               eventTextColor='#ffffff'
               selectable={true}
+              dayMaxEvents={true}
+              ref={calendarRef}
             />
           </div>
           <div className="w-[30%] p-2">
@@ -166,35 +287,52 @@ function CalendarView() {
               <div className="w-full text-center text-xl pt-2 pb-6">
                 {selectedDate} {selectedDay}
               </div>
-              <div className="w-full pt-2 h-full border">
-                {dateEvents.map((de: any, index: number) => (
-                  <div className="border-b px-2 py-1">
-                    <div className="border-l-4 th-border-blue flex items-center">
-                      <div className="px-2 w-20 text-sm">
-                        <div>
-                          {new Date(de?.start_time).toLocaleTimeString([], {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                            hour12: false,
-                          })}
-                        </div>
-                        <div>
-                          {new Date(de?.end_time).toLocaleTimeString([], {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                            hour12: false,
-                          })}
+              <div className="w-full pt-2 h-full border th-border-for">
+                {
+                  dateEvents.length > 0 ? (
+                    <>
+                    {dateEvents.map((de: any, index: number) => (
+                      <div className="border-b px-2 py-1 cursor-pointer" onClick={() => handleEventClick(de.meetingId ? de.meetingId : de.id)}>
+                        <div className="border-l-4 th-border-blue flex items-center">
+                          <div className="px-2 w-20 text-sm">
+                            <div>
+                              {new Date(de?.start_time).toLocaleTimeString([], {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                hour12: false,
+                              })}
+                            </div>
+                            <div>
+                              {new Date(de?.end_time).toLocaleTimeString([], {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                hour12: false,
+                              })}
+                            </div>
+                          </div>
+                          <div className="px-2 w-auto text-sm">{de?.title}</div>
                         </div>
                       </div>
-                      <div className="px-2 w-auto text-sm">{de?.title}</div>
+                    ))}
+                    </>
+                  ) : (
+                    <div className="w-full flex flex-col items-center justify-center pt-10">
+                      <img src={`${process.env.PUBLIC_URL}/no_event.png`} alt="no events" className="w-[40%] h-auto" />
+                      <div className="text-sm">No events for today</div>
                     </div>
-                  </div>
-                ))}
+                  )
+                }
               </div>
             </div>
           </div>
         </div>
       </div>
+      {open && <ScheduleView open={open} setOpen={setOpen} event={selectedEvent} deleteEvent={handleDelete} />}
+      {openEditSchedule && <EditSchedule event={selectedEvent} />}
+      {openEditMeeting && <EditMeeting event={selectedEvent} />}
+      {openPrivateFiles && <PrivateFiles />}
+      {openRecordingFiles && <RecordingFiles />}
+      {openDeleteEvent && <DeleteConfirm event={selectedEvent} deleteEvent={handleDelete} />}
     </div>
   )
 }

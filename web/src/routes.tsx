@@ -93,6 +93,14 @@ const routes = [
               </AuthGuard>
             ),
           },
+          {
+            path: "teamcal",
+            element: (
+              <AuthGuard>
+                <Dashboard />
+              </AuthGuard>
+            ),
+          },
         ],
       },
       {

@@ -37,6 +37,29 @@ export const ModalContext = createContext({
   setFileURL: null as any,
   fileMessage: null as any,
   setFileMessage: null as any,
+  openEditSchedule: false,
+  setOpenEditSchedule: null as any,
+  openPrivateFiles: false,
+  setOpenPrivateFiles: null as any,
+  checkedPrivateFiles: [] as any[],
+  setCheckedPrivateFiles: null as any,
+  openRecordingFiles: false,
+  setOpenRecordingFiles: null as any,
+  checkedRecordingFiles: [] as any,
+  setCheckedRecordingFiles: null as any,
+  openEditMeeting: false,
+  setOpenEditMeeting: null as any,
+  openEditLive: false,
+  setOpenEditLive: null as any,
+  uteamworkUserData: [] as any[],
+  setUteamworkUserData: null as any,
+  openEtherpad: false,
+  setOpenEtherpad: null as any,
+  etherpadLink: "",
+  setEtherpadLink: null as any,
+  
+  openDeleteEvent: false,
+  setOpenDeleteEvent: null as any,
 });
 
 export function ModalProvider({ children }: { children: React.ReactNode }) {
@@ -61,6 +84,17 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
   const [openFavorite, setOpenFavorite] = useState(false);
   const [fileURL, setFileURL] = useState("");
   const [fileMessage, setFileMessage] = useState<any>(null);
+  const [openEditSchedule, setOpenEditSchedule] = useState(false);
+  const [openPrivateFiles, setOpenPrivateFiles] = useState(false);
+  const [openRecordingFiles, setOpenRecordingFiles] = useState(false);
+  const [checkedPrivateFiles, setCheckedPrivateFiles] = useState<any[]>([]);
+  const [checkedRecordingFiles, setCheckedRecordingFiles] = useState<any[]>([]);
+  const [openEditMeeting, setOpenEditMeeting] = useState(false);
+  const [openEditLive, setOpenEditLive] = useState(false);
+  const [uteamworkUserData, setUteamworkUserData] = useState<any[]>([]);
+  const [openEtherpad, setOpenEtherpad] = useState(false);
+  const [etherpadLink, setEtherpadLink] = useState("");
+  const [openDeleteEvent, setOpenDeleteEvent] = useState(false);
 
   return (
     <ModalContext.Provider
@@ -106,6 +140,37 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
 
         fileMessage,
         setFileMessage,
+
+        openEditSchedule,
+        setOpenEditSchedule,
+
+        openPrivateFiles,
+        setOpenPrivateFiles,
+
+        openRecordingFiles,
+        setOpenRecordingFiles,
+
+        checkedPrivateFiles,
+        setCheckedPrivateFiles,
+
+        checkedRecordingFiles,
+        setCheckedRecordingFiles,
+
+        openEditMeeting,
+        setOpenEditMeeting,
+        openEditLive,
+        setOpenEditLive,
+
+        uteamworkUserData,
+        setUteamworkUserData,
+
+        openEtherpad,
+        setOpenEtherpad,
+        etherpadLink,
+        setEtherpadLink,
+
+        openDeleteEvent,
+        setOpenDeleteEvent,
       }}
     >
       {children}

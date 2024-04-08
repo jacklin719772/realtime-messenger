@@ -401,7 +401,7 @@ export const deleteFavorite = async (
         await graphQLClient(res.locals.token).request(UPDATE_MESSAGE, {
           input: {
             objectId: id,
-            favorites: arrayRemove(message.members, uid),
+            favorites: arrayRemove(message.favorites, uid),
           },
         })
       );

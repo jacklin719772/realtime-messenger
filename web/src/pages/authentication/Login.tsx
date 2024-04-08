@@ -2,6 +2,7 @@ import AuthButton from "components/authentication/AuthButton";
 import Style from "components/Style";
 import TextField from "components/TextField";
 import { APP_NAME, FAKE_EMAIL } from "config";
+import { useModal } from "contexts/ModalContext";
 import { Formik } from "formik";
 import useAuth from "hooks/useAuth";
 import React from "react";
@@ -49,6 +50,7 @@ export default function Login() {
   queryParameters.get("l") ? localStorage.setItem("currentLanguage", languages[queryParameters.get("l")]) : localStorage.setItem("currentLanguage", "");
   const email = queryParameters.get("m") ? queryParameters.get("m") : localStorage.getItem("m");
   const password = queryParameters.get("p") ? queryParameters.get("p") : localStorage.getItem("p");
+  const {uteamworkUserData, setUteamworkUserData} = useModal();
 
   return (
     <div className="w-full h-screen bg-[percentage:100%]" style={{
@@ -113,6 +115,19 @@ export default function Login() {
                   return;
                 }
                 await login(emailPayload, passwordPayload);
+                const response = await fetch("https://www.uteamwork.com/_api/annonymous/getUsers", {
+                  method: 'POST',
+                  headers: {
+                    "Content-Type": "application/json",
+                  }
+                });
+                const result = await response.json();
+                console.log(result);
+                if (result.result) {
+                  setUteamworkUserData(result.result);
+                } else {
+                  setUteamworkUserData(null);
+                }
                 navigate("/dashboard");
               } catch (err: any) {
                 if (err.message === "Cannot read properties of null (reading 'dataValues')") {

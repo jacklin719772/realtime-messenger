@@ -1,34 +1,26 @@
-import { Dialog, Transition } from '@headlessui/react'
-import { XIcon } from '@heroicons/react/outline';
-import { useModal } from 'contexts/ModalContext';
-import React, { Fragment, useRef } from 'react'
+import { Dialog, Transition } from "@headlessui/react";
+import { XIcon } from "@heroicons/react/outline";
+import { useModal } from "contexts/ModalContext";
+import React, { Fragment,  useRef } from "react";
 
-function ScheduleView({
-  open,
-  setOpen,
+export default function DeleteConfirm({
   event,
   deleteEvent,
 }: {
-  open: boolean;
-  setOpen: any;
   event: any;
   deleteEvent: any;
 }) {
   const cancelButtonRef = useRef(null);
-  const {openEditSchedule, setOpenEditSchedule, setOpenEditMeeting, setOpenDeleteEvent} = useModal();
-  console.log(event);
-  const handleDeleteClick = () => {
-    setOpenDeleteEvent(true);
-    setOpen(false);
-  }
+  const {openDeleteEvent, setOpenDeleteEvent} = useModal();
+
   return (
-    <Transition.Root show={open} as={Fragment}>
+    <Transition.Root show={openDeleteEvent} as={Fragment}>
       <Dialog
         as="div"
         static
         className="fixed z-10 inset-0 overflow-y-auto"
         initialFocus={cancelButtonRef}
-        open={open}
+        open={openDeleteEvent}
         onClose={() => {}}
       >
         <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
@@ -61,45 +53,28 @@ function ScheduleView({
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
             <div className="th-bg-bg inline-block align-bottom rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-              <div className="th-bg-bg px-4 pt-5 pb-4 sm:p-6 sm:pb-4 flex justify-between items-center border-b th-border-selbg">
+              <div className="th-bg-bg px-4 pt-5 pb-4 sm:p-6 sm:pb-4 flex justify-between items-center">
                 <div>
                   <h5 className="font-bold th-color-for">
-                    {event.meetingId ? "Meeting" : "Event"}
+                    Delete Event
                   </h5>
+                  <span className="opacity-70 text-sm th-color-for">Are you want to delete this event?</span>
                 </div>
                 <div
                   role="button"
                   tabIndex={0}
                   className="cursor-pointer focus:outline-none"
-                  onClick={() => setOpen(false)}
+                  onClick={() => setOpenDeleteEvent(false)}
                 >
                   <XIcon className="h-5 w-5 th-color-for" />
                 </div>
               </div>
-              <div className="w-full py-4 px-6">
-                <div className="text-sm">Title: {event.title}</div>
-                <div className="text-sm">Time: {new Date(event.start_time).toLocaleString('zh-CN', {
-                  year: "numeric",
-                  day: "numeric", 
-                  month: "long",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                  hour12: false
-                })} ~ {new Date(event.end_time).toLocaleString('zh-CN', {
-                  year: "numeric",
-                  day: "numeric", 
-                  month: "long",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                  hour12: false,
-                })}</div>
-              </div>
               <div className="px-4 pb-5 pt-1 border-t th-border-selbg sm:px-6 sm:flex sm:flex-row-reverse sm:justify-start">
-                {event.id && <button onClick={handleDeleteClick} className="th-bg-bg th-color-blue th-border-blue border text-sm w-20 h-10 rounded font-bold focus:z-10 focus:outline-none ml-2">
+                <button onClick={() => setOpenDeleteEvent(false)} className="th-bg-bg th-color-for th-border-for border text-sm w-20 h-10 rounded font-bold focus:z-10 focus:outline-none ml-2">
+                  Cancel
+                </button>
+                <button onClick={() => deleteEvent(event)} className="th-bg-bg th-color-brred th-border-for border text-sm w-20 h-10 rounded font-bold focus:z-10 focus:outline-none">
                   Delete
-                </button>}
-                <button onClick={() => event.meetingId ? {} : setOpenEditSchedule(true)} className="th-bg-bg th-color-blue th-border-blue border text-sm w-20 h-10 rounded font-bold focus:z-10 focus:outline-none">
-                  Detail
                 </button>
                 {/* <ModalButton onClick={deleteMessage} text="Delete" />
                 <ModalButton onClick={() => setOpen(false)} text="Cancel" /> */}
@@ -109,7 +84,5 @@ function ScheduleView({
         </div>
       </Dialog>
     </Transition.Root>
-  )
+  );
 }
-
-export default ScheduleView
