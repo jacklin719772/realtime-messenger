@@ -58,7 +58,7 @@ function CalendarView({
   const {openEditSchedule, setOpenEditSchedule, openEditMeeting, setOpenEditMeeting, openPrivateFiles, openRecordingFiles, openDeleteEvent, setOpenDeleteEvent} = useModal();
   console.log(!teamcal || isOwner);
 
-  const calendarRef = useRef(null);
+  const calendarRef = useRef<any>(null);
 
   const getAllMeeting =async () => {
     try {

@@ -206,7 +206,7 @@ function HeaderDirectMessage() {
       timer = setTimeout(() => {
         sendCallMessage("Missed Call", new Date());
         handleTimeout(userdata, value);
-      }, 30000);
+      }, 35000);
     } else {
       clearTimeout(timer);
     }

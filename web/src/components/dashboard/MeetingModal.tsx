@@ -94,6 +94,7 @@ export default function MeetingModal() {
           disabled: false,
         },
         startWithAudioMuted: !enableMic,
+        startWithVideoMuted: false,
       },
       interfaceConfigOverwrite: {
         APP_NAME: 'Uteamwork Meeting',
@@ -206,19 +207,27 @@ export default function MeetingModal() {
             leaveFrom="opacity-100 translate-y-0 sm:scale-100"
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
-            <div className="th-bg-bg inline-block align-bottom rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:align-middle sm:max-w-6xl sm:w-full">
-              <div className="th-bg-bg px-4 pt-2 pb-4 sm:p-2 sm:px-4 flex justify-between items-center">
-                <h5 className="font-bold th-color-for">
-                  Web Meeting
+            <div className="th-bg-for inline-block align-bottom rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:align-middle sm:max-w-6xl sm:w-full">
+              <div className="th-bg-for px-4 pt-2 pb-4 sm:p-2 sm:px-4 flex justify-between items-center">
+                <h5 className="font-bold th-color-bg">
+                  {isVideoDisabled ? "Voice Call" : "Video Call"}
                 </h5>
-                <div className="flex items-center">
+                <div className="flex items-center space-x-4">
+                  <div
+                    role="button"
+                    tabIndex={0}
+                    className="cursor-pointer focus:outline-none"
+                    onClick={() => {}}
+                  >
+                    <img src={`${process.env.PUBLIC_URL}/add_meet_member.png`} className="h-5 w-5" alt="add_participant" />
+                  </div>
                   <div
                     role="button"
                     tabIndex={0}
                     className="cursor-pointer focus:outline-none"
                     onClick={handleClose}
                   >
-                    <XIcon className="h-5 w-5 th-color-for" />
+                    <XIcon className="h-5 w-5 th-color-bg" />
                   </div>
                 </div>
               </div>

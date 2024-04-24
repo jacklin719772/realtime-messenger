@@ -392,7 +392,7 @@ export default function Message({
         {message?.text.includes("[Jitsi_Call_Log:]:") ?
         <>
         {JSON.parse(message?.text.substr(19, message?.text.length)).type === "Call ended" &&  
-      <div className="flex flex-1 group w-full justify-center items-center">
+      <div className="flex flex-1 group w-full pl-12 items-center">
         <div className="w-96 px-4 py-2 m-2 rounded th-bg-selbg flex justify-between items-center">
           <div className="flex items-center space-x-2">
             <div className="text-sm">{JSON.parse(message?.text.substr(19, message?.text.length)).type}</div>
@@ -417,7 +417,7 @@ export default function Message({
         </div>
       </div>}
       {(JSON.parse(message?.text.substr(19, message?.text.length)).type === "Missed Call" && JSON.parse(message?.text.substr(19, message?.text.length)).receiver?.objectId === user?.uid) &&  
-      <div className="flex flex-1 group w-full justify-center items-center">
+      <div className="flex flex-1 group w-full pl-12 items-center">
         <div className="w-96 px-4 py-2 m-2 rounded th-bg-selbg flex justify-between items-center">
           <div className="flex items-center space-x-2">
             <div className="text-sm">{JSON.parse(message?.text.substr(19, message?.text.length)).type}</div>
@@ -446,7 +446,7 @@ export default function Message({
       </div>
         }
         {(JSON.parse(message?.text.substr(19, message?.text.length)).type === "Stopped Call" && JSON.parse(message?.text.substr(19, message?.text.length)).receiver?.objectId === user?.uid) &&  
-        <div className="flex flex-1 group w-full justify-center items-center">
+        <div className="flex flex-1 group w-full pl-12 items-center">
           <div className="w-96 px-4 py-2 m-2 rounded th-bg-selbg flex justify-between items-center">
             <div className="flex items-center space-x-2">
               <div className="text-sm">{JSON.parse(message?.text.substr(19, message?.text.length)).type}</div>
@@ -475,7 +475,7 @@ export default function Message({
         </div>
         }
         {(JSON.parse(message?.text.substr(19, message?.text.length)).type === "Refused Call" && JSON.parse(message?.text.substr(19, message?.text.length)).sender?.objectId === user?.uid) &&  
-        <div className="flex flex-1 group w-full justify-center items-center">
+        <div className="flex flex-1 group w-full pl-12 items-center">
           <div className="w-96 px-4 py-2 m-2 rounded th-bg-selbg flex justify-between items-center">
             <div className="flex items-center space-x-2">
               <div className="text-sm">{JSON.parse(message?.text.substr(19, message?.text.length)).type}</div>
