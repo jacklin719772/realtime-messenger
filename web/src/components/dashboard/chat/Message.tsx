@@ -422,7 +422,6 @@ export default function Message({
           <div className="flex items-center space-x-2">
             <div className="text-sm">{JSON.parse(message?.text.substr(19, message?.text.length)).type}</div>
             <div className="text-sm">
-              {JSON.parse(message?.text.substr(19, message?.text.length)).duration}
               {new Date(JSON.parse(message?.text.substr(19, message?.text.length)).duration).toLocaleTimeString([], {
                 hour: '2-digit',
                 minute: '2-digit',
@@ -452,7 +451,6 @@ export default function Message({
             <div className="flex items-center space-x-2">
               <div className="text-sm">{JSON.parse(message?.text.substr(19, message?.text.length)).type}</div>
               <div className="text-sm">
-                {JSON.parse(message?.text.substr(19, message?.text.length)).duration}
                 {new Date(JSON.parse(message?.text.substr(19, message?.text.length)).duration).toLocaleTimeString([], {
                   hour: '2-digit',
                   minute: '2-digit',
@@ -482,7 +480,6 @@ export default function Message({
             <div className="flex items-center space-x-2">
               <div className="text-sm">{JSON.parse(message?.text.substr(19, message?.text.length)).type}</div>
               <div className="text-sm">
-                {JSON.parse(message?.text.substr(19, message?.text.length)).duration}
                 {new Date(JSON.parse(message?.text.substr(19, message?.text.length)).duration).toLocaleTimeString([], {
                   hour: '2-digit',
                   minute: '2-digit',
