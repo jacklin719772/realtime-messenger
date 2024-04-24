@@ -3,14 +3,20 @@ import { XIcon } from "@heroicons/react/outline";
 import { useModal } from "contexts/ModalContext";
 import { useUser } from "contexts/UserContext";
 import { Fragment,  useEffect,  useRef, useState } from "react";
+import { useParams } from "react-router-dom";
+import { postData } from "utils/api-helpers";
+import { v4 as uuidv4 } from "uuid";
 
 
 export default function MeetingModal() {
   const { userdata } = useUser();
+  const { workspaceId, channelId, dmId } = useParams();
   const jitsiContainerId = "jitsi-container-id";
-  const {openMeetingModal, setOpenMeetingModal, setOpenCalling, setOpenReceiving, setRecipientInfo, setSenderInfo, roomName, setRoomName, isVideoDisabled, setIsVideoDisabled, setIframeLoaded, enableMic} = useModal();
+  const {openMeetingModal, setOpenMeetingModal, setOpenCalling, setOpenReceiving, recipientInfo, setRecipientInfo, senderInfo, setSenderInfo, roomName, setRoomName, isVideoDisabled, setIsVideoDisabled, setIframeLoaded, enableMic} = useModal();
   const cancelButtonRef = useRef(null);
   const [jitsi, setJitsi] = useState({});
+  const [meetStartTime, setMeetStartTime] = useState(new Date().getTime());
+  const [meetEndTime, setMeetEndTime] = useState(new Date().getTime());
 
   const loadJitsiScript = () => {
     let resolveLoadJitsiScriptPromise = null;
@@ -33,6 +39,7 @@ export default function MeetingModal() {
     if (!window.JitsiMeetExternalAPI) {
       await loadJitsiScript();
     }
+    let startTime: number, endTime: number;
     const _jitsi = new window.JitsiMeetExternalAPI("meeting.uteamwork.com", {
       parentNode: document.getElementById(jitsiContainerId),
       roomName,
@@ -104,13 +111,23 @@ export default function MeetingModal() {
         setIframeLoaded(true);
       },
     });
+
+    _jitsi.addEventListener("videoConferenceJoined", (info: any) => {
+      startTime = new Date().getTime();
+    });
     
     _jitsi.addEventListener("participantLeft", (info: any) => {
+      if (dmId && senderInfo?.objectId === userdata?.objectId) {
+        sendCallMessage(startTime);
+      }
       _jitsi.dispose();
       handleClose();
     });
     
     _jitsi.addEventListener("videoConferenceLeft", (info: any) => {
+      if (dmId && senderInfo?.objectId === userdata?.objectId) {
+        sendCallMessage(startTime);
+      }
       _jitsi.dispose();
       handleClose();
     });
@@ -127,6 +144,17 @@ export default function MeetingModal() {
     setRoomName("");
     setIsVideoDisabled(false);
     setIframeLoaded(false);
+  }
+
+  const sendCallMessage = async (startTime: number) => {
+    const messageId = uuidv4();
+    await postData("/messages", {
+      objectId: messageId,
+      text: `[Jitsi_Call_Log:]: {"sender": ${JSON.stringify(senderInfo)}, "receiver": ${JSON.stringify(recipientInfo)}, "type": "Call ended", "duration": "${new Date().getTime() - startTime}", "audioOnly": ${isVideoDisabled}}`,
+      chatId: dmId,
+      workspaceId,
+      chatType: "Direct",
+    });
   }
 
   useEffect(() => {

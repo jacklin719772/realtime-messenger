@@ -3,12 +3,17 @@ import axios from 'axios';
 import { useModal } from 'contexts/ModalContext'
 import { useUser } from 'contexts/UserContext';
 import React, { useState } from 'react'
+import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { postData } from 'utils/api-helpers';
 import { getHref } from 'utils/get-file-url';
+import { v4 as uuidv4 } from "uuid";
 
 function Receiving() {
   const { userdata } = useUser();
+  const { workspaceId, dmId } = useParams();
   const { openReceiving, setOpenReceiving, senderInfo, recipientInfo, setRecipientInfo, setSenderInfo, roomName, setRoomName, isVideoDisabled, setIsVideoDisabled, setOpenMeetingModal, enableMic, setEnableMic, iframeLoaded, setIframeLoaded } = useModal();
+
   const handleAcceptButton = async () => {
     try {
       await axios.post('/send-message', {

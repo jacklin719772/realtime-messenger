@@ -28,6 +28,8 @@ import { DirectMessagesContext } from "contexts/DirectMessagesContext";
 import { channel } from "diagnostics_channel";
 import { ModalContext } from "contexts/ModalContext";
 import { toast as toastr } from "react-toastify";
+import { randomRoomName } from "utils/jitsiGenerator";
+import axios from "axios";
 
 const MessageDiv = styled.div`
   :hover {
@@ -117,7 +119,7 @@ export default function Message({
 
   const { themeColors } = useTheme();
 
-  const { user } = useUser();
+  const { user, userdata } = useUser();
 
   const downloadRef = useRef<any>(null);
 
@@ -165,7 +167,7 @@ export default function Message({
   
   const {isSelecting, setIsSelecting, setVisibleForward, setVisibleReply, setForwardMessage, originId, setOriginId} = useContext(ReactionsContext);
   // const [forward, setForward] = useState<any>(null);
-  const {setOpenMailSender, setEmailBody, setEmailRecipient, setOpenFavorite, setFileURL, setFileMessage} = useContext(ModalContext);
+  const {setOpenMailSender, setEmailBody, setEmailRecipient, setOpenFavorite, setFileURL, setFileMessage, setOpenCalling, setRecipientInfo, setSenderInfo, setRoomName, setIsVideoDisabled} = useContext(ModalContext);
 
   const [loadingDelete, setLoadingDelete] = useState(false);
 
@@ -339,6 +341,27 @@ export default function Message({
     return d?.toLocaleDateString("zh-CN", { day:"numeric", month:"short"});
   }
 
+  const handleCallingButton = async (receiver: any, audioOnly: boolean) => {
+    try {
+      const room = randomRoomName();
+      await axios.post('/send-message', {
+        sender: userdata,
+        receiver,
+        type: "Calling",
+        room,
+        audioOnly,
+      });
+      console.log('Message sent successfully');
+      setOpenCalling(true);
+      setRecipientInfo(receiver);
+      setSenderInfo(userdata);
+      setRoomName(room);
+      setIsVideoDisabled(audioOnly);
+    } catch (error) {
+      console.error('Error sending message', error);
+    }
+  }
+
   const { value: channels } = useChannels();
   const { value: dms } = useContext(DirectMessagesContext);
   const isOriginViewAllowed = channels?.filter((channel: any) => channel.objectId === message?.forwardChatId).length > 0 || dms?.filter((channel: any) => channel.objectId === message?.forwardChatId).length > 0;
@@ -365,6 +388,126 @@ export default function Message({
 
   const messageRender = useMemo(
     () => (
+      <>
+        {message?.text.includes("[Jitsi_Call_Log:]:") ?
+        <>
+        {JSON.parse(message?.text.substr(19, message?.text.length)).type === "Call ended" &&  
+      <div className="flex flex-1 group w-full justify-center items-center">
+        <div className="w-96 px-4 py-2 m-2 rounded th-bg-selbg flex justify-between items-center">
+          <div className="flex items-center space-x-2">
+            <div className="text-sm">{JSON.parse(message?.text.substr(19, message?.text.length)).type}</div>
+            <div className="text-sm">
+              {String(Math.floor(parseInt(JSON.parse(message?.text.substr(19, message?.text.length)).duration) / 1000 / 60)).padStart(2, "0")}:
+              {String(Math.floor(parseInt(JSON.parse(message?.text.substr(19, message?.text.length)).duration) / 1000) - Math.floor(parseInt(JSON.parse(message?.text.substr(19, message?.text.length)).duration) / 1000 / 60) * 60).padStart(2, "0")}
+            </div>
+          </div>
+          <div className="flex items-center">
+            <button className="rounded-full bg-transparent th-color-brwhite" onClick={
+              () => {
+                if (JSON.parse(message?.text.substr(19, message?.text.length)).receiver?.objectId === user?.uid) {
+                  handleCallingButton(JSON.parse(message?.text.substr(19, message?.text.length)).sender, JSON.parse(message?.text.substr(19, message?.text.length)).audioOnly);
+                } else {
+                  handleCallingButton(JSON.parse(message?.text.substr(19, message?.text.length)).receiver, JSON.parse(message?.text.substr(19, message?.text.length)).audioOnly);
+                }
+              }
+            }>
+              <img src={`${process.env.PUBLIC_URL}/call_start.png`} className="h-10 w-10" alt="mic_on" />
+            </button>
+          </div>
+        </div>
+      </div>}
+      {(JSON.parse(message?.text.substr(19, message?.text.length)).type === "Missed Call" && JSON.parse(message?.text.substr(19, message?.text.length)).receiver?.objectId === user?.uid) &&  
+      <div className="flex flex-1 group w-full justify-center items-center">
+        <div className="w-96 px-4 py-2 m-2 rounded th-bg-selbg flex justify-between items-center">
+          <div className="flex items-center space-x-2">
+            <div className="text-sm">{JSON.parse(message?.text.substr(19, message?.text.length)).type}</div>
+            <div className="text-sm">
+              {JSON.parse(message?.text.substr(19, message?.text.length)).duration}
+              {new Date(JSON.parse(message?.text.substr(19, message?.text.length)).duration).toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false,
+              })}
+            </div>
+          </div>
+          <div className="flex items-center">
+            <button className="rounded-full bg-transparent th-color-brwhite" onClick={
+              () => {
+                if (JSON.parse(message?.text.substr(19, message?.text.length)).receiver?.objectId === user?.uid) {
+                  handleCallingButton(JSON.parse(message?.text.substr(19, message?.text.length)).sender, JSON.parse(message?.text.substr(19, message?.text.length)).audioOnly);
+                } else {
+                  handleCallingButton(JSON.parse(message?.text.substr(19, message?.text.length)).receiver, JSON.parse(message?.text.substr(19, message?.text.length)).audioOnly);
+                }
+              }
+            }>
+              <img src={`${process.env.PUBLIC_URL}/call_start.png`} className="h-10 w-10" alt="mic_on" />
+            </button>
+          </div>
+        </div>
+      </div>
+        }
+        {(JSON.parse(message?.text.substr(19, message?.text.length)).type === "Stopped Call" && JSON.parse(message?.text.substr(19, message?.text.length)).receiver?.objectId === user?.uid) &&  
+        <div className="flex flex-1 group w-full justify-center items-center">
+          <div className="w-96 px-4 py-2 m-2 rounded th-bg-selbg flex justify-between items-center">
+            <div className="flex items-center space-x-2">
+              <div className="text-sm">{JSON.parse(message?.text.substr(19, message?.text.length)).type}</div>
+              <div className="text-sm">
+                {JSON.parse(message?.text.substr(19, message?.text.length)).duration}
+                {new Date(JSON.parse(message?.text.substr(19, message?.text.length)).duration).toLocaleTimeString([], {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  hour12: false,
+                })}
+              </div>
+            </div>
+            <div className="flex items-center">
+              <button className="rounded-full bg-transparent th-color-brwhite" onClick={
+                () => {
+                  if (JSON.parse(message?.text.substr(19, message?.text.length)).receiver?.objectId === user?.uid) {
+                    handleCallingButton(JSON.parse(message?.text.substr(19, message?.text.length)).sender, JSON.parse(message?.text.substr(19, message?.text.length)).audioOnly);
+                  } else {
+                    handleCallingButton(JSON.parse(message?.text.substr(19, message?.text.length)).receiver, JSON.parse(message?.text.substr(19, message?.text.length)).audioOnly);
+                  }
+                }
+              }>
+                <img src={`${process.env.PUBLIC_URL}/call_start.png`} className="h-10 w-10" alt="mic_on" />
+              </button>
+            </div>
+          </div>
+        </div>
+        }
+        {(JSON.parse(message?.text.substr(19, message?.text.length)).type === "Refused Call" && JSON.parse(message?.text.substr(19, message?.text.length)).sender?.objectId === user?.uid) &&  
+        <div className="flex flex-1 group w-full justify-center items-center">
+          <div className="w-96 px-4 py-2 m-2 rounded th-bg-selbg flex justify-between items-center">
+            <div className="flex items-center space-x-2">
+              <div className="text-sm">{JSON.parse(message?.text.substr(19, message?.text.length)).type}</div>
+              <div className="text-sm">
+                {JSON.parse(message?.text.substr(19, message?.text.length)).duration}
+                {new Date(JSON.parse(message?.text.substr(19, message?.text.length)).duration).toLocaleTimeString([], {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  hour12: false,
+                })}
+              </div>
+            </div>
+            <div className="flex items-center">
+              <button className="rounded-full bg-transparent th-color-brwhite" onClick={
+                () => {
+                  if (JSON.parse(message?.text.substr(19, message?.text.length)).receiver?.objectId === user?.uid) {
+                    handleCallingButton(JSON.parse(message?.text.substr(19, message?.text.length)).sender, JSON.parse(message?.text.substr(19, message?.text.length)).audioOnly);
+                  } else {
+                    handleCallingButton(JSON.parse(message?.text.substr(19, message?.text.length)).receiver, JSON.parse(message?.text.substr(19, message?.text.length)).audioOnly);
+                  }
+                }
+              }>
+                <img src={`${process.env.PUBLIC_URL}/call_start.png`} className="h-10 w-10" alt="mic_on" />
+              </button>
+            </div>
+          </div>
+        </div>
+        }
+        </>
+        : 
       <div className="flex flex-1 group w-full">
         {displayProfilePicture && (
           <div className="flex flex-col items-start h-full pt-1 w-6">
@@ -949,7 +1092,8 @@ export default function Message({
             )}
           </div>
         )}
-      </div>
+      </div>}
+      </>
     ),
     [
       photoURL,
@@ -969,6 +1113,12 @@ export default function Message({
   );
 
   return (
+    <>
+    {message?.text.includes("[Jitsi_Call_Log:]:") ?
+    <div className="w-full" id={message?.objectId}>
+      {children}
+      {messageRender}
+    </div> :
     <div className="w-full first:mb-4 last:mt-4" id={message?.objectId}>
       {children}
 
@@ -989,5 +1139,7 @@ export default function Message({
       </MessageDiv>
       <DeleteConfirm open={open} setOpen={setOpen} deleteMessage={deleteMessage} />
     </div>
+    }
+    </>
   );
 }

@@ -3,14 +3,31 @@ import axios from 'axios';
 import { useModal } from 'contexts/ModalContext'
 import { useUser } from 'contexts/UserContext';
 import React, { useState } from 'react'
+import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { postData } from 'utils/api-helpers';
 import { getHref } from 'utils/get-file-url';
+import { v4 as uuidv4 } from "uuid";
 
 function Calling() {
   const { userdata } = useUser();
-  const { openCalling, setOpenCalling, recipientInfo, setRecipientInfo, setSenderInfo, setRoomName, enableMic, setEnableMic, iframeLoaded, setIframeLoaded } = useModal();
+  const { workspaceId, dmId } = useParams();
+  const { openCalling, setOpenCalling, recipientInfo, setRecipientInfo, senderInfo, setSenderInfo, setRoomName, isVideoDisabled, enableMic, setEnableMic, iframeLoaded, setIframeLoaded } = useModal();
+  
+  const sendCallMessage = async (type: string, startTime: Date) => {
+    const messageId = uuidv4();
+    await postData("/messages", {
+      objectId: messageId,
+      text: `[Jitsi_Call_Log:]: {"sender": ${JSON.stringify(senderInfo)}, "receiver": ${JSON.stringify(recipientInfo)}, "type": "${type}", "duration": "${startTime}", "audioOnly": ${isVideoDisabled}}`,
+      chatId: dmId,
+      workspaceId,
+      chatType: "Direct",
+    });
+  }
+
   const handleStopButton = async () => {
     try {
+      await sendCallMessage("Stopped Call", new Date());
       await axios.post('/send-message', {
         sender: userdata,
         receiver: recipientInfo,

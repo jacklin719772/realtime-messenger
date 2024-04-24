@@ -43,6 +43,7 @@ import Calling from "components/dashboard/Calling";
 import { io, Socket } from 'socket.io-client';
 import Receiving from "components/dashboard/Receiving";
 import axios from "axios";
+import { v4 as uuidv4 } from "uuid";
 
 interface ServerToClientEvents {
   noArg: () => void;
@@ -230,6 +231,17 @@ export default function Dashboard() {
   const [ownerData, setOwnerData] = useState<any>(null);
   const audio = useMemo(() => new Audio('/ringtone.mp3'), []);
 
+  const sendCallMessage = async (type: string, startTime: Date) => {
+    const messageId = uuidv4();
+    await postData("/messages", {
+      objectId: messageId,
+      text: `[Jitsi_Call_Log:]: {"sender": ${JSON.stringify(senderInfo)}, "receiver": ${JSON.stringify(recipientInfo)}, "type": "${type}", "duration": "${startTime}", "audioOnly": ${isVideoDisabled}}`,
+      chatId: dmId,
+      workspaceId,
+      chatType: "Direct",
+    });
+  }
+
   useEffect(() => {
     if ((openCalling || openReceiving) && !iframeLoaded) {
       audio.play();
@@ -263,6 +275,7 @@ export default function Dashboard() {
         }, "*");
       }
       if (receiver?.objectId === user?.uid && !openCalling && type === "Timeout" && openReceiving) {
+        // sendCallMessage("Missed Call", new Date());
         setOpenReceiving(false);
         setSenderInfo(null);
         setRecipientInfo(null);
@@ -297,6 +310,7 @@ export default function Dashboard() {
         });
       }
       if (receiver?.objectId === user?.uid && openCalling && type === "Reject" && !openReceiving) {
+        sendCallMessage("Refused Call", new Date());
         setOpenCalling(false);
         setSenderInfo(null);
         setRecipientInfo(null);

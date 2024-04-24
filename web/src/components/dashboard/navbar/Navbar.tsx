@@ -82,7 +82,8 @@ export default function Navbar() {
   const clearAllNotifications = async () => {
     const repliedMessages = messages.filter((m: any) => (m.replyId && m.replySenderId === userdata?.objectId && m.replySenderId !== m.senderId && !m.isNoticeRead));
     const mentionedMessages = messages.filter((m: any) => (m.senderId !== userdata?.objectId && m.text.includes(`<span contenteditable="false">@${userdata.displayName}</span>`) && !m.isNoticeRead));
-    if (repliedMessages.concat(mentionedMessages).length > 0) {
+    const missedCallMessages = messages.filter((m: any) => (m?.text.includes("[Jitsi_Call_Log:]:") && !m.isNoticeRead)).filter((message: any) => (JSON.parse(message?.text.substr(19, message?.text.length)).type === "Missed Call" && JSON.parse(message?.text.substr(19, message?.text.length)).receiver?.objectId === userdata?.objectId));
+    if (missedCallMessages.concat(repliedMessages).concat(mentionedMessages).length > 0) {
       setDeleteLoading(true);
       for (const m of repliedMessages.concat(mentionedMessages)) {
         await postData(`/messages/${m?.objectId}/notifications`);
@@ -122,7 +123,21 @@ export default function Navbar() {
         </div>
       </div>
     ));
-    return mentionedHtml.concat(repliedHtml);
+    const missedCallMessages = messages.filter((m: any) => (m?.text.includes("[Jitsi_Call_Log:]:") && !m.isNoticeRead)).filter((message: any) => (JSON.parse(message?.text.substr(19, message?.text.length)).type === "Missed Call" && JSON.parse(message?.text.substr(19, message?.text.length)).receiver?.objectId === userdata?.objectId));
+    const missedCallHtml = missedCallMessages.map((r: any, index: number) => (
+      <div className="flex p-2 th-bg-bg th-color-for border-b cursor-pointer hover:bg-gray-200 w-full" key={index} onClick={() => goMessage(r)}>
+        <div className="flex justify-center items-center w-10 pr-2">
+          <img src={getHref(users.filter((m: any) => m?.objectId === r?.senderId)[0].thumbnailURL) || 
+            getHref(users.filter((m: any) => m?.objectId === r?.senderId)[0].photoURL) || 
+            `${process.env.PUBLIC_URL}/blank_user.png`} alt={r?.senderId} className="w-full" />
+        </div>
+        <div className="w-60">
+          <div className="font-bold text-sm">You missed {users.filter((m: any) => m?.objectId === r?.senderId)[0].displayName}'s call:</div>
+          <div className="font-medium text-xs">{new Date(r.createdAt).toLocaleString()}</div>
+        </div>
+      </div>
+    ));
+    return missedCallHtml.concat(mentionedHtml).concat(repliedHtml);
   }, [messages, loading]);
 
   const handleLanguageChange = (newLang: string) => {

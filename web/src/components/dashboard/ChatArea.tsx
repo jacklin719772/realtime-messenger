@@ -28,6 +28,7 @@ import { Menu, Transition } from "@headlessui/react";
 import { useModal } from "contexts/ModalContext";
 import axios from "axios";
 import { randomRoomName } from "utils/jitsiGenerator";
+import { v4 as uuidv4 } from "uuid";
 
 const SelectChannel = styled.button`
   :hover {
@@ -113,7 +114,7 @@ function HeaderDirectMessage() {
   const { visibleFileSearch, setVisibleFileSearch } = useContext(ReactionsContext);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
-  const { openCalling, setOpenCalling, setRecipientInfo, setSenderInfo, setRoomName, setIsVideoDisabled, openMeetingModal } = useModal();
+  const { openCalling, setOpenCalling, recipientInfo, setRecipientInfo, senderInfo, setSenderInfo, setRoomName, setIsVideoDisabled, openMeetingModal, isVideoDisabled } = useModal();
 
   const createChannelAndInviteMember = async () => {
     setLoading(true);
@@ -186,20 +187,31 @@ function HeaderDirectMessage() {
       console.error('Error sending message', error);
     }
   }
+ 
+  const sendCallMessage = async (type: string, startTime: Date) => {
+    const messageId = uuidv4();
+    await postData("/messages", {
+      objectId: messageId,
+      text: `[Jitsi_Call_Log:]: {"sender": ${JSON.stringify(senderInfo)}, "receiver": ${JSON.stringify(recipientInfo)}, "type": "${type}", "duration": "${startTime}", "audioOnly": ${isVideoDisabled}}`,
+      chatId: dmId,
+      workspaceId,
+      chatType: "Direct",
+    });
+  }
 
   useEffect(() => {
     console.log(new Date());
     let timer: NodeJS.Timeout | undefined;
     if (openCalling && !openMeetingModal) {
       timer = setTimeout(() => {
-        console.log(new Date());
+        sendCallMessage("Missed Call", new Date());
         handleTimeout(userdata, value);
       }, 30000);
     } else {
       clearTimeout(timer);
     }
     return () => clearTimeout(timer);
-  }, [openCalling, openMeetingModal]);
+  }, [openCalling, openMeetingModal, senderInfo, recipientInfo, isVideoDisabled]);
 
   return (
     <div className="w-full border-b flex items-center justify-between px-5 py-1 h-14 th-color-selbg th-border-selbg">
