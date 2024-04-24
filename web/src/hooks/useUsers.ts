@@ -5,6 +5,8 @@ import * as subscriptions from "graphql/subscriptions";
 import useAuth from "hooks/useAuth";
 import { useContext, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { useMyWorkspaces } from "./useWorkspaces";
+import { useModal } from "contexts/ModalContext";
 
 function compareFullName(a: any, b: any) {
   if (a.fullName < b.fullName) {
@@ -19,9 +21,12 @@ function compareFullName(a: any, b: any) {
 export function useUsersByWorkspace() {
   const { user } = useAuth();
   const location = useLocation();
+  const { currentWorkspaceId } = useModal();
   const workspaceId = location.pathname
     .split("/dashboard/workspaces/")[1]
-    ?.split("/")[0];
+    ?.split("/")[0] ? location.pathname
+    .split("/dashboard/workspaces/")[1]
+    ?.split("/")[0] : currentWorkspaceId;
 
   const [users, setUsers] = useState<any[]>([]);
 

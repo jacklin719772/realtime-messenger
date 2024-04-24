@@ -19,9 +19,9 @@ import { useUser } from "contexts/UserContext";
 import { usePresenceByUserId } from "hooks/usePresence";
 import { useUserById } from "hooks/useUsers";
 import { useMyWorkspaces, useWorkspaceById } from "hooks/useWorkspaces";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
 import {
   Navigate,
   useLocation,
@@ -36,6 +36,24 @@ import 'react-toastify/dist/ReactToastify.css';
 import CalendarView from "components/dashboard/calendar/CalendarView";
 import { useChannelById } from "hooks/useChannels";
 import EtherpadModal from "components/dashboard/EtherpadModal";
+import MinimizedView from "components/dashboard/MinimizedView";
+import CreateMessageModal from "components/dashboard/sidebar/CreateMessageModal";
+import MeetingModal from "components/dashboard/MeetingModal";
+import Calling from "components/dashboard/Calling";
+import { io, Socket } from 'socket.io-client';
+import Receiving from "components/dashboard/Receiving";
+import axios from "axios";
+
+interface ServerToClientEvents {
+  noArg: () => void;
+  newMessage: (msg: string) => void;
+  basicEmit: (a: number, b: string, c: Buffer) => void;
+  withAck: (d: string, callback: (e: number) => void) => void;
+}
+
+interface ClientToServerEvents {
+  hello: () => void;
+}
 
 function ProfileViewItem({ value, text }: { value: string; text: string }) {
   const {setEmailRecipient, setEmailBody, setOpenMailSender} = useContext(ModalContext);
@@ -91,7 +109,16 @@ function ProfileView() {
       navigate(`/dashboard/workspaces/${workspaceId}/dm/${directId}`);
       setOpenAdd(false);
     } catch (err: any) {
-      toast.error(err.message);
+      toast.error(err.message, {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
     }
     setLoading(false);
   };
@@ -104,7 +131,16 @@ function ProfileView() {
       await postData(`/directs/${dm?.objectId}/close`);
       if (dmId === id) navigate(`/dashboard/workspaces/${workspaceId}`);
     } catch (err: any) {
-      toast.error(err.message);
+      toast.error(err.message, {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
     }
     setLoading(false);
   };
@@ -178,8 +214,9 @@ function ProfileView() {
 export default function Dashboard() {
   const { workspaceId, channelId, dmId } = useParams();
   const { value, loading } = useMyWorkspaces();
+  console.log(value);
   const { user, userdata } = useUser();
-  const { value: channel } = useChannelById(channelId || value[0].channelId || value.find((w: any) => w.objectId === workspaceId)?.channelId);
+  const { value: channel } = useChannelById(channelId || value[0]?.channelId);
   console.log(channel);
   const { value: owner } = useUserById(channel?.createdBy);
   console.log(owner);
@@ -188,9 +225,117 @@ export default function Dashboard() {
   const calendar = location.pathname?.includes("calendar");
   const teamcal = location.pathname?.includes("teamcal");
   const {visibleFileSearch, visibleGlobalSearch} = useContext(ReactionsContext);
-  const {openMailSender, openFavorite, uteamworkUserData, openEtherpad} = useContext(ModalContext);
+  const {openMailSender, openFavorite, uteamworkUserData, etherpadMinimized, setCurrentWorkspaceId, openMeetingModal, openCalling, setOpenCalling, openReceiving, setOpenReceiving, recipientInfo, setRecipientInfo, senderInfo, setSenderInfo, roomName, setRoomName, isVideoDisabled, setIsVideoDisabled, setOpenMeetingModal, iframeLoaded} = useContext(ModalContext);
   const [isOwner, setIsOwner] = useState(false);
   const [ownerData, setOwnerData] = useState<any>(null);
+  const audio = useMemo(() => new Audio('/ringtone.mp3'), []);
+
+  useEffect(() => {
+    if ((openCalling || openReceiving) && !iframeLoaded) {
+      audio.play();
+      audio.loop = true;
+    } else {
+      audio.pause();
+    }
+  }, [openCalling, openReceiving, iframeLoaded]);
+
+  useEffect(() => {
+    const socket = io();
+    socket.on('newMessage', (data: any) => {
+      const { message } = JSON.parse(data);
+      const { receiver, sender, type, room, audioOnly } = JSON.parse(message);
+      console.log(JSON.parse(message));
+      console.log(receiver);
+      console.log(user);
+      console.log('openCalling: ', openCalling);
+      console.log('openReceiving: ', openReceiving);
+      if (receiver?.objectId === user?.uid && !openCalling && type === "Calling" && !openReceiving) {
+        setOpenReceiving(true);
+        setSenderInfo(sender);
+        setRecipientInfo(receiver);
+        setRoomName(room);
+        setIsVideoDisabled(audioOnly);
+        window.parent.postMessage({
+          roomName: room,
+          name: userdata.displayName,
+          sender: sender?.displayName,
+          audioOnly,
+        }, "*");
+      }
+      if (receiver?.objectId === user?.uid && !openCalling && type === "Timeout" && openReceiving) {
+        setOpenReceiving(false);
+        setSenderInfo(null);
+        setRecipientInfo(null);
+        setRoomName("");
+        setIsVideoDisabled(false);
+        toast.info('Sorry, but this call timed out.', {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+      }
+      if (receiver?.objectId === user?.uid && !openCalling && type === "Stop" && openReceiving) {
+        setOpenReceiving(false);
+        setSenderInfo(null);
+        setRecipientInfo(null);
+        setRoomName("");
+        setIsVideoDisabled(false);
+        toast.info('The caller has interrupted the call.', {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+      }
+      if (receiver?.objectId === user?.uid && openCalling && type === "Reject" && !openReceiving) {
+        setOpenCalling(false);
+        setSenderInfo(null);
+        setRecipientInfo(null);
+        setRoomName("");
+        setIsVideoDisabled(false);
+        toast.info('The recipient has declined the call.', {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+      }
+      if (receiver?.objectId === user?.uid && openCalling && type === "Accept" && !openReceiving) {
+        setOpenMeetingModal(true);
+        // setOpenCalling(false);
+        // setSenderInfo(null);
+        // setRecipientInfo(null);
+        // setRoomName("");
+        // setIsVideoDisabled(false);
+        toast.info('The recipient has accepted the call.', {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+      }
+    });
+    return () => {
+      socket.disconnect();
+    }
+  }, [openCalling, openReceiving, roomName, isVideoDisabled]);
 
   useEffect(() => {
     if (owner) {
@@ -222,6 +367,18 @@ export default function Dashboard() {
     window.addEventListener("resize", appHeight);
   }, []);
 
+  useEffect(() => {
+    if (workspaceId) {
+      setCurrentWorkspaceId(workspaceId);
+    } else if (value.length > 0) {
+      setCurrentWorkspaceId(value[0].objectId);
+    }
+  }, [value, workspaceId]);
+
+  const epadModalRender = useMemo(() => (
+    <><EtherpadModal /></>
+  ), []);
+
   if (loading) return <LoadingScreen />;
 
   if (value?.length === 0) return <Navigate to="/dashboard/new_workspace" />;
@@ -243,14 +400,6 @@ export default function Dashboard() {
       />
     );
   }
-
-  // if (workspaceId && !channelId && dmId && teamcal) {
-  //   return (
-  //     <Navigate
-  //       to={`/dashboard/workspaces/${workspaceId}/dm/${dmId}/teamcal`}
-  //     />
-  //   );
-  // }
 
   if ((!workspaceId || !value.find((w: any) => w.objectId === workspaceId)) && !calendar)
     return (
@@ -297,9 +446,14 @@ export default function Dashboard() {
             {visibleFileSearch ? <FileGalleryView /> : profile && <ProfileView />}
             {openMailSender && <MailComposer />}
             {openFavorite && <Favorite />}
-            {openEtherpad && <EtherpadModal />}
           </>
         )}
+        <>{epadModalRender}</>
+        {etherpadMinimized && <MinimizedView />}
+        <CreateMessageModal />
+        {openCalling && <Calling />}
+        {openReceiving && <Receiving />}
+        {openMeetingModal && <MeetingModal />}
         <ToastContainer
           position="top-right"
           autoClose={2000}

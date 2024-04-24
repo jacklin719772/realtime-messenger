@@ -60,6 +60,40 @@ export const ModalContext = createContext({
   
   openDeleteEvent: false,
   setOpenDeleteEvent: null as any,
+
+  etherpadMinimized: false,
+  setEtherpadMinimized: null as any,
+
+  openDeletePad: false,
+  setOpenDeletePad: null as any,
+  checkedPads: [] as any[],
+  setCheckedPads: null as any,
+  currentPadName: "",
+  setCurrentPadName: null as any,
+
+  currentWorkspaceId: "",
+  setCurrentWorkspaceId: null as any,
+
+  openMeetingModal: false,
+  setOpenMeetingModal: null as any,
+
+  openCalling: false,
+  setOpenCalling: null as any,
+  recipientInfo: null as any,
+  setRecipientInfo: null as any,
+
+  openReceiving: false,
+  setOpenReceiving: null as any,
+  senderInfo: null as any,
+  setSenderInfo: null as any,
+  roomName: "",
+  setRoomName: null as any,
+  isVideoDisabled: false,
+  setIsVideoDisabled: null as any,
+  iframeLoaded: false,
+  setIframeLoaded: null as any,
+  enableMic: true,
+  setEnableMic: null as any,
 });
 
 export function ModalProvider({ children }: { children: React.ReactNode }) {
@@ -95,6 +129,20 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
   const [openEtherpad, setOpenEtherpad] = useState(false);
   const [etherpadLink, setEtherpadLink] = useState("");
   const [openDeleteEvent, setOpenDeleteEvent] = useState(false);
+  const [etherpadMinimized, setEtherpadMinimized] = useState(false);
+  const [openDeletePad, setOpenDeletePad] = useState(false);
+  const [checkedPads, setCheckedPads] = useState<any[]>([]);
+  const [currentPadName, setCurrentPadName] = useState("");
+  const [currentWorkspaceId, setCurrentWorkspaceId] = useState("");
+  const [openMeetingModal, setOpenMeetingModal] = useState(false);
+  const [openCalling, setOpenCalling] = useState(false);
+  const [recipientInfo, setRecipientInfo] = useState<any>(null);
+  const [openReceiving, setOpenReceiving] = useState(false);
+  const [senderInfo, setSenderInfo] = useState<any>(null);
+  const [roomName, setRoomName] = useState("");
+  const [isVideoDisabled, setIsVideoDisabled] = useState(false);
+  const [iframeLoaded, setIframeLoaded] = useState(false);
+  const [enableMic, setEnableMic] = useState(true);
 
   return (
     <ModalContext.Provider
@@ -171,6 +219,40 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
 
         openDeleteEvent,
         setOpenDeleteEvent,
+
+        etherpadMinimized,
+        setEtherpadMinimized,
+
+        openDeletePad,
+        setOpenDeletePad,
+        checkedPads,
+        setCheckedPads,
+        currentPadName,
+        setCurrentPadName,
+
+        currentWorkspaceId,
+        setCurrentWorkspaceId,
+
+        openMeetingModal,
+        setOpenMeetingModal,
+
+        openCalling,
+        setOpenCalling,
+        recipientInfo,
+        setRecipientInfo,
+
+        openReceiving,
+        setOpenReceiving,
+        senderInfo,
+        setSenderInfo,
+        roomName,
+        setRoomName,
+        isVideoDisabled,
+        setIsVideoDisabled,
+        iframeLoaded,
+        setIframeLoaded,
+        enableMic,
+        setEnableMic,
       }}
     >
       {children}

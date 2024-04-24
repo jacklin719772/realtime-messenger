@@ -167,7 +167,6 @@ export default function Sidebar() {
       </div>
       <Preferences />
       <WorkspaceSettings workspace={value} />
-      <CreateMessageModal />
     </div>
   );
 }

@@ -7,6 +7,8 @@ import cors from "cors";
 import express from "express";
 import { verifyToken } from "utils/auth";
 import nodemailer from 'nodemailer';
+import amqp from 'amqplib';
+import WebSocket from 'ws';
 
 const app = express();
 
@@ -94,6 +96,72 @@ usersRouter.post("/", users.createUser);
 usersRouter.post("/:id", authMiddleware, users.updateUser);
 usersRouter.post("/:id/presence", authMiddleware, users.updatePresence);
 usersRouter.post("/:id/read", authMiddleware, users.read);
+
+const server = app.listen(4001, () => {
+  console.log('Server running on port 4001');
+});
+
+const wss = new WebSocket.Server({ server });
+
+wss.on('connection', (ws: any) => {
+  console.log('Client connected');
+
+  // Handle messages from the client (React frontend)
+  ws.on('message', (message: any) => {
+    console.log(`Received message from client: ${message}`);
+  });
+
+  // You can also send messages to the client
+  // ws.send('Welcome to WebSocket!');
+});
+
+async function connect() {
+  try {
+    const connection = await amqp.connect('amqp://admin:password@117.21.178.36:5672');
+    const channel = await connection.createChannel();
+
+    // Create a queue for receiving messages
+    const queueName = 'messages';
+    await channel.assertQueue(queueName, { durable: false });
+
+    // Consume messages from the queue
+    channel.consume(queueName, (message: any) => {
+      console.log('Received message:', message.content.toString());
+      // Handle the incoming message here
+      // You can emit this message to your React frontend via WebSocket or other means
+    }, { noAck: true });
+
+    console.log('Connected to RabbitMQ');
+  } catch (error) {
+    console.error('Error connecting to RabbitMQ', error);
+  }
+}
+
+connect();
+
+app.post('/send-message', async (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) => {
+  const message = req.body;
+  
+  try {
+    const connection = await amqp.connect('amqp://admin:password@117.21.178.36:5672');
+    const channel = await connection.createChannel();
+    const queueName = 'messages';
+
+    // Send message to the queue
+    channel.sendToQueue(queueName, Buffer.from(JSON.stringify(message)));
+    console.log('Message sent:', message);
+
+    res.locals.data = { message: 'Message sent successfully' };
+    return next();
+  } catch (error) {
+    console.error('Error sending message', error);
+    return next(error);
+  }
+});
 
 const mailRouter = express.Router();
 mailRouter.post("/", async (

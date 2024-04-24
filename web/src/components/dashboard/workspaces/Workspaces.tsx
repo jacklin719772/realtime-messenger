@@ -250,6 +250,7 @@ function WorkspaceItem({
 }) {
   const { themeColors } = useTheme();
   const { workspaceId } = useParams();
+  const {openEtherpad, etherpadMinimized, openCreateMessage} = useModal();
   const navigate = useNavigate();
   const selected = workspaceId && objectId === workspaceId;
   const photoURL = src;
@@ -271,7 +272,7 @@ function WorkspaceItem({
           selected ? "border-2" : "",
           "h-8 w-8 rounded-md p-px"
         )}
-        style={{ borderColor: selected ? themeColors?.blue : "" }}
+        style={{ borderColor: (selected  && (!openEtherpad || etherpadMinimized) && !openCreateMessage) ? themeColors?.blue : "" }}
       />
     </div>
   );
@@ -303,7 +304,7 @@ export default function Workspaces() {
   const navigate = useNavigate();
   const { themeColors } = useTheme();
   const calendar = location.pathname.includes("calendar");
-  const {openEtherpad, setOpenEtherpad} = useModal();
+  const {openEtherpad, setOpenEtherpad, etherpadMinimized, setEtherpadMinimized, openCreateMessage, setOpenCreateMessage, createMessageSection, setCreateMessageSection, openMeetingModal, setOpenMeetingModal} = useModal();
   return (
     <div className="row-span-2 border-r flex flex-col items-center space-y-5 py-2 flex-1 overflow-y-auto th-bg-selbg th-border-bg">
       {value?.map((doc: any) => (
@@ -314,6 +315,50 @@ export default function Workspaces() {
           src={getHref(doc.thumbnailURL) || getHref(doc.photoURL)}
         />
       ))}
+      <div
+        role="button"
+        tabIndex={0}
+        className={classNames(
+          "flex items-center justify-center cursor-pointer focus:outline-none"
+        )}
+        title="Add channel"
+        onClick={() => {
+          setOpenCreateMessage(true);
+          setCreateMessageSection("channels");
+        }}
+      >
+        <img
+          src={`${process.env.PUBLIC_URL}/add_channel.png`}
+          alt="workspace"
+          className={classNames(
+            calendar ? "border-2" : "",
+            "h-8 w-8 rounded-md p-px"
+          )}
+          style={{ borderColor: (openCreateMessage && createMessageSection === "channels") ? themeColors?.blue : "" }}
+        />
+      </div>
+      <div
+        role="button"
+        tabIndex={0}
+        className={classNames(
+          "flex items-center justify-center cursor-pointer focus:outline-none"
+        )}
+        title="Add member"
+        onClick={() => {
+          setOpenCreateMessage(true);
+          setCreateMessageSection("members");
+        }}
+      >
+        <img
+          src={`${process.env.PUBLIC_URL}/add_member.png`}
+          alt="workspace"
+          className={classNames(
+            calendar ? "border-2" : "",
+            "h-8 w-8 rounded-md p-px"
+          )}
+          style={{ borderColor: (openCreateMessage && createMessageSection === "members") ? themeColors?.blue : "" }}
+        />
+      </div>
       <div
         role="button"
         tabIndex={0}
@@ -332,7 +377,7 @@ export default function Workspaces() {
             calendar ? "border-2" : "",
             "h-8 w-8 rounded-md p-px"
           )}
-          style={{ borderColor: calendar ? themeColors?.blue : "" }}
+          style={{ borderColor: (calendar && (!openEtherpad || etherpadMinimized) && !openCreateMessage) ? themeColors?.blue : "" }}
         />
       </div>
       <div
@@ -341,9 +386,14 @@ export default function Workspaces() {
         className={classNames(
           "flex items-center justify-center cursor-pointer focus:outline-none"
         )}
-        title="My Schedule"
-        onClick={() =>
-          setOpenEtherpad(true)
+        title="Collaedit"
+        onClick={() => {
+            if (!openEtherpad) {
+              setOpenEtherpad(true)
+            } else {
+              setEtherpadMinimized(false);
+            }
+          }
         }
       >
         <img
@@ -356,8 +406,25 @@ export default function Workspaces() {
           style={{ borderColor: openEtherpad ? themeColors?.blue : "" }}
         />
       </div>
-      {/* <AddWorkspaces />
-      <CreateWorkspace /> */}
+      <div
+        role="button"
+        tabIndex={0}
+        className={classNames(
+          "flex items-center justify-center cursor-pointer focus:outline-none"
+        )}
+        title="Web meeting"
+        onClick={() => {}}
+      >
+        <img
+          src={`${process.env.PUBLIC_URL}/book_camera.png`}
+          alt="workspace"
+          className={classNames(
+            calendar ? "border-2" : "",
+            "h-8 w-8 rounded-md p-px"
+          )}
+          style={{ borderColor: openMeetingModal ? themeColors?.blue : "" }}
+        />
+      </div>
     </div>
   );
 }

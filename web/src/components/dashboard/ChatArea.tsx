@@ -9,7 +9,7 @@ import { useChannelById } from "hooks/useChannels";
 import { useDetailByChat } from "hooks/useDetails";
 import { useDirectMessageById } from "hooks/useDirects";
 import { useUserById } from "hooks/useUsers";
-import { KeyboardEvent, useContext, useEffect, useState } from "react";
+import { Fragment, KeyboardEvent, useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { postData } from "utils/api-helpers";
@@ -20,10 +20,14 @@ import ForwardMessage from "./chat/ForwardMessage";
 import ReplyMessage from "./chat/ReplyMessage";
 import SelectHeader from "./chat/SelectHeader";
 import SelectFooter from "./chat/SelectFooter";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
 import Spinner from "components/Spinner";
 import AddChannelConfirm from "./chat/AddChannelConfirm";
 import useAuth from "hooks/useAuth";
+import { Menu, Transition } from "@headlessui/react";
+import { useModal } from "contexts/ModalContext";
+import axios from "axios";
+import { randomRoomName } from "utils/jitsiGenerator";
 
 const SelectChannel = styled.button`
   :hover {
@@ -99,7 +103,7 @@ function HeaderDirectMessage() {
   const { themeColors } = useTheme();
   const { workspaceId, dmId } = useParams();
   const { value: dm } = useDirectMessageById(dmId);
-  const { user } = useUser();
+  const { user, userdata } = useUser();
   const { value: userData } = useUserById(user?.uid);
   const otherUserId = dm?.members.find((m: string) => m !== user?.uid);
   const { value } = useUserById(otherUserId || user?.uid);
@@ -109,6 +113,7 @@ function HeaderDirectMessage() {
   const { visibleFileSearch, setVisibleFileSearch } = useContext(ReactionsContext);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
+  const { openCalling, setOpenCalling, setRecipientInfo, setSenderInfo, setRoomName, setIsVideoDisabled, openMeetingModal } = useModal();
 
   const createChannelAndInviteMember = async () => {
     setLoading(true);
@@ -131,6 +136,70 @@ function HeaderDirectMessage() {
     setOpen(false);
     setLoading(false);
   }
+
+  const handleCallingButton = async (audioOnly: boolean) => {
+    try {
+      const room = randomRoomName();
+      await axios.post('/send-message', {
+        sender: userdata,
+        receiver: value,
+        type: "Calling",
+        room,
+        audioOnly,
+      });
+      console.log('Message sent successfully');
+      setOpenCalling(true);
+      setRecipientInfo(value);
+      setSenderInfo(userdata);
+      setRoomName(room);
+      setIsVideoDisabled(audioOnly);
+    } catch (error) {
+      console.error('Error sending message', error);
+    }
+  }
+  
+  const handleTimeout = async (sender: any, receiver: any) => {
+    try {
+      await axios.post('/send-message', {
+        sender,
+        receiver,
+        type: "Timeout",
+        roomName: "",
+      });
+      console.log('Message sent successfully');
+      setOpenCalling(false);
+      setRecipientInfo(null);
+      setSenderInfo(null);
+      setRoomName("");
+      setIsVideoDisabled(false);
+      toast.info('Sorry, but the recipient you are calling right now is not responding.', {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+    } catch (error) {
+      console.error('Error sending message', error);
+    }
+  }
+
+  useEffect(() => {
+    console.log(new Date());
+    let timer: NodeJS.Timeout | undefined;
+    if (openCalling && !openMeetingModal) {
+      timer = setTimeout(() => {
+        console.log(new Date());
+        handleTimeout(userdata, value);
+      }, 30000);
+    } else {
+      clearTimeout(timer);
+    }
+    return () => clearTimeout(timer);
+  }, [openCalling, openMeetingModal]);
 
   return (
     <div className="w-full border-b flex items-center justify-between px-5 py-1 h-14 th-color-selbg th-border-selbg">
@@ -155,19 +224,13 @@ function HeaderDirectMessage() {
         </h5>
         <ChevronDownIcon className="h-4 w-4 th-color-for" />
       </SelectChannel>
-      <div>
+      <div className="flex">
         {value?.objectId !== user?.uid && (
           <button className="th-bg-bg th-color-for inline-flex justify-center items-center text-sm w-10 h-10 rounded font-extrabold focus:z-10 focus:outline-none" disabled={loading} onClick={() =>setOpen(true)}>
             {loading ? <Spinner className="h-5 w-5" /> : 
             <img className="h-5 w-5" alt="add member" src={`${process.env.PUBLIC_URL}/add_user.png`} />}
           </button>
         )}
-        {/* <button
-          className="th-bg-bg th-color-for inline-flex justify-center items-center text-sm w-10 h-10 rounded font-extrabold focus:z-10 focus:outline-none"
-          onClick={() => navigate(`/dashboard/workspaces/${workspaceId}/dm/${dmId}/teamcal`)}
-        >
-          <img className="h-5 w-5" alt="gallery" src={`${process.env.PUBLIC_URL}/calendar.png`} />
-        </button> */}
         <button
           className="th-bg-bg th-color-for inline-flex justify-center items-center text-sm w-10 h-10 rounded font-extrabold focus:z-10 focus:outline-none"
           onClick={() => setVisibleSearch(!visibleSearch)}
@@ -182,6 +245,16 @@ function HeaderDirectMessage() {
         >
           <img className="h-5 w-5" alt="gallery" src={`${process.env.PUBLIC_URL}/gallery.png`} />
         </button>
+        {value?.objectId !== user?.uid && (
+          <button className="th-bg-bg th-color-for inline-flex justify-center items-center text-sm w-10 h-10 rounded font-extrabold focus:z-10 focus:outline-none disabled:opacity-50" disabled={openCalling} onClick={() => handleCallingButton(true)}>
+            <img className="h-5 w-5" alt="call" src={`${process.env.PUBLIC_URL}/voice_call.png`} />
+          </button>
+        )}
+        {value?.objectId !== user?.uid && (
+          <button className="th-bg-bg th-color-for inline-flex justify-center items-center text-sm w-10 h-10 rounded font-extrabold focus:z-10 focus:outline-none disabled:opacity-50" disabled={openCalling} onClick={() => handleCallingButton(false)}>
+            <img className="h-5 w-5" alt="call" src={`${process.env.PUBLIC_URL}/video_call.png`} />
+          </button>
+        )}
       </div>
       <AddChannelConfirm open={open} setOpen={setOpen} addChannel={createChannelAndInviteMember} loading={loading} />
     </div>

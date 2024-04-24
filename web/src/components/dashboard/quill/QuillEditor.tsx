@@ -848,6 +848,9 @@ function Editor({
             .ql-snow .ql-editor a:hover {
               text-decoration: underline;
             }
+            .ql-snow .ql-tooltip.ql-editing {
+              left: 0 !important;
+            }
           `}
         />
         <ReactQuill

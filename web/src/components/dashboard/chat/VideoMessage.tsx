@@ -77,6 +77,7 @@ export default function VideoMessage() {
     const extension = blob.type.split("/").length > 1 ? blob.type.split("/")[1] : "wav";
     const remadeFile = new File([blob], `record.${extension}`, {type: blob.type});
     console.log(remadeFile);
+    removeAllStream();
     setVideoBlob(remadeFile);
     setVisibleVideoRecorder(false);
     clearBlobUrl();
