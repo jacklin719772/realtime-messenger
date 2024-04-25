@@ -6,7 +6,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        lato: ["Lato", ...defaultTheme.fontFamily.sans],
+        lato: ['segoe, "Segoe UI", Arial, sans-serif'],
       },
       gridTemplateRows: {
         main: "40px auto",

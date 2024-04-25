@@ -170,8 +170,8 @@ export default function Editor() {
     <div className="w-full px-5 pb-2 flex-shrink-0">
       <div
         className={classNames(
-          dropzone.isDragActive ? "th-border-blue" : "th-border-selbg",
-          "w-full border rounded flex items-center th-bg-bg"
+          dropzone.isDragActive ? "th-border-blue" : "th-border-for",
+          "w-full border rounded-lg flex items-center th-bg-bg"
         )}
       >
         <Formik

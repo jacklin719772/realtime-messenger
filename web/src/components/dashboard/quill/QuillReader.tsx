@@ -45,6 +45,10 @@ export default function Reader({
     <>
       <Style
         css={`
+          .mention {
+            background-color: ${themeColors?.brightBlack} !important;
+            padding: 2px 0 !important;
+          }
           .reader .ql-editor {
             color: ${themeColors?.foreground};
             font-weight: ${themeColors?.messageFontWeight === "light"
@@ -69,7 +73,7 @@ export default function Reader({
 
           /* Link */
           .ql-bubble .ql-editor a {
-            color: ${themeColors?.blue};
+            color: ${themeColors?.cyan};
             text-decoration: none;
           }
           .ql-bubble .ql-editor a:hover {

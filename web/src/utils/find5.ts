@@ -508,7 +508,7 @@ function create_div_html(isShowTxt: any, root: string) {
     '<div id="look" style="color: #363636">查找:</div>' +
     '<div id="window_body" style="padding-left: 15px;height: 35px;border: 1px solid #DCDFE6;border-radius: 5px;background-color: #fff;width: 500px">' +
     '<form onsubmit="return false;"><div style="display: flex;padding: 3px;"><input autocomplete="off"' +
-    ' class="paperview-input-text" ' +
+    ' class="paperview-input-text focus:outline-none focus:ring-0 text-sm" ' +
     ' style="float:left;height: 27px;width: 500px;border: none;outline: 0px;" id="fwtext"' +
     ' placeholder="Search messages..."/>' +
     closeIcon +
@@ -518,9 +518,9 @@ function create_div_html(isShowTxt: any, root: string) {
     "</form></div>" +
     '<div class="searchRight" style=" display: flex; width: 300px">' +
     '<div class="res"  style=" display: flex;justify-content: space-around;align-items: center;">' +
-    `<div class="txt" style="font-size: 14px; color: #6c6c6c;">Results：<span id="total">0</span></div>` +
-    '<div id="btnUp" class="btn item" style="display: flex;justify-content: center;align-items: center;width: 68px;height: 24px;background: #1b4975;border-radius: 4px;font-size: 12px;color: #ffffff; margin: 12px 2px;cursor: pointer;margin-left: 10px;">Prev</div>' +
-    '<div id="btnDown" class="btn item" style="display: flex;justify-content: center;align-items: center;width: 68px;height: 24px;background: #1b4975;border-radius: 4px;font-size: 12px;color: #ffffff; margin: 12px 2px;cursor: pointer;">Next</div>' +
+    `<div class="txt th-color-for" style="font-size: 14px;">Results：<span id="total">0</span></div>` +
+    '<div id="btnUp" class="btn item th-bg-bg border-2 rounded th-border-for th-color-for text-xs" style="display: flex;justify-content: center;align-items: center;width: 68px;height: 24px; margin: 12px 2px;cursor: pointer;margin-left: 10px;">Prev</div>' +
+    '<div id="btnDown" class="btn item th-bg-bg border-2 rounded th-border-for th-color-for text-xs" style="display: flex;justify-content: center;align-items: center;width: 68px;height: 24px; margin: 12px 2px;cursor: pointer;">Next</div>' +
     '<div class="txt" id="find_msg"  style="font-size: 14px; color: #6c6c6c;margin-left: 10px;">0/0</div>' +
     "</div>" +
     "</div>";

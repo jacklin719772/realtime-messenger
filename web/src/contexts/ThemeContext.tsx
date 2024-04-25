@@ -100,9 +100,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // @ts-ignore
     document.querySelector("body").style.backgroundColor =
-      themeColors?.background;
+      themeColors?.backgroundDark;
     if (themeColors)
-      localStorage.setItem("backgroundColor", themeColors.background);
+      localStorage.setItem("backgroundColor", themeColors.backgroundDark);
   }, [themeColors]);
 
   const getThemeColors = useCallback(() => {
@@ -130,8 +130,14 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
           .th-bg-bg {
             background-color: ${themeColors?.background};
           }
+          .th-bg-bgdark {
+            background-color: ${themeColors?.backgroundDark};
+          }
           .th-bg-for {
             background-color: ${themeColors?.foreground};
+          }
+          .th-bg-forbr {
+            background-color: ${hexToRgbA(themeColors?.foreground, "0.5")};
           }
           .th-bg-selbg {
             background-color: ${themeColors?.selectionBackground};
@@ -173,6 +179,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
           .th-border-bg {
             border-color: ${themeColors?.background};
           }
+          .th-border-bgdark {
+            border-color: ${themeColors?.backgroundDark};
+          }
           .th-border-blue {
             border-color: ${themeColors?.blue};
           }
@@ -180,10 +189,19 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
             border-color: ${themeColors?.selectionBackground};
           }
           .th-border-for {
-            border-color: ${themeColors?.foreground};
+            border-color: ${hexToRgbA(themeColors?.foreground, "0.5")};
+          }
+          .th-border-ford {
+            border-color: ${hexToRgbA(themeColors?.foreground, "0.8")};
           }
           .th-border-brblack {
             border-color: ${themeColors?.brightBlack};
+          }
+          .th-border-brred {
+            border-color: ${themeColors?.brightRed};
+          }
+          .th-border-cyan {
+            border-color: ${themeColors?.cyan};
           }
 
           .th-color-bg {
@@ -212,6 +230,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
           }
           .th-color-brblack {
             color: ${themeColors?.brightBlack};
+          }
+          .th-color-cyan {
+            color: ${themeColors?.cyan};
           }
         `}
       />

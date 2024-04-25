@@ -45,18 +45,18 @@ export default function SelectFooter() {
   
   return (
     <>
-      <div className="border-t th-border-selbg flex justify-end items-center px-5 py-3">
+      <div className="border-t th-border-for flex justify-end items-center px-5 py-3">
         <button className="flex flex-col items-center mr-4 disabled:opacity-50" disabled={isEmailDisabled} onClick={handleOpenEmail}>
           <img className="h-6 w-6" alt="forward" src="/send_email.png" />
-          <div className="text-xs">E-mail</div>
+          <div className="text-xs th-color-for">E-mail</div>
         </button>
         <button className="flex flex-col items-center mr-4" onClick={() => setVisibleForwardMultiple(true)}>
           <img className="h-6 w-6" alt="forward" src="/forward.png" />
-          <div className="text-xs">Forward</div>
+          <div className="text-xs th-color-for">Forward</div>
         </button>
         <button className="flex flex-col items-center disabled:opacity-50" disabled={isDisabled} onClick={() => setOpen(true)}>
-        <TrashIcon className="h-6 w-6" />
-          <div className="text-xs">Remove</div>
+        <TrashIcon className="h-6 w-6 th-color-for" />
+          <div className="text-xs th-color-for">Remove</div>
         </button>
       </div>
       <DeleteConfirm open={open} setOpen={setOpen} deleteMessage={handleMultipleDelete} />

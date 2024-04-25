@@ -147,8 +147,8 @@ function ProfileView() {
   };
   
   return (
-    <div className="row-span-2 border-l flex flex-col overflow-hidden th-border-selbg">
-      <div className="h-14 border-b flex items-center justify-between py-1 px-4 th-border-selbg">
+    <div className="row-span-2 border rounded-xl flex flex-col overflow-hidden th-border-for my-2 mr-2 th-bg-bg">
+      <div className="h-14 border-b flex items-center justify-between py-1 px-4 th-border-for">
         <h5 className="text-base font-bold th-color-for">Profile</h5>
         <XIcon
           onClick={() => navigate(location.pathname.split("/user_profile")[0])}
@@ -191,16 +191,16 @@ function ProfileView() {
         </div>
         <div className="w-full px-5 pt-2 flex items-center justify-between pb-8">
           {dmUsers.includes(value.objectId) && (
-            <button className="w-28 p-2 border border-red-500 th-color-brred rounded text-xs shadow" onClick={() => setOpenRemove(true)}>
+            <button className="w-28 p-2 border-2 th-border-brred th-color-brred rounded text-xs shadow" onClick={() => setOpenRemove(true)}>
               Remove member
             </button>
           )}
           {!dmUsers.includes(value.objectId) && (
-            <button className="w-28 p-2 border th-border-blue th-color-blue rounded text-xs shadow" onClick={() => setOpenAdd(true)}>
+            <button className="w-28 p-2 border-2 th-border-cyan th-color-cyan rounded text-xs shadow" onClick={() => setOpenAdd(true)}>
               Add as member
             </button>
           )}
-          <button className="w-28 p-2 border th-border-for rounded text-xs shadow" onClick={() => setOpenOffice(true)}>
+          <button className="w-28 p-2 border-2 th-border-for th-color-for rounded text-xs shadow" onClick={() => setOpenOffice(true)}>
             Visit weboffice
           </button>
         </div>

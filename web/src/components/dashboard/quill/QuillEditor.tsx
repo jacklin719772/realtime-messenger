@@ -221,7 +221,7 @@ function StickersDropdown() {
             <div>
               <Popover.Panel
                 static
-                className="th-bg-bg th-border-selbg origin-top-left max-h-96 overflow-y-scroll w-72 absolute bottom-0 right-0 shadow border rounded py-2 px-2 grid grid-cols-3 gap-1"
+                className="th-bg-bg th-border-for origin-top-left max-h-96 overflow-y-scroll w-72 absolute bottom-0 right-0 shadow border rounded py-2 px-2 grid grid-cols-3 gap-1"
               >
                 {stickers.map((sticker) => (
                   <div
@@ -335,9 +335,9 @@ function CustomToolbar({
             backgroundColor:
               // eslint-disable-next-line
               errors.text && isText
-                ? themeColors?.red
+                ? themeColors?.brightRed
                 : isText || isFiles
-                ? themeColors?.blue
+                ? themeColors?.green
                 : "transparent",
           }}
         >
@@ -799,8 +799,8 @@ function Editor({
                 : "400"};
             }
             .editor .ql-editor {
-              border-top-left-radius: 3px;
-              border-top-right-radius: 3px;
+              border-top-left-radius: 12px;
+              border-top-right-radius: 12px;
             }
             .quill > .ql-container > .ql-editor.ql-blank::before {
               color: ${themeColors?.foreground};
@@ -811,9 +811,9 @@ function Editor({
               background-color: ${themeColors?.background};
               border-color: ${isDragActive
                 ? themeColors?.blue
-                : themeColors?.selectionBackground};
-              border-bottom-left-radius: 3px;
-              border-bottom-right-radius: 3px;
+                : hexToRgbA(themeColors?.foreground, "0.5")};
+              border-bottom-left-radius: 12px;
+              border-bottom-right-radius: 12px;
             }
 
             /* Code editor */

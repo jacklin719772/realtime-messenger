@@ -57,7 +57,7 @@ function SearchList() {
     //   return result;
     // }, [])
     .map((channel: any, index: number) => (
-      <div className="flex items-center p-2 th-bg-bg th-color-for border-b cursor-pointer hover:bg-gray-200" key={index} id={channel?.objectId} onClick={() => navigate(`/dashboard/workspaces/${channel?.workspaceId}/channels/${channel?.objectId}`)}>
+      <div className="flex items-center p-2 th-bg-selbg th-color-for cursor-pointer hover:bg-gray-500" key={index} id={channel?.objectId} onClick={() => navigate(`/dashboard/workspaces/${channel?.workspaceId}/channels/${channel?.objectId}`)}>
         <div className="flex justify-center items-center w-10 pr-2">
           <img src={`${process.env.PUBLIC_URL}/channel.png`} alt="channel" className="w-full" />
         </div>
@@ -93,9 +93,9 @@ function SearchList() {
     //   return result;
     // }, [])
     .map((dm: any, index: number) => (
-      <div className="flex items-center p-2 th-bg-bg th-color-for border-b cursor-pointer hover:bg-gray-200" key={index} id={dm?.objectId} onClick={() => navigate(`/dashboard/workspaces/${dm?.workspaceId}/dm/${dm?.objectId}`)}>
+      <div className="flex items-center p-2 th-bg-selbg th-color-for cursor-pointer hover:bg-gray-500" key={index} id={dm?.objectId} onClick={() => navigate(`/dashboard/workspaces/${dm?.workspaceId}/dm/${dm?.objectId}`)}>
         <div className="flex justify-center items-center w-10 pr-2">
-          <img src={getHref(dm?.thumbnailURL) || getHref(dm?.photoURL) || `${process.env.PUBLIC_URL}/blank_user.png`} alt={dm?.displayName} className="w-full" />
+          <img src={getHref(dm?.thumbnailURL) || getHref(dm?.photoURL) || `${process.env.PUBLIC_URL}/blank_user.png`} alt={dm?.displayName} className="w-full rounded-full" />
         </div>
         <div className="w-60">
           <div className="font-bold text-sm" dangerouslySetInnerHTML={{__html: dm?.displayName}} />
@@ -134,12 +134,12 @@ function SearchList() {
       return result;
     }, [])
     .map((message: any, index: number) => (
-      <div className="flex items-center p-2 th-bg-bg th-color-for border-b cursor-pointer hover:bg-gray-200 w-full" key={index} id={message?.objectId} onClick={() => goOriginal(message)}>
+      <div className="flex items-center p-2 th-bg-selbg th-color-for cursor-pointer hover:bg-gray-500 w-full" key={index} id={message?.objectId} onClick={() => goOriginal(message)}>
         <div className="flex justify-center items-center w-10 pr-2">
           <img src={message?.chatType === "Channel" ? `${process.env.PUBLIC_URL}/channel.png` : 
             getHref(members.filter((m: any) => m?.objectId === message?.senderId)[0].thumbnailURL) || 
             getHref(members.filter((m: any) => m?.objectId === message?.senderId)[0].photoURL) || 
-            `${process.env.PUBLIC_URL}/blank_user.png`} alt={message?.chat} className="w-full" />
+            `${process.env.PUBLIC_URL}/blank_user.png`} alt={message?.chat} className="w-full rounded-full" />
         </div>
         <div className="w-60">
           <div className="font-bold text-sm">{message?.chat}</div>
@@ -180,12 +180,12 @@ function SearchList() {
       return result;
     }, [])
     .map((message: any, index: number) => (
-      <div className="flex items-center p-2 th-bg-bg th-color-for border-b cursor-pointer hover:bg-gray-200 w-full" key={index} id={message?.objectId} onClick={() => goOriginal(message)}>
+      <div className="flex items-center p-2 th-bg-selbg th-color-for cursor-pointer hover:bg-gray-500 w-full" key={index} id={message?.objectId} onClick={() => goOriginal(message)}>
         <div className="flex justify-center items-center w-10 pr-2">
           <img src={message?.chatType === "Channel" ? `${process.env.PUBLIC_URL}/channel.png` : 
             getHref(members.filter((m: any) => m?.objectId === message?.senderId)[0].thumbnailURL) || 
             getHref(members.filter((m: any) => m?.objectId === message?.senderId)[0].photoURL) || 
-            `${process.env.PUBLIC_URL}/blank_user.png`} alt={message?.chat} className="w-full" />
+            `${process.env.PUBLIC_URL}/blank_user.png`} alt={message?.chat} className="w-full rounded-full" />
         </div>
         <div className="w-60">
           <div className="font-bold text-sm">{message?.chat}</div>
@@ -218,13 +218,13 @@ function SearchList() {
   }
 
   return (
-    <div className="col-span-2 row-span-2 p-0 m-0 overflow-hidden flex flex-col border-r th-border-selbg">
-      <div className="flex items-center justify-between w-full px-4 py-4 th-color-for th-bg-selbg">
+    <div className="col-span-2 row-span-2 p-0 my-2 ml-2 overflow-hidden flex flex-col border th-border-for rounded-xl th-bg-selbg">
+      <div className="flex items-center justify-between w-full px-4 py-4 h-14 th-color-for th-bg-selbg border-b th-border-for">
         <h5 className="font-bold th-color-for max-w-sm truncate">{value?.name}</h5>
         {visibleGlobalSearch && <XIcon className="h-4 w-4 button" style={{cursor: "pointer"}} onClick={() => setVisibleGlobalSearch(!visibleGlobalSearch)} />}
       </div>
-      <div className="flex items-center border w-full pl-2 pr-4 th-color-for bg-white th-border-selbg">
-        <SearchIcon className="h-4 w-4 th-color-for" />
+      <div className="flex items-center border-y w-full pl-2 pr-4 text-gray-500 bg-white th-border-selbg mt-2">
+        <SearchIcon className="h-4 w-4 text-gray-500" />
         <input
           type="text"
           name="searchFiles"
@@ -232,11 +232,11 @@ function SearchList() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search for Workspace..."
-          className="block text-sm border-0 w-full focus:outline-none focus:ring-0"
+          className="bg-white block text-sm border-0 w-full focus:outline-none focus:ring-0"
         />
-        <XIcon className="h-4 w-4 th-color-for" style={{cursor: 'pointer'}} onClick={() => setSearch("")} />
+        <XIcon className="h-4 w-4 text-gray-500" style={{cursor: 'pointer'}} onClick={() => setSearch("")} />
       </div>
-      <div className="pt-2 border-r th-border-selbg">
+      <div className="pt-2">
         <RadioGroup
           as="div"
           value={section}
@@ -255,7 +255,7 @@ function SearchList() {
                   "pb-2 cursor-pointer"
                 )}
                 style={{
-                  borderColor: checked ? themeColors?.brightBlue : "",
+                  borderColor: checked ? themeColors?.cyan : "",
                 }}
               >
                 <span>All</span>
@@ -273,7 +273,7 @@ function SearchList() {
                   "pb-2 cursor-pointer"
                 )}
                 style={{
-                  borderColor: checked ? themeColors?.brightBlue : "",
+                  borderColor: checked ? themeColors?.cyan : "",
                 }}
               >
                 <span>Contact</span>
@@ -291,7 +291,7 @@ function SearchList() {
                   "pb-2 cursor-pointer"
                 )}
                 style={{
-                  borderColor: checked ? themeColors?.brightBlue : "",
+                  borderColor: checked ? themeColors?.cyan : "",
                 }}
               >
                 <span>Channel</span>
@@ -309,7 +309,7 @@ function SearchList() {
                   "pb-2 cursor-pointer"
                 )}
                 style={{
-                  borderColor: checked ? themeColors?.brightBlue : "",
+                  borderColor: checked ? themeColors?.cyan : "",
                 }}
               >
                 <span>Message</span>
@@ -327,7 +327,7 @@ function SearchList() {
                   "pb-2 cursor-pointer"
                 )}
                 style={{
-                  borderColor: checked ? themeColors?.brightBlue : "",
+                  borderColor: checked ? themeColors?.cyan : "",
                 }}
               >
                 <span>File</span>
@@ -336,30 +336,30 @@ function SearchList() {
           </RadioGroup.Option>
         </RadioGroup>
       </div>
-      <div className="border-r th-border-selbg overflow-y-auto">
+      <div className="border-r th-border-selbg overflow-y-auto mt-1">
         {(section === "all" || section === "dm") && (<div>
-          <div className="px-4 py-2 th-bg-brwhite th-color-black text-xs">
+          <div className="px-4 py-2 th-color-for th-bg-bgdark text-xs border-b th-border-for">
             Contacts
           </div>
-          {dmList.length > 0 ? dmList : <div className="p-2 text-center text-sm th-bg-bg">No Results</div>}
+          {dmList.length > 0 ? dmList : <div className="p-2 text-center text-sm th-color-for">No Results</div>}
         </div>)}
         {(section === "all" || section === "channel") && (<div>
-          <div className="px-4 py-2 th-bg-brwhite th-color-black text-xs">
+          <div className="px-4 py-2 th-color-for th-bg-bgdark text-xs border-b th-border-for">
             Channels
           </div>
-          {channelList.length > 0 ? channelList : <div className="p-2 text-center text-sm th-bg-bg">No Results</div>}
+          {channelList.length > 0 ? channelList : <div className="p-2 text-center text-sm th-color-for">No Results</div>}
         </div>)}
         {(section === "all" || section === "message") && (<div>
-          <div className="px-4 py-2 th-bg-brwhite th-color-black text-xs">
+          <div className="px-4 py-2 th-color-for th-bg-bgdark text-xs border-b th-border-for">
             Messages
           </div>
-          {messageList.length > 0 ? messageList : loading? <div className="flex justify-center items-center th-bg-bg h-16"><Spinner className="h-4 w-4 th-color-for" /></div> : <div className="p-2 text-center text-sm th-bg-bg">No Results</div>}
+          {messageList.length > 0 ? messageList : loading? <div className="flex justify-center items-center th-bg-bg h-16"><Spinner className="h-4 w-4 th-color-for" /></div> : <div className="p-2 text-center text-sm th-color-for">No Results</div>}
         </div>)}
         {(section === "all" || section === "file") && (<div>
-          <div className="px-4 py-2 th-bg-brwhite th-color-black text-xs">
+          <div className="px-4 py-2 th-color-for th-bg-bgdark text-xs border-b th-border-for">
             Files
           </div>
-          {fileList.length > 0 ? fileList : loading? <div className="flex justify-center items-center th-bg-bg h-16"><Spinner className="h-4 w-4 th-color-for" /></div> : <div className="p-2 text-center text-sm th-bg-bg">No Results</div>}
+          {fileList.length > 0 ? fileList : loading? <div className="flex justify-center items-center th-bg-bg h-16"><Spinner className="h-4 w-4 th-color-for" /></div> : <div className="p-2 text-center text-sm th-color-for">No Results</div>}
         </div>)}
       </div>
     </div>
