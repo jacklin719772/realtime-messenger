@@ -19,6 +19,7 @@ import { useLocation } from 'react-router-dom';
 import classNames from 'utils/classNames';
 import DeleteConfirm from './DeleteConfirm';
 import { toast } from 'react-toastify';
+import { useTheme } from 'contexts/ThemeContext';
 
 const renderEventContent = (eventInfo: any) => {
   return (
@@ -47,6 +48,8 @@ function CalendarView({
 }) {
   const location = useLocation();
   const teamcal = location.pathname?.includes("teamcal");
+  
+  const { themeColors } = useTheme();
 
   const [allMeeting, setAllMeeting] = useState<any[]>([]);
   const [events, setEvents] = useState<EventProps[]>([]);
@@ -182,7 +185,7 @@ function CalendarView({
   }, [allMeeting])
 
   return (
-    <div className={classNames(teamcal ? "" : "col-span-2", "flex flex-col row-span-2 overflow-hidden")}>
+    <div className={classNames(teamcal ? "" : "col-span-2", "flex flex-col row-span-2 overflow-hidden m-2 th-bg-bg rounded-xl border th-border-for")}>
       <Style css={`
         .fc .fc-view-harness {
           height: 360px !important;
@@ -219,11 +222,17 @@ function CalendarView({
         .fc-day-sun a, .fc-day-sat a {
           color: #ff4040 !important;
         }
+        .fc .fc-daygrid-day.fc-day-today, .fc .fc-timegrid-col.fc-day-today {
+          background-color: ${themeColors?.selectionBackground}
+        }
+        .fc .fc-multimonth-singlecol .fc-multimonth-header, .fc .fc-multimonth-daygrid {
+          background-color: ${themeColors?.background}
+        }
       `} />
       <HeaderCalendar />
       <div className="flex flex-col overflow-y-auto">
-        <div className="w-full p-2 flex">
-          <div className="overflow-y-auto w-[70%] p-2">
+        <div className="w-full p-2 md:flex">
+          <div className="overflow-y-auto w-full md:w-[70%] p-2 th-color-for">
             <FullCalendar
               firstDay={0}
               locale={locale}
@@ -282,12 +291,12 @@ function CalendarView({
               ref={calendarRef}
             />
           </div>
-          <div className="w-[30%] p-2">
+          <div className="w-full md:w-[30%] p-2">
             <div className="flex flex-col items-center h-full overflow-y-auto">
-              <div className="w-full text-center text-xl pt-2 pb-6">
+              <div className="w-full text-center text-xl pt-2 pb-6 th-color-for">
                 {selectedDate} {selectedDay}
               </div>
-              <div className="w-full pt-2 h-full border th-border-for">
+              <div className="w-full pt-2 h-full border th-border-for rounded-xl">
                 {
                   dateEvents.length > 0 ? (
                     <>
@@ -318,7 +327,7 @@ function CalendarView({
                   ) : (
                     <div className="w-full flex flex-col items-center justify-center pt-10">
                       <img src={`${process.env.PUBLIC_URL}/no_event.png`} alt="no events" className="w-[40%] h-auto" />
-                      <div className="text-sm">No events for today</div>
+                      <div className="text-sm th-color-for">No events for today</div>
                     </div>
                   )
                 }

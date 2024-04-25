@@ -272,7 +272,7 @@ function WorkspaceItem({
           selected ? "border-2" : "",
           "h-8 w-8 rounded-md p-px"
         )}
-        style={{ borderColor: (selected  && (!openEtherpad || etherpadMinimized) && !openCreateMessage) ? themeColors?.blue : "" }}
+        style={{ borderColor: (selected  && (!openEtherpad || etherpadMinimized) && !openCreateMessage) ? themeColors?.cyan : "" }}
       />
     </div>
   );
@@ -306,7 +306,7 @@ export default function Workspaces() {
   const calendar = location.pathname.includes("calendar");
   const {openEtherpad, setOpenEtherpad, etherpadMinimized, setEtherpadMinimized, openCreateMessage, setOpenCreateMessage, createMessageSection, setCreateMessageSection, openMeetingModal, setOpenMeetingModal} = useModal();
   return (
-    <div className="row-span-2 border-r flex flex-col items-center space-y-5 py-2 flex-1 overflow-y-auto th-bg-selbg th-border-bg">
+    <div className="row-span-2 flex flex-col items-center space-y-5 py-2 flex-1 overflow-y-auto th-bg-bgdark">
       {value?.map((doc: any) => (
         <WorkspaceItem
           key={doc.objectId}
@@ -334,7 +334,7 @@ export default function Workspaces() {
             calendar ? "border-2" : "",
             "h-8 w-8 rounded-md p-px"
           )}
-          style={{ borderColor: (openCreateMessage && createMessageSection === "channels") ? themeColors?.blue : "" }}
+          style={{ borderColor: (openCreateMessage && createMessageSection === "channels") ? themeColors?.cyan : "" }}
         />
       </div>
       <div
@@ -356,7 +356,7 @@ export default function Workspaces() {
             calendar ? "border-2" : "",
             "h-8 w-8 rounded-md p-px"
           )}
-          style={{ borderColor: (openCreateMessage && createMessageSection === "members") ? themeColors?.blue : "" }}
+          style={{ borderColor: (openCreateMessage && createMessageSection === "members") ? themeColors?.cyan : "" }}
         />
       </div>
       <div
@@ -377,7 +377,7 @@ export default function Workspaces() {
             calendar ? "border-2" : "",
             "h-8 w-8 rounded-md p-px"
           )}
-          style={{ borderColor: (calendar && (!openEtherpad || etherpadMinimized) && !openCreateMessage) ? themeColors?.blue : "" }}
+          style={{ borderColor: (calendar && (!openEtherpad || etherpadMinimized) && !openCreateMessage) ? themeColors?.cyan : "" }}
         />
       </div>
       <div
@@ -403,7 +403,7 @@ export default function Workspaces() {
             calendar ? "border-2" : "",
             "h-8 w-8 rounded-md p-px"
           )}
-          style={{ borderColor: openEtherpad ? themeColors?.blue : "" }}
+          style={{ borderColor: openEtherpad ? themeColors?.cyan : "" }}
         />
       </div>
       <div
@@ -422,7 +422,7 @@ export default function Workspaces() {
             calendar ? "border-2" : "",
             "h-8 w-8 rounded-md p-px"
           )}
-          style={{ borderColor: openMeetingModal ? themeColors?.blue : "" }}
+          style={{ borderColor: openMeetingModal ? themeColors?.cyan : "" }}
         />
       </div>
     </div>

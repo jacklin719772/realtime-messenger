@@ -95,7 +95,7 @@ export default function Navbar() {
   const notifications = useMemo(() => {
     const repliedMessages = messages.filter((m: any) => (m.replyId && m.replySenderId === userdata?.objectId && m.replySenderId !== m.senderId && !m.isNoticeRead));
     const repliedHtml = repliedMessages.map((r: any, index: number) => (
-      <div className="flex p-2 th-bg-bg th-color-for border-b cursor-pointer hover:bg-gray-200 w-full" key={index} onClick={() => goMessage(r)}>
+      <div className="flex p-2 th-bg-bg th-color-for border-b th-border-for cursor-pointer hover:bg-gray-200 w-full" key={index} onClick={() => goMessage(r)}>
         <div className="flex justify-center items-center w-10 pr-2">
           <img src={getHref(users.filter((m: any) => m?.objectId === r?.senderId)[0].thumbnailURL) || 
             getHref(users.filter((m: any) => m?.objectId === r?.senderId)[0].photoURL) || 
@@ -110,7 +110,7 @@ export default function Navbar() {
     ));
     const mentionedMessages = messages.filter((m: any) => (m.senderId !== userdata?.objectId && m.text.includes(`<span contenteditable="false">@${userdata.displayName}</span>`) && !m.isNoticeRead));
     const mentionedHtml = mentionedMessages.map((r: any, index: number) => (
-      <div className="flex p-2 th-bg-bg th-color-for border-b cursor-pointer hover:bg-gray-200 w-full" key={index} onClick={() => goMessage(r)}>
+      <div className="flex p-2 th-bg-bg th-color-for border-b th-border-for cursor-pointer hover:bg-gray-200 w-full" key={index} onClick={() => goMessage(r)}>
         <div className="flex justify-center items-center w-10 pr-2">
           <img src={getHref(users.filter((m: any) => m?.objectId === r?.senderId)[0].thumbnailURL) || 
             getHref(users.filter((m: any) => m?.objectId === r?.senderId)[0].photoURL) || 
@@ -125,7 +125,7 @@ export default function Navbar() {
     ));
     const missedCallMessages = messages.filter((m: any) => (m?.text.includes("[Jitsi_Call_Log:]:") && !m.isNoticeRead)).filter((message: any) => (JSON.parse(message?.text.substr(19, message?.text.length)).type === "Missed Call" && JSON.parse(message?.text.substr(19, message?.text.length)).receiver?.objectId === userdata?.objectId));
     const missedCallHtml = missedCallMessages.map((r: any, index: number) => (
-      <div className="flex p-2 th-bg-bg th-color-for border-b cursor-pointer hover:bg-gray-200 w-full" key={index} onClick={() => goMessage(r)}>
+      <div className="flex p-2 th-bg-bg th-color-for border-b th-border-for cursor-pointer hover:bg-gray-200 w-full" key={index} onClick={() => goMessage(r)}>
         <div className="flex justify-center items-center w-10 pr-2">
           <img src={getHref(users.filter((m: any) => m?.objectId === r?.senderId)[0].thumbnailURL) || 
             getHref(users.filter((m: any) => m?.objectId === r?.senderId)[0].photoURL) || 
@@ -149,11 +149,11 @@ export default function Navbar() {
     <div
       className={classNames(
         profile || visibleFileSearch ? "col-span-4" : "col-span-3",
-        "max-h-12 border-b px-4 th-bg-blue th-border-bg grid grid-cols-6"
+        "max-h-12 px-4 th-bg-blue grid grid-cols-6"
       )}
     >
       <div className="flex items-center justify-start col-span-2">
-        <div className="flex items-center px-2">
+        <div className="flex items-center pl-1 pr-3">
           <Menu as="div" className="relative">
             {({ open }) => (
               <>
@@ -171,7 +171,7 @@ export default function Navbar() {
                       />
                     </div>
                     <div
-                      className="rounded h-6 w-6 bg-cover"
+                      className="rounded h-7 w-7 bg-cover p-px"
                       style={{
                         backgroundImage: `url(${
                           photoURL || `${process.env.PUBLIC_URL}/blank_user.png`
@@ -192,7 +192,7 @@ export default function Navbar() {
                 >
                   <Menu.Items
                     static
-                    className="th-bg-bg border th-border-selbg origin-top-right z-20 absolute left-0 mt-2 w-72 rounded-md shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none py-3"
+                    className="th-bg-bg border th-border-for origin-top-right z-20 absolute left-0 mt-2 w-72 rounded-md shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none py-3"
                   >
                     <div className="px-5 flex py-2">
                       <img
@@ -217,7 +217,7 @@ export default function Navbar() {
                         </div>
                       </div>
                     </div>
-                    <div className="w-full h-px my-2 th-bg-selbg" />
+                    <div className="w-full h-px my-2 th-bg-forbr" />
                     <NavbarItem
                       text={t("Edit_profile")}
                       onClick={() => setOpenEditProfile(true)}
@@ -230,7 +230,7 @@ export default function Navbar() {
                       text={t("Change_password")}
                       onClick={() => setOpenEditPassword(true)}
                     />
-                    <div className="w-full h-px my-2 th-bg-selbg" />
+                    <div className="w-full h-px my-2 th-bg-forbr" />
                     <NavbarItem
                       text={t("Sign_out")}
                       onClick={() => {
@@ -255,10 +255,10 @@ export default function Navbar() {
                   >
                     {notifications?.length > 0 && (
                       <div className="th-bg-blue rounded-full h-5 w-5 absolute top-0 right-0 transform translate-x-1 -translate-y-1 flex items-center justify-center">
-                        <div className="flex items-center justify-center rounded-full h-4 w-4 th-bg-red text-white" style={{fontSize: 10, lineHeight: 0}}>{notifications?.length}</div>
+                        <div className="flex items-center justify-center rounded-full h-4 w-4 th-bg-red th-color-for font-medium" style={{fontSize: 10, lineHeight: 0}}>{notifications?.length}</div>
                       </div>
                     )}
-                    <BellIcon className="w-6 h-6 text-white" />
+                    <BellIcon className="w-6 h-6 th-color-for" />
                   </Menu.Button>
                 </div>
                 <Transition
@@ -273,17 +273,17 @@ export default function Navbar() {
                 >
                   <Menu.Items
                     static
-                    className="th-bg-bg border th-border-selbg origin-top-right z-20 absolute left-0 mt-2 w-72 rounded-md shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none py-3"
+                    className="th-bg-bg border th-border-for origin-top-right z-20 absolute left-0 mt-2 w-72 rounded-md shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none py-3"
                   >
                     <div className="px-5 flex items-center justify-between">
-                      <div className="text-base">Notification</div>
-                      <button className="border-0 text-xs" onClick={clearAllNotifications}>Clear All</button>
+                      <div className="text-base th-color-for">Notification</div>
+                      <button className="border-0 text-xs th-color-for" onClick={clearAllNotifications}>Clear All</button>
                     </div>
-                    <div className="w-full h-px my-2 th-bg-selbg" />
+                    <div className="w-full h-px my-2 th-bg-forbr" />
                     {(!loading && !deleteLoading) ? (
                       <>
                         {notifications.length === 0 ? (
-                          <div className="flex items-center justify-center th-bg-bg th-color-for border-b w-full h-10">
+                          <div className="flex items-center justify-center th-bg-bg th-color-for border-b th-border-for w-full h-10">
                             No notifications
                           </div>
                         ) : notifications}
@@ -330,7 +330,7 @@ export default function Navbar() {
                   as="div"
                   className="relative mr-2 cursor-pointer appearance-none"
                 >
-                  <div className="rounded h-6 w-auto bg-cover text-sm th-color-brwhite">
+                  <div className="rounded w-auto bg-cover text-sm th-color-brwhite">
                     { i18n.language === "en" ? "English" : i18n.language === "zhs" ? "简体中文" : "繁體中文" }
                   </div>
                 </Menu.Button>
@@ -347,21 +347,24 @@ export default function Navbar() {
               >
                 <Menu.Items
                   static
-                  className="th-bg-bg border th-border-selbg origin-top-right z-10 absolute right-0 mt-2 w-72 rounded-md shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none py-3"
+                  className="th-bg-bg border th-border-for origin-top-right z-10 absolute right-0 mt-2 w-32 rounded-md shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none py-3"
                 >
-                  <div className="w-full h-px my-2 th-bg-selbg" />
+                  <div className="w-full h-px th-bg-forbr" />
                   <NavbarItem
                     text="English"
                     onClick={() => handleLanguageChange("en")}
                   />
+                  <div className="w-full h-px th-bg-forbr" />
                   <NavbarItem
                     text="简体中文"
                     onClick={() => handleLanguageChange("zhs")}
                   />
+                  <div className="w-full h-px th-bg-forbr" />
                   <NavbarItem
                     text="繁體中文"
                     onClick={() => handleLanguageChange("zht")}
                   />
+                  <div className="w-full h-px th-bg-forbr" />
                 </Menu.Items>
               </Transition>
             </>

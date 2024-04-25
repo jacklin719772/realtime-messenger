@@ -58,11 +58,11 @@ export default function CreateMessageModal() {
           >
             <div
               style={{ backgroundColor: themeColors?.background }}
-              className="inline-block align-bottom rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full"
+              className="inline-block align-bottom border th-border-for rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full"
             >
               <div
                 style={{ backgroundColor: themeColors?.background }}
-                className="pl-8 p-6 pb-4 flex justify-between items-center"
+                className="pl-8 p-6 pb-4 flex justify-between items-center border-b th-border-for"
               >
                 <h5
                   style={{ color: themeColors?.foreground }}
@@ -73,7 +73,7 @@ export default function CreateMessageModal() {
                 <div
                   role="button"
                   tabIndex={0}
-                  className="cursor-pointer focus:outline-none"
+                  className="cursor-pointer focus:outline-none rounded-full"
                   onClick={() => setOpen(false)}
                 >
                   <XIcon
@@ -83,7 +83,7 @@ export default function CreateMessageModal() {
                 </div>
               </div>
               <div
-                className="pt-1"
+                className="pt-2"
                 style={{ backgroundColor: themeColors?.background }}
               >
                 <RadioGroup
@@ -104,7 +104,7 @@ export default function CreateMessageModal() {
                           "pb-2 cursor-pointer"
                         )}
                         style={{
-                          borderColor: checked ? themeColors?.brightBlue : "",
+                          borderColor: checked ? themeColors?.foreground : "",
                         }}
                       >
                         <span>Channels</span>
@@ -122,7 +122,7 @@ export default function CreateMessageModal() {
                           "pb-2 cursor-pointer"
                         )}
                         style={{
-                          borderColor: checked ? themeColors?.brightBlue : "",
+                          borderColor: checked ? themeColors?.foreground : "",
                         }}
                       >
                         <span>Members</span>
@@ -131,10 +131,8 @@ export default function CreateMessageModal() {
                   </RadioGroup.Option>
                 </RadioGroup>
                 <div
-                  className={classNames("space-y-6 pt-5 pb-8 border-t")}
+                  className={classNames("space-y-6 pt-5 pb-8 border-t th-bg-bg th-border-for")}
                   style={{
-                    backgroundColor: themeColors?.background,
-                    borderColor: themeColors?.selectionBackground,
                     height: 350, maxHeight: 350,
                   }}
                 >

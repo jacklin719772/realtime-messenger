@@ -393,10 +393,10 @@ export default function Message({
         <>
         {JSON.parse(message?.text.substr(19, message?.text.length)).type === "Call ended" &&  
       <div className="flex flex-1 group w-full pl-12 items-center">
-        <div className="w-96 px-4 py-2 m-2 rounded th-bg-selbg flex justify-between items-center">
+        <div className="w-96 px-4 py-2 m-2 rounded-lg th-bg-selbg flex justify-between items-center border th-border-for">
           <div className="flex items-center space-x-2">
-            <div className="text-sm">{JSON.parse(message?.text.substr(19, message?.text.length)).type}</div>
-            <div className="text-sm">
+            <div className="text-sm th-color-for">{JSON.parse(message?.text.substr(19, message?.text.length)).type}</div>
+            <div className="text-sm th-color-for">
               {String(Math.floor(parseInt(JSON.parse(message?.text.substr(19, message?.text.length)).duration) / 1000 / 60)).padStart(2, "0")}:
               {String(Math.floor(parseInt(JSON.parse(message?.text.substr(19, message?.text.length)).duration) / 1000) - Math.floor(parseInt(JSON.parse(message?.text.substr(19, message?.text.length)).duration) / 1000 / 60) * 60).padStart(2, "0")}
             </div>
@@ -418,10 +418,10 @@ export default function Message({
       </div>}
       {(JSON.parse(message?.text.substr(19, message?.text.length)).type === "Missed Call" && JSON.parse(message?.text.substr(19, message?.text.length)).receiver?.objectId === user?.uid) &&  
       <div className="flex flex-1 group w-full pl-12 items-center">
-        <div className="w-96 px-4 py-2 m-2 rounded th-bg-selbg flex justify-between items-center">
+        <div className="w-96 px-4 py-2 m-2 rounded-lg th-bg-selbg flex justify-between items-center border th-border-for">
           <div className="flex items-center space-x-2">
-            <div className="text-sm">{JSON.parse(message?.text.substr(19, message?.text.length)).type}</div>
-            <div className="text-sm">
+            <div className="text-sm th-color-for">{JSON.parse(message?.text.substr(19, message?.text.length)).type}</div>
+            <div className="text-sm th-color-for">
               {new Date(JSON.parse(message?.text.substr(19, message?.text.length)).duration).toLocaleTimeString([], {
                 hour: '2-digit',
                 minute: '2-digit',
@@ -447,10 +447,10 @@ export default function Message({
         }
         {(JSON.parse(message?.text.substr(19, message?.text.length)).type === "Stopped Call" && JSON.parse(message?.text.substr(19, message?.text.length)).receiver?.objectId === user?.uid) &&  
         <div className="flex flex-1 group w-full pl-12 items-center">
-          <div className="w-96 px-4 py-2 m-2 rounded th-bg-selbg flex justify-between items-center">
+          <div className="w-96 px-4 py-2 m-2 rounded-lg th-bg-selbg flex justify-between items-center border th-border-for">
             <div className="flex items-center space-x-2">
-              <div className="text-sm">{JSON.parse(message?.text.substr(19, message?.text.length)).type}</div>
-              <div className="text-sm">
+              <div className="text-sm th-color-for">{JSON.parse(message?.text.substr(19, message?.text.length)).type}</div>
+              <div className="text-sm th-color-for">
                 {new Date(JSON.parse(message?.text.substr(19, message?.text.length)).duration).toLocaleTimeString([], {
                   hour: '2-digit',
                   minute: '2-digit',
@@ -476,10 +476,10 @@ export default function Message({
         }
         {(JSON.parse(message?.text.substr(19, message?.text.length)).type === "Refused Call" && JSON.parse(message?.text.substr(19, message?.text.length)).sender?.objectId === user?.uid) &&  
         <div className="flex flex-1 group w-full pl-12 items-center">
-          <div className="w-96 px-4 py-2 m-2 rounded th-bg-selbg flex justify-between items-center">
+          <div className="w-96 px-4 py-2 m-2 rounded-lg th-bg-selbg flex justify-between items-center border th-border-for">
             <div className="flex items-center space-x-2">
-              <div className="text-sm">{JSON.parse(message?.text.substr(19, message?.text.length)).type}</div>
-              <div className="text-sm">
+              <div className="text-sm th-color-for">{JSON.parse(message?.text.substr(19, message?.text.length)).type}</div>
+              <div className="text-sm th-color-for">
                 {new Date(JSON.parse(message?.text.substr(19, message?.text.length)).duration).toLocaleTimeString([], {
                   hour: '2-digit',
                   minute: '2-digit',
@@ -573,12 +573,12 @@ export default function Message({
           )}
 
           <div className={classNames(
-            message?.replyId ? "p-2 bg-opacity-50 th-bg-selbg" : ""
+            message?.replyId ? "p-2 pl-0" : ""
           )}>
             {message?.replyId && (
-              <div className="px-4 py-1 mt-2 mr-2 th-bg-selbg cursor-pointer shadow rounded" style={{borderLeft: '3px solid grey'}} onClick={() => goRepliedOriginal(message?.replyId)}>
+              <div className="px-4 py-1 mt-2 mr-2 cursor-pointer shadow rounded-lg border border-l-4 th-border-for" onClick={() => goRepliedOriginal(message?.replyId)}>
                 <div className="py-1">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 th-color-for">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
                   </svg>
                 </div>
@@ -602,14 +602,14 @@ export default function Message({
                   />
                   <div
                     role="button"
-                    className="font-bold text-sm ml-2 hover:underline cursor-pointer" onClick={() =>
+                    className="font-bold text-sm ml-2 hover:underline cursor-pointer th-color-for" onClick={() =>
                       navigate(
                         `${
                           location.pathname.split("/user_profile")[0]
                         }/user_profile/${replyUser?.objectId}`
                       )
                   }>{replyUser?.displayName}</div>
-                  <div className="px-2 th-color-brblack text-xs">{getFormattedTime(message?.replyCreatedAt)}</div>
+                  <div className="px-2 th-color-for text-xs">{getFormattedTime(message?.replyCreatedAt)}</div>
                 </div>
                 <div className="pt-1">
                   {message?.replyText && <QuillReader text={message?.replyText} isEdited={false} />}
@@ -672,7 +672,7 @@ export default function Message({
                         !message?.replyFileType?.includes("video/") &&
                         !message?.replyFileType?.includes("image/") && (
                           <div className="relative my-1">
-                            <div className="rounded h-16 w-80 relative group bg-gray-800 border border-gray-600 flex space-x-2 items-center p-1 overflow-hidden">
+                            <div className="rounded-xl h-16 w-80 relative group border th-border-for flex space-x-2 items-center p-1 overflow-hidden">
                               <DocumentTextIcon className="h-9 w-9 text-blue-500 flex-shrink-0" />
                               <div className="flex flex-col min-w-0">
                                 <div className="text-gray-300 text-sm font-bold truncate">
@@ -692,7 +692,7 @@ export default function Message({
             )}
 
             {message?.forwardId && forward && !loading ? (
-              <div className="px-4 py-1 mt-2 th-bg-selbg" style={{borderLeft: '3px solid grey'}}>
+              <div className="px-4 py-1 mt-2 border border-l-4 th-border-for rounded-lg">
                 <div className="flex items-center h-5 pt-1 w-auto">
                   <div
                     role="button"
@@ -713,7 +713,7 @@ export default function Message({
                   />
                   <div
                     role="button"
-                    className="font-bold text-sm ml-2 hover:underline cursor-pointer" onClick={() =>
+                    className="font-bold text-sm ml-2 hover:underline cursor-pointer th-color-for" onClick={() =>
                       navigate(
                         `${
                           location.pathname.split("/user_profile")[0]
@@ -800,13 +800,13 @@ export default function Message({
                 </div>
                 {(isOriginViewAllowed && !forward?.isDeleted) && (
                 <div className="text-xs flex items-center">
-                  <div className="pr-2 button th-color-brblack hover:underline cursor-pointer border-r th-border-brblack" onClick={() => goOriginal(forward)}>
+                  <div className="pr-2 button th-color-for hover:underline cursor-pointer border-r th-border-for" onClick={() => goOriginal(forward)}>
                     {message?.forwardChatType === "Channel" ? `Posted in #${forwardChatName}` : "Direct message"}
                   </div>
-                  <div className="px-2 th-color-brblack hover:underline cursor-pointer border-r th-border-brblack" style={{cursor: 'pointer'}} onClick={() => goOriginal(forward)}>
+                  <div className="px-2 th-color-for hover:underline cursor-pointer border-r th-border-for" style={{cursor: 'pointer'}} onClick={() => goOriginal(forward)}>
                     {getFormattedTime(message?.forwardCreatedAt)}
                   </div>
-                  <div className="px-2 th-color-blue hover:underline cursor-pointer th-border-brblack" style={{cursor: 'pointer'}} onClick={() => goOriginal(forward)}>
+                  <div className="px-2 th-color-cyan hover:underline cursor-pointer th-border-for" style={{cursor: 'pointer'}} onClick={() => goOriginal(forward)}>
                     {message?.forwardChatType === "Channel" ? "View message" : "View conversation"}
                   </div>
                 </div>
@@ -929,7 +929,7 @@ export default function Message({
             {message?.fileURL && (
               <button
                 type="button"
-                className="th-bg-bg th-border-selbg th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none"
+                className="th-bg-bg th-border-for th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none"
                 onClick={() => downloadRef?.current?.click()}
               >
                 <span className="sr-only">Download</span>
@@ -954,7 +954,7 @@ export default function Message({
                   message?.fileType?.includes("image/")) && (
               <button
                 type="button"
-                className="th-bg-bg th-border-selbg th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none"
+                className="th-bg-bg th-border-for th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none"
                 onClick={() => previewRef?.current?.click()}
               >
                 <span className="sr-only">Preview</span>
@@ -979,7 +979,7 @@ export default function Message({
                   !message?.fileType?.includes("image/")) && (
               <button
                 type="button"
-                className="th-bg-bg th-border-selbg th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none"
+                className="th-bg-bg th-border-for th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none"
                 onClick={() => previewRef?.current?.click()}
               >
                 <span className="sr-only">Preview</span>
@@ -1001,7 +1001,7 @@ export default function Message({
             {(message?.text && message?.senderId === user?.uid && !message?.forwardId) && (
               <button
                 type="button"
-                className="th-bg-bg th-border-selbg th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none"
+                className="th-bg-bg th-border-for th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none"
                 onClick={() => setEditMessage(message?.objectId)}
               >
                 <span className="sr-only">Edit</span>
@@ -1012,7 +1012,7 @@ export default function Message({
             {message?.senderId === user?.uid && (
               <button
                 type="button"
-                className="th-bg-bg th-border-selbg th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none"
+                className="th-bg-bg th-border-for th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none"
                 onClick={() => setOpen(true)}
               >
                 <span className="sr-only">Delete</span>
@@ -1026,7 +1026,7 @@ export default function Message({
 
             <button
               type="button"
-              className="th-bg-bg th-border-selbg th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none"
+              className="th-bg-bg th-border-for th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none"
               onClick={initializeSelect}
             >
               <span className="sr-only">Select</span>
@@ -1035,7 +1035,7 @@ export default function Message({
 
             <button
               type="button"
-              className="th-bg-bg th-border-selbg th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none"
+              className="th-bg-bg th-border-for th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none"
               onClick={showReply}
             >
               <span className="sr-only">Reply</span>
@@ -1046,7 +1046,7 @@ export default function Message({
 
             <button
               type="button"
-              className="th-bg-bg th-border-selbg th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none"
+              className="th-bg-bg th-border-for th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none"
               onClick={showForward}
             >
               <span className="sr-only">Forward</span>
@@ -1055,7 +1055,7 @@ export default function Message({
             
             <button
               type="button"
-              className="th-bg-bg th-border-selbg th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none"
+              className="th-bg-bg th-border-for th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none"
               onClick={() => initializeEmail(message)}
             >
               <span className="sr-only">Forward</span>
@@ -1067,7 +1067,7 @@ export default function Message({
               {(message?.fileURL && message?.favorites.includes(user?.uid)) ? (
                 <button
                   type="button"
-                  className="th-bg-bg th-border-selbg th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none"
+                  className="th-bg-bg th-border-for th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none"
                   onClick={removeFavorite}
                 >
                   <span className="sr-only">Favorite</span>
@@ -1077,7 +1077,7 @@ export default function Message({
               ) : (
                 <button
                   type="button"
-                  className="th-bg-bg th-border-selbg th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none"
+                  className="th-bg-bg th-border-for th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none"
                   onClick={() => initializeFavorite(message)}
                 >
                   <span className="sr-only">Favorite</span>

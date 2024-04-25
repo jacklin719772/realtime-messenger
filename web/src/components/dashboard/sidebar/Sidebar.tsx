@@ -90,7 +90,7 @@ function WorkspaceDropdown({
             {user?.uid === value?.ownerId ? (
               <Menu.Items
                 static
-                className="origin-top-left absolute left-0 mt-2 w-72 rounded-md shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none py-3 th-bg-bg border th-border-selbg"
+                className="origin-top-left absolute left-0 mt-2 w-72 rounded-md shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none py-3 th-bg-bg border th-border-for"
               >
                 <div className="px-5 flex py-2">
                   <img
@@ -104,7 +104,7 @@ function WorkspaceDropdown({
                     <h5 className="font-bold truncate w-48">{workspaceName}</h5>
                   </div>
                 </div>
-                <div className="w-full h-px my-2 th-bg-selbg" />
+                <div className="w-full h-px my-2 th-bg-forbr" />
                 <WorkspaceDropdownItem
                   setOpen={setOpenInviteTeammates}
                   text={t("Invite_member")}
@@ -113,7 +113,7 @@ function WorkspaceDropdown({
                   setOpen={setOpenCreateChannel}
                   text={t("Create_a_channel")}
                 />
-                <div className="w-full h-px my-2 th-bg-selbg" />
+                <div className="w-full h-px my-2 th-bg-forbr" />
                 <WorkspaceDropdownItem
                   setOpen={setOpenWorkspaceSettings}
                   text={t("Settings")}
@@ -122,7 +122,7 @@ function WorkspaceDropdown({
             ) : (
               <Menu.Items
                 static
-                className="origin-top-left absolute left-0 mt-2 w-72 rounded-md shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none py-3 th-bg-bg border th-border-selbg"
+                className="origin-top-left absolute left-0 mt-2 w-72 rounded-md shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none py-3 th-bg-bg border th-border-for"
               >
                 <div className="px-5 flex py-2">
                   <img
@@ -151,11 +151,11 @@ export default function Sidebar() {
   const photoURL = getHref(value?.thumbnailURL) || getHref(value?.photoURL);
   const {visibleGlobalSearch, setVisibleGlobalSearch} = useContext(ReactionsContext);
   return (
-    <div className="row-span-2 border-r flex flex-col overflow-hidden th-bg-selbg th-border-bg">
+    <div className="row-span-2 border rounded-xl flex flex-col overflow-hidden th-bg-selbg th-border-for my-2">
       {!value ? (
         <Spinner />
       ) : (
-        <div className="h-14 w-full border-b flex items-center justify-between px-4 py-1 th-color-for th-border-bg">
+        <div className="h-14 w-full border-b flex items-center justify-between px-4 py-1 th-color-for th-border-for">
           <WorkspaceDropdown photoURL={photoURL} workspaceName={value?.name} visibleGlobalSearch={visibleGlobalSearch} setVisibleGlobalSearch={setVisibleGlobalSearch} />
         </div>
       )}

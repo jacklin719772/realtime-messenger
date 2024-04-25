@@ -78,7 +78,7 @@ export default function Messages({ lastRead, filter }: { lastRead: number | null
   const displayMessages = useMemo(
     () => (
       <div
-        className="w-full flex flex-1 flex-col-reverse overflow-y-auto pt-1"
+        className="flex flex-1 flex-col-reverse overflow-y-auto m-1"
         id="contentMain"
       >
         {messages?.reduce((result: any, message: any) => {
@@ -127,9 +127,9 @@ export default function Messages({ lastRead, filter }: { lastRead: number | null
             </Message>
             {(index === messages?.length - 1 || (index < messages?.length - 1 && !equalDate(message?.createdAt, messages[index + 1]?.createdAt))) && (
               <div className="flex w-full justify-center items-center">
-                <div className="h-px w-full mx-3 my-3 th-bg-for" />
-                <span className="font-medium w-60 p-1 m-1 text-xs th-color-for th-border-for border text-center rounded date-show" data-text={formattedDate(message?.createdAt)}></span>
-                <div className="h-px w-full mx-3 my-3 th-bg-for" />
+                <div className="h-px w-full ml-3 my-3 th-bg-forbr" />
+                <span className="font-medium w-60 px-2 py-1 text-xs th-color-for th-border-for border text-center rounded-xl date-show" data-text={formattedDate(message?.createdAt)}></span>
+                <div className="h-px w-full mr-3 my-3 th-bg-forbr" />
               </div>
             )}
           </>

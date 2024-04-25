@@ -23,6 +23,7 @@ import { postData } from "utils/api-helpers";
 import toast from "react-hot-toast";
 import { useModal } from "contexts/ModalContext";
 import { toast as toastr } from "react-toastify";
+import { PlusIcon } from "@heroicons/react/outline";
 
 function MessageItem({
     message,
@@ -167,7 +168,7 @@ function MessageItem({
             {!message?.fileType?.includes("video/") &&
               !message?.fileType?.includes("image/") && (
                 <div className="relative my-1">
-                  <div className="rounded h-16 w-full relative group bg-gray-800 border border-gray-600 flex space-x-2 items-center p-1 overflow-hidden">
+                  <div className="rounded-xl h-16 w-full relative group border th-border-for flex space-x-2 items-center p-1 overflow-hidden">
                     <DocumentTextIcon className="h-9 w-9 text-blue-500 flex-shrink-0" />
                     <div className="flex flex-col min-w-0">
                       <div className="text-gray-300 text-sm font-bold truncate">
@@ -390,8 +391,8 @@ function FileGalleryView() {
   [messages, section]);
 
   return (
-    <div className="row-span-2 border-l flex flex-col overflow-hidden th-border-selbg">
-      <div className="h-14 border-b flex items-center justify-between py-1 px-4 th-border-selbg">
+    <div className="row-span-2 border rounded-xl flex flex-col overflow-hidden th-border-for my-2 mr-2 th-bg-bg">
+      <div className="h-14 border-b flex items-center justify-between py-1 px-4 th-border-for">
         <span className="text-base font-bold th-color-for">Gallery</span>
         <XIcon
           onClick={() => setVisibleFileSearch(false)}
@@ -417,7 +418,7 @@ function FileGalleryView() {
                 "pb-2 cursor-pointer"
               )}
               style={{
-                borderColor: checked ? themeColors?.brightBlue : "",
+                borderColor: checked ? themeColors?.cyan : "",
               }}
             >
               <span>All</span>
@@ -435,7 +436,7 @@ function FileGalleryView() {
                 "pb-2 cursor-pointer"
               )}
               style={{
-                borderColor: checked ? themeColors?.brightBlue : "",
+                borderColor: checked ? themeColors?.cyan : "",
               }}
             >
               <span>Image</span>
@@ -453,7 +454,7 @@ function FileGalleryView() {
                 "pb-2 cursor-pointer"
               )}
               style={{
-                borderColor: checked ? themeColors?.brightBlue : "",
+                borderColor: checked ? themeColors?.cyan : "",
               }}
             >
               <span>Audio</span>
@@ -471,7 +472,7 @@ function FileGalleryView() {
                 "pb-2 cursor-pointer"
               )}
               style={{
-                borderColor: checked ? themeColors?.brightBlue : "",
+                borderColor: checked ? themeColors?.cyan : "",
               }}
             >
               <span>Video</span>
@@ -489,7 +490,7 @@ function FileGalleryView() {
                 "pb-2 cursor-pointer"
               )}
               style={{
-                borderColor: checked ? themeColors?.brightBlue : "",
+                borderColor: checked ? themeColors?.cyan : "",
               }}
             >
               <span>Others</span>
@@ -499,16 +500,16 @@ function FileGalleryView() {
       </RadioGroup>
       <Dropzone onDrop={acceptedFiles => onDrop(acceptedFiles)}>
         {({getRootProps, getInputProps}) => (
-          <section className="p-4 w-full" style={{cursor: 'pointer'}}>
-            <div className="rounded w-full h-16 th-bg-selbg flex justify-between items-center px-8" {...getRootProps()}>
+          <section className="p-4 w-full cursor-pointer th-color-for">
+            <div className="rounded-xl border-2 th-border-for w-full h-16 th-bg-selbg flex justify-between items-center px-8" {...getRootProps()}>
               <input {...getInputProps()} />
               <p>Drop here to share</p>
-              <p className="text-4xl">+</p>
+              <PlusIcon className="w-8 h-8" />
             </div>
           </section>
         )}
       </Dropzone>
-      <div className="flex-1 overflow-y-auto flex flex-col items-center">
+      <div className="flex-1 overflow-y-auto flex flex-col items-center m-1">
         <div className="space-y-3 w-full">
           {filteredMessages}
         </div>
