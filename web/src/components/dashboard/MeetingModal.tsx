@@ -1,11 +1,14 @@
-import { Dialog, Transition } from "@headlessui/react";
+import { Dialog, Menu, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
 import { useModal } from "contexts/ModalContext";
 import { useUser } from "contexts/UserContext";
-import { Fragment,  useEffect,  useRef, useState } from "react";
+import { UsersContext } from "contexts/UsersContext";
+import { Fragment,  useContext,  useEffect,  useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { postData } from "utils/api-helpers";
+import { getHref } from "utils/get-file-url";
 import { v4 as uuidv4 } from "uuid";
+import axios from 'axios';
 
 
 export default function MeetingModal() {
@@ -17,6 +20,7 @@ export default function MeetingModal() {
   const [jitsi, setJitsi] = useState({});
   const [meetStartTime, setMeetStartTime] = useState(new Date().getTime());
   const [meetEndTime, setMeetEndTime] = useState(new Date().getTime());
+  const { value: users } = useContext(UsersContext);
 
   const loadJitsiScript = () => {
     let resolveLoadJitsiScriptPromise = null;
@@ -158,6 +162,21 @@ export default function MeetingModal() {
     });
   }
 
+  const handleCallingButton = async (receiver: any) => {
+    try {
+      await axios.post('/send-message', {
+        sender: userdata,
+        receiver,
+        type: "Calling",
+        room: roomName,
+        audioOnly: isVideoDisabled,
+      });
+      console.log('Message sent successfully');
+    } catch (error) {
+      console.error('Error sending message', error);
+    }
+  }
+
   useEffect(() => {
     initialiseJitsi();
 
@@ -213,14 +232,58 @@ export default function MeetingModal() {
                   {isVideoDisabled ? "Voice Call" : "Video Call"}
                 </h5>
                 <div className="flex items-center space-x-4">
-                  <div
-                    role="button"
-                    tabIndex={0}
-                    className="cursor-pointer focus:outline-none"
-                    onClick={() => {}}
-                  >
-                    <img src={`${process.env.PUBLIC_URL}/add_meet_member.png`} className="h-5 w-5" alt="add_participant" />
-                  </div>
+                  <Menu as="div" className="relative">
+                    {({ open }) => (
+                      <>
+                        <div>
+                          <Menu.Button
+                            as="div"
+                            className="relative"
+                          >
+                            <div
+                              role="button"
+                              tabIndex={0}
+                              className="cursor-pointer focus:outline-none"
+                              onClick={() => {}}
+                            >
+                              <img src={`${process.env.PUBLIC_URL}/add_meet_member.png`} className="h-5 w-5" alt="add_participant" />
+                            </div>
+                          </Menu.Button>
+                        </div>
+                        <Transition
+                          show={open}
+                          as={Fragment}
+                          enter="transition ease-out duration-100"
+                          enterFrom="transform opacity-0 scale-95"
+                          enterTo="transform opacity-100 scale-100"
+                          leave="transition ease-in duration-75"
+                          leaveFrom="transform opacity-100 scale-100"
+                          leaveTo="transform opacity-0 scale-95"
+                        >
+                          <Menu.Items
+                            static
+                            className="th-bg-bg border th-border-selbg origin-top-right z-20 absolute right-0 mt-2 w-40 h-64 overflow-y-auto rounded-md shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none py-3"
+                          >
+                            <div className="px-5 flex items-center justify-between">
+                              <div className="text-base">Users</div>
+                            </div>
+                            <div className="w-full h-px th-bg-selbg" />
+                            {users.filter((u: any) => (u.objectId !== recipientInfo?.objectId && u.objectId !== senderInfo && u.objectId !== userdata.objectId)).map((item: any, index: number) => (
+                              <div className="flex justify-between items-center p-2 th-bg-bg th-color-for border-b hover:bg-gray-200 w-full" key={index}>
+                                <div className="flex items-center space-x-2">
+                                  <img src={getHref(item.thumbnailURL) || getHref(item.photoURL) || `${process.env.PUBLIC_URL}/blank_user.png`} alt={item.displayName} className="w-6" />
+                                  <div className="font-bold text-sm">{item.displayName}</div>
+                                </div>
+                                <button className="rounded-full bg-transparent th-color-brwhite" onClick={() => {handleCallingButton(item)}}>
+                                  <img src={`${process.env.PUBLIC_URL}/call_start.png`} className="h-5 w-5" alt="mic_on" />
+                                </button>
+                              </div>
+                            ))}
+                          </Menu.Items>
+                        </Transition>
+                      </>
+                    )}
+                  </Menu>
                   <div
                     role="button"
                     tabIndex={0}
