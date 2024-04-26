@@ -94,6 +94,8 @@ export const ModalContext = createContext({
   setIframeLoaded: null as any,
   enableMic: true,
   setEnableMic: null as any,
+  meetingMinimized: false,
+  setMeetingMinimized: null as any,
 });
 
 export function ModalProvider({ children }: { children: React.ReactNode }) {
@@ -143,6 +145,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
   const [isVideoDisabled, setIsVideoDisabled] = useState(false);
   const [iframeLoaded, setIframeLoaded] = useState(false);
   const [enableMic, setEnableMic] = useState(true);
+  const [meetingMinimized, setMeetingMinimized] = useState(false);
 
   return (
     <ModalContext.Provider
@@ -253,6 +256,8 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
         setIframeLoaded,
         enableMic,
         setEnableMic,
+        meetingMinimized,
+        setMeetingMinimized,
       }}
     >
       {children}

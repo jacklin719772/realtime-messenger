@@ -38,21 +38,36 @@ const SelectChannel = styled.button`
 
 function InviteUserItem({
   item,
+  allChecked,
+  setAllChecked,
   handleSelect,
 }: {
   item: any;
+  allChecked: boolean;
+  setAllChecked: any;
   handleSelect: any;
 }) {
   const [checked, setChecked] = useState(false);
+
+  const handleCheckedChange = (e: any) => {
+    setAllChecked(false);
+    setChecked(e.target.checked);
+  }
 
   useEffect(() => {
     handleSelect(checked, item);
   }, [checked]);
 
+  useEffect(() => {
+    if (allChecked) {
+      setChecked(true);
+    }
+  }, [allChecked]);
+
   return (
     <div className="flex items-center space-x-2 px-2 py-1 th-bg-bg th-color-for border-b th-border-for hover:bg-gray-500 w-full">
       <div className="flex items-center">
-        <input type="checkbox" className="appearance-none checked:bg-blue-500" checked={checked} onChange={(e) => setChecked(e.target.checked)} />
+        <input type="checkbox" className="appearance-none checked:bg-blue-500" checked={checked} onChange={handleCheckedChange} />
       </div>
       <div className="flex items-center space-x-4">
         <img src={getHref(item.thumbnailURL) || getHref(item.photoURL) || `${process.env.PUBLIC_URL}/blank_user.png`} alt={item.displayName} className="w-6" />
@@ -74,11 +89,14 @@ function HeaderChannel() {
   const { visibleFileSearch, setVisibleFileSearch } = useContext(ReactionsContext);
   const { openCalling, setOpenCalling, recipientInfo, setRecipientInfo, senderInfo, setSenderInfo, setRoomName, setIsVideoDisabled, openMeetingModal, isVideoDisabled } = useModal();
   const [checkedUsers, setCheckedUsers] = useState<any[]>([]);
+  const [checked, setChecked] = useState(false);
 
   const handleSelectUsers = (checked: boolean, userdata: any) => {
     if (checked) {
       console.log('Checked:', userdata);
-      setCheckedUsers([...checkedUsers, userdata]);
+      if (checkedUsers.filter((c: any) => (c?.objectId === userdata?.objectId)).length === 0) {
+        setCheckedUsers([...checkedUsers, userdata]);
+      }
     } else {
       console.log('Unchecked: ', userdata);
       setCheckedUsers(checkedUsers.filter((u: any) => u?.objectId !== userdata?.objectId));
@@ -120,6 +138,7 @@ function HeaderChannel() {
       setSenderInfo(null);
       setRoomName("");
       setIsVideoDisabled(false);
+      setCheckedUsers([]);
       toast.info('Sorry, but the recipient you are calling right now is not responding.', {
         position: "top-right",
         autoClose: 2000,
@@ -147,23 +166,18 @@ function HeaderChannel() {
   }
 
   useEffect(() => {
-    console.log(checkedUsers);
-  }, [checkedUsers]);
-
-  useEffect(() => {
     console.log(new Date());
     let timer: NodeJS.Timeout | undefined;
     if (openCalling && !openMeetingModal) {
       timer = setTimeout(() => {
         sendCallMessage("Missed Call", new Date());
         handleTimeout(userdata, checkedUsers);
-        setCheckedUsers([]);
       }, 35000);
     } else {
       clearTimeout(timer);
     }
     return () => clearTimeout(timer);
-  }, [openCalling, openMeetingModal, senderInfo, recipientInfo, isVideoDisabled]);
+  }, [openCalling, openMeetingModal, senderInfo, recipientInfo, isVideoDisabled, checkedUsers]);
 
   return (
     <div className="w-full border-b flex items-center justify-between px-5 py-1 h-14 th-color-selbg th-border-for">
@@ -248,20 +262,18 @@ function HeaderChannel() {
                     <div className="overflow-y-auto h-52">
                       {users?.filter((u: any) => (value?.members.includes(u?.objectId) && u?.objectId !== userdata?.objectId)).map((item: any, index: number) => (
                         <div key={index}>
-                          <InviteUserItem item={item} handleSelect={handleSelectUsers} />
+                          <InviteUserItem item={item} allChecked={checked} setAllChecked={setChecked} handleSelect={handleSelectUsers} />
                         </div>
                       ))}
                     </div>
                     <div className="flex justify-end items-center border-t th-border-for pt-2 px-2 space-x-2">
                       <button className="th-color-cyan border-2 th-border-cyan rounded text-xs px-2 py-1" onClick={() => {
                         handleCallingButton(true);
-                        setCheckedUsers([]);
-                        close();
                       }}>Confirm</button>
                       <button className="th-color-for border-2 th-border-for rounded text-xs px-2 py-1" onClick={() =>  {
-                        setCheckedUsers([]);
-                        close();
-                      }}>Cancel</button>
+                        setCheckedUsers(users?.filter((u: any) => (value?.members.includes(u?.objectId) && u?.objectId !== userdata?.objectId)));
+                        setChecked(true);
+                      }}>Select All</button>
                     </div>
                   </Menu.Items>
                 </Transition>
@@ -304,18 +316,17 @@ function HeaderChannel() {
                     <div className="overflow-y-auto h-52">
                       {users?.filter((u: any) => (value?.members.includes(u?.objectId) && u?.objectId !== userdata?.objectId)).map((item: any, index: number) => (
                         <div key={index}>
-                          <InviteUserItem item={item} handleSelect={handleSelectUsers} />
+                          <InviteUserItem item={item} allChecked={checked} setAllChecked={setChecked} handleSelect={handleSelectUsers} />
                         </div>
                       ))}
                     </div>
                     <div className="flex justify-end items-center border-t th-border-for pt-2 px-2 space-x-2">
                       <button className="th-color-cyan border-2 th-border-cyan rounded text-xs px-2 py-1" onClick={() => {
                         handleCallingButton(false);
-                        close();
                       }}>Confirm</button>
                       <button className="th-color-for border-2 th-border-for rounded text-xs px-2 py-1" onClick={() =>  {
-                        setCheckedUsers([]);
-                        close();
+                        setCheckedUsers(users?.filter((u: any) => (value?.members.includes(u?.objectId) && u?.objectId !== userdata?.objectId)));
+                        setChecked(true);
                       }}>Cancel</button>
                     </div>
                   </Menu.Items>

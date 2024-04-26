@@ -231,11 +231,11 @@ export default function Dashboard() {
   const [ownerData, setOwnerData] = useState<any>(null);
   const audio = useMemo(() => new Audio('/ringtone.mp3'), []);
 
-  const sendCallMessage = async (type: string, startTime: Date) => {
+  const sendCallMessage = async (type: string, startTime: Date, refusedUser?: any) => {
     const messageId = uuidv4();
     await postData("/messages", {
       objectId: messageId,
-      text: `[Jitsi_Call_Log:]: {"sender": ${JSON.stringify(senderInfo)}, "receiver": ${JSON.stringify(recipientInfo)}, "type": "${type}", "duration": "${startTime}", "audioOnly": ${isVideoDisabled}}`,
+      text: `[Jitsi_Call_Log:]: {"sender": ${JSON.stringify(senderInfo)}, "receiver": ${JSON.stringify(recipientInfo)}, "type": "${type}", "duration": "${startTime}", "audioOnly": ${isVideoDisabled}, "refusedUser": ${refusedUser ? JSON.stringify(refusedUser) : null}}`,
       chatId: channelId || dmId,
       workspaceId,
       chatType: "Direct",
@@ -312,7 +312,7 @@ export default function Dashboard() {
       if (receiver?.filter((r: any) => r?.objectId === user?.uid).length > 0 && openCalling && type === "Reject" && !openReceiving) {
         setRecipientInfo(recipientInfo.filter((u: any) => u?.objectId !== sender?.objectId));
         if (recipientInfo.length < 2) {
-          sendCallMessage("Refused Call", new Date());
+          sendCallMessage("Refused Call", new Date(), sender);
           setOpenCalling(false);
           setSenderInfo(null);
           setRoomName("");
