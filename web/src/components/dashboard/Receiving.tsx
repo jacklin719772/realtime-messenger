@@ -12,7 +12,7 @@ import { v4 as uuidv4 } from "uuid";
 function Receiving() {
   const { userdata } = useUser();
   const { workspaceId, dmId } = useParams();
-  const { openReceiving, setOpenReceiving, senderInfo, recipientInfo, setRecipientInfo, setSenderInfo, roomName, setRoomName, isVideoDisabled, setIsVideoDisabled, setOpenMeetingModal, enableMic, setEnableMic, iframeLoaded, setIframeLoaded } = useModal();
+  const { openReceiving, setOpenReceiving, senderInfo, recipientInfo, setRecipientInfo, setSenderInfo, roomName, setRoomName, isVideoDisabled, setIsVideoDisabled, setOpenMeetingModal, enableMic, setEnableMic, iframeLoaded, setIframeLoaded, meetingMinimized } = useModal();
 
   const handleAcceptButton = async () => {
     try {
@@ -67,8 +67,8 @@ function Receiving() {
   }, []);
 
   return (
-    <div className="absolute w-full h-full bg-transparent">
-      <div className="absolute w-96 m-auto inset-0 th-bg-bgdark h-40 p-4 flex items-center rounded-xl border th-border-for" hidden={!openReceiving}>
+    <div className="absolute w-full h-full bg-transparent" hidden={meetingMinimized}>
+      <div className="absolute w-96 m-auto inset-0 th-bg-bgdark h-40 p-4 flex items-center rounded-xl border th-border-for">
         <div className="w-full flex flex-col justify-center space-y-4">
           <div className="flex items-center space-x-4">
             <img src={getHref(senderInfo?.photoURL) || `${process.env.PUBLIC_URL}/blank_user.png`} className="w-10 h-10" alt={senderInfo?.displayName} />

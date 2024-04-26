@@ -60,6 +60,7 @@ export default function Navbar() {
   const { value: users } = useContext(UsersContext);
   const { setOriginId } = useContext(ReactionsContext);
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const { roomName, meetingMinimized, setMeetingMinimized } = useModal();
 
   const { userdata } = useUser();
   const photoURL =
@@ -152,7 +153,7 @@ export default function Navbar() {
         "max-h-12 px-4 th-bg-blue grid grid-cols-6"
       )}
     >
-      <div className="flex items-center justify-start col-span-2">
+      <div className="flex items-center justify-start col-span-3">
         <div className="flex items-center pl-1 pr-3">
           <Menu as="div" className="relative">
             {({ open }) => (
@@ -243,7 +244,7 @@ export default function Navbar() {
             )}
           </Menu>
         </div>
-        <div className="font-bold text-base text-white w-20 truncate">{userdata?.displayName}</div>
+        <div className="font-bold text-base th-color-for w-20 truncate">{userdata?.displayName}</div>
         <div className="flex items-center justify-end">
           <Menu as="div" className="relative">
             {({ open }) => (
@@ -299,8 +300,16 @@ export default function Navbar() {
             )}
           </Menu>
         </div>
+        {meetingMinimized && roomName !== "" && (
+          <div className="ml-5 flex items-center">
+            <div className="text-sm th-color-for">Meeting:  {roomName}</div>
+            <button className="p-2" onClick={() => setMeetingMinimized(false)}>
+              <img src={`${process.env.PUBLIC_URL}/meeting_show.png`} alt="meeting show" title="Display Meeting Window" className="w-6 h-6" />
+            </button>
+          </div>
+        )}
       </div>
-      <div className="col-span-3 flex items-center justify-center">
+      <div className="col-span-2 flex items-center justify-center">
         {/* <div
           style={{
             paddingTop: "1px",

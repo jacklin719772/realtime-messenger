@@ -404,8 +404,8 @@ export default function Message({
           <div className="flex items-center">
             <button className="rounded-full bg-transparent th-color-brwhite" onClick={
               () => {
-                if (JSON.parse(message?.text.substr(19, message?.text.length)).receiver?.objectId === user?.uid) {
-                  handleCallingButton(JSON.parse(message?.text.substr(19, message?.text.length)).sender, JSON.parse(message?.text.substr(19, message?.text.length)).audioOnly);
+                if (JSON.parse(message?.text.substr(19, message?.text.length)).receiver?.filter((r: any) => r?.objectId === user?.uid).length > 0) {
+                  handleCallingButton([JSON.parse(message?.text.substr(19, message?.text.length)).sender], JSON.parse(message?.text.substr(19, message?.text.length)).audioOnly);
                 } else {
                   handleCallingButton(JSON.parse(message?.text.substr(19, message?.text.length)).receiver, JSON.parse(message?.text.substr(19, message?.text.length)).audioOnly);
                 }
@@ -416,7 +416,7 @@ export default function Message({
           </div>
         </div>
       </div>}
-      {(JSON.parse(message?.text.substr(19, message?.text.length)).type === "Missed Call" && JSON.parse(message?.text.substr(19, message?.text.length)).receiver?.objectId === user?.uid) &&  
+      {(JSON.parse(message?.text.substr(19, message?.text.length)).type === "Missed Call" && JSON.parse(message?.text.substr(19, message?.text.length)).receiver?.filter((r: any) => r?.objectId === user?.uid).length > 0) &&  
       <div className="flex flex-1 group w-full pl-12 items-center">
         <div className="w-96 px-4 py-2 m-2 rounded-lg th-bg-selbg flex justify-between items-center border th-border-for">
           <div className="flex items-center space-x-2">
@@ -432,8 +432,8 @@ export default function Message({
           <div className="flex items-center">
             <button className="rounded-full bg-transparent th-color-brwhite" onClick={
               () => {
-                if (JSON.parse(message?.text.substr(19, message?.text.length)).receiver?.objectId === user?.uid) {
-                  handleCallingButton(JSON.parse(message?.text.substr(19, message?.text.length)).sender, JSON.parse(message?.text.substr(19, message?.text.length)).audioOnly);
+                if (JSON.parse(message?.text.substr(19, message?.text.length)).receiver?.filter((r: any) => r?.objectId === user?.uid).length > 0) {
+                  handleCallingButton([JSON.parse(message?.text.substr(19, message?.text.length)).sender], JSON.parse(message?.text.substr(19, message?.text.length)).audioOnly);
                 } else {
                   handleCallingButton(JSON.parse(message?.text.substr(19, message?.text.length)).receiver, JSON.parse(message?.text.substr(19, message?.text.length)).audioOnly);
                 }
@@ -445,7 +445,7 @@ export default function Message({
         </div>
       </div>
         }
-        {(JSON.parse(message?.text.substr(19, message?.text.length)).type === "Stopped Call" && JSON.parse(message?.text.substr(19, message?.text.length)).receiver?.objectId === user?.uid) &&  
+        {(JSON.parse(message?.text.substr(19, message?.text.length)).type === "Stopped Call" && JSON.parse(message?.text.substr(19, message?.text.length)).receiver?.filter((r: any) => r?.objectId === user?.uid).length > 0) &&  
         <div className="flex flex-1 group w-full pl-12 items-center">
           <div className="w-96 px-4 py-2 m-2 rounded-lg th-bg-selbg flex justify-between items-center border th-border-for">
             <div className="flex items-center space-x-2">
@@ -461,8 +461,8 @@ export default function Message({
             <div className="flex items-center">
               <button className="rounded-full bg-transparent th-color-brwhite" onClick={
                 () => {
-                  if (JSON.parse(message?.text.substr(19, message?.text.length)).receiver?.objectId === user?.uid) {
-                    handleCallingButton(JSON.parse(message?.text.substr(19, message?.text.length)).sender, JSON.parse(message?.text.substr(19, message?.text.length)).audioOnly);
+                  if (JSON.parse(message?.text.substr(19, message?.text.length)).receiver?.filter((r: any) => r?.objectId === user?.uid).length > 0) {
+                    handleCallingButton([JSON.parse(message?.text.substr(19, message?.text.length)).sender], JSON.parse(message?.text.substr(19, message?.text.length)).audioOnly);
                   } else {
                     handleCallingButton(JSON.parse(message?.text.substr(19, message?.text.length)).receiver, JSON.parse(message?.text.substr(19, message?.text.length)).audioOnly);
                   }
@@ -491,9 +491,9 @@ export default function Message({
               <button className="rounded-full bg-transparent th-color-brwhite" onClick={
                 () => {
                   if (JSON.parse(message?.text.substr(19, message?.text.length)).receiver?.objectId === user?.uid) {
-                    handleCallingButton(JSON.parse(message?.text.substr(19, message?.text.length)).sender, JSON.parse(message?.text.substr(19, message?.text.length)).audioOnly);
+                    handleCallingButton([JSON.parse(message?.text.substr(19, message?.text.length)).sender], JSON.parse(message?.text.substr(19, message?.text.length)).audioOnly);
                   } else {
-                    handleCallingButton(JSON.parse(message?.text.substr(19, message?.text.length)).receiver, JSON.parse(message?.text.substr(19, message?.text.length)).audioOnly);
+                    handleCallingButton([JSON.parse(message?.text.substr(19, message?.text.length))?.refusedUser], JSON.parse(message?.text.substr(19, message?.text.length)).audioOnly);
                   }
                 }
               }>

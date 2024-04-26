@@ -12,7 +12,7 @@ import { v4 as uuidv4 } from "uuid";
 function Calling() {
   const { userdata } = useUser();
   const { workspaceId, channelId, dmId } = useParams();
-  const { openCalling, setOpenCalling, recipientInfo, setRecipientInfo, senderInfo, setSenderInfo, setRoomName, isVideoDisabled, enableMic, setEnableMic, iframeLoaded, setIframeLoaded } = useModal();
+  const { openCalling, setOpenCalling, recipientInfo, setRecipientInfo, senderInfo, setSenderInfo, setRoomName, isVideoDisabled, enableMic, setEnableMic, iframeLoaded, setIframeLoaded, meetingMinimized } = useModal();
   
   const sendCallMessage = async (type: string, startTime: Date) => {
     const messageId = uuidv4();
@@ -30,7 +30,7 @@ function Calling() {
       await sendCallMessage("Stopped Call", new Date());
       await axios.post('/send-message', {
         sender: userdata,
-        receiver: [recipientInfo],
+        receiver: recipientInfo,
         type: "Stop",
         room: "",
       });
@@ -51,8 +51,8 @@ function Calling() {
   }, []);
 
   return (
-    <div className="absolute w-full h-full bg-transparent">
-      <div className="absolute w-96 m-auto inset-0 th-bg-bgdark h-40 p-4 flex items-center rounded-xl border th-border-for" hidden={!openCalling}>
+    <div className="absolute w-full h-full bg-transparent" hidden={meetingMinimized}>
+      <div className="absolute w-96 m-auto inset-0 th-bg-bgdark h-40 p-4 flex items-center rounded-xl border th-border-for">
         <div className="w-full flex flex-col justify-center space-y-4">
           <div className="flex items-center space-x-4">
             <img src={getHref(recipientInfo[0]?.photoURL) || `${process.env.PUBLIC_URL}/blank_user.png`} className="w-10 h-10" alt={recipientInfo[0]?.displayName} />

@@ -15,7 +15,7 @@ export default function MeetingModal() {
   const { userdata } = useUser();
   const { workspaceId, channelId, dmId } = useParams();
   const jitsiContainerId = "jitsi-container-id";
-  const {openMeetingModal, setOpenMeetingModal, setOpenCalling, setOpenReceiving, recipientInfo, setRecipientInfo, senderInfo, setSenderInfo, roomName, setRoomName, isVideoDisabled, setIsVideoDisabled, setIframeLoaded, enableMic} = useModal();
+  const {openMeetingModal, setOpenMeetingModal, setOpenCalling, setOpenReceiving, recipientInfo, setRecipientInfo, senderInfo, setSenderInfo, roomName, setRoomName, isVideoDisabled, setIsVideoDisabled, setIframeLoaded, enableMic, meetingMinimized, setMeetingMinimized} = useModal();
   const cancelButtonRef = useRef(null);
   const [jitsi, setJitsi] = useState({});
   const [meetStartTime, setMeetStartTime] = useState(new Date().getTime());
@@ -56,6 +56,7 @@ export default function MeetingModal() {
         toolbarButtons: isVideoDisabled ? [
           'hangup',
           'microphone',
+          'tileview',
         ] : [
           'camera',
           'chat',
@@ -97,6 +98,9 @@ export default function MeetingModal() {
         welcomePage: {
           disabled: false,
         },
+        p2p: {
+          enable: recipientInfo.length > 1 ? false : true,
+        },
         startWithAudioMuted: !enableMic,
         startWithVideoMuted: false,
       },
@@ -122,18 +126,20 @@ export default function MeetingModal() {
     });
     
     _jitsi.addEventListener("participantLeft", (info: any) => {
-      if (dmId && senderInfo?.objectId === userdata?.objectId) {
-        sendCallMessage(startTime);
+      if (_jitsi.getNumberOfParticipants() < 2) {
+        if (senderInfo?.objectId === userdata?.objectId) {
+          sendCallMessage(startTime);
+        }
+        _jitsi.dispose();
+        handleClose();
       }
-      _jitsi.dispose();
-      handleClose();
     });
     
     _jitsi.addEventListener("videoConferenceLeft", (info: any) => {
-      if (dmId && senderInfo?.objectId === userdata?.objectId) {
+      if (senderInfo?.objectId === userdata?.objectId) {
         sendCallMessage(startTime);
+        _jitsi.dispose();
       }
-      _jitsi.dispose();
       handleClose();
     });
 
@@ -149,6 +155,10 @@ export default function MeetingModal() {
     setRoomName("");
     setIsVideoDisabled(false);
     setIframeLoaded(false);
+  }
+
+  const handleMinimize = () => {
+    setMeetingMinimized(true);
   }
 
   const sendCallMessage = async (startTime: number) => {
@@ -182,7 +192,7 @@ export default function MeetingModal() {
 
     return () => {
       jitsi?.dispose?.();
-      setIframeLoaded(false);
+      handleClose();
     }
   }, []);
 
@@ -196,6 +206,7 @@ export default function MeetingModal() {
         initialFocus={cancelButtonRef}
         open={openMeetingModal}
         onClose={() => {}}
+        hidden={meetingMinimized}
       >
         <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
           <Transition.Child
@@ -269,7 +280,7 @@ export default function MeetingModal() {
                               <div className="text-base th-color-for">Users</div>
                             </div>
                             <div className="w-full h-px th-bg-for" />
-                            <div className="overflow-y-auto h-56">
+                            <div className="overflow-y-auto h-48">
                               {users.filter((u: any) => (!recipientInfo.includes(u) && u.objectId !== senderInfo && u.objectId !== userdata.objectId)).map((item: any, index: number) => (
                                 <div className="flex justify-between items-center px-2 py-1 th-bg-bg th-color-for border-b th-border-for hover:bg-gray-500 w-full" key={index}>
                                   <div className="flex items-center space-x-2">
@@ -288,6 +299,14 @@ export default function MeetingModal() {
                     )}
                   </Menu>
                   )}
+                  <div
+                    role="button"
+                    tabIndex={0}
+                    className="cursor-pointer focus:outline-none"
+                    onClick={handleMinimize}
+                  >
+                    <img src={`${process.env.PUBLIC_URL}/meeting_hide.png`} alt="meeting hide" className="w-5 h-5" />
+                  </div>
                   <div
                     role="button"
                     tabIndex={0}
