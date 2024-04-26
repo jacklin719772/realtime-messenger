@@ -145,7 +145,7 @@ export default function MeetingModal() {
     setOpenCalling(false);
     setOpenReceiving(false);
     setSenderInfo(null);
-    setRecipientInfo(null);
+    setRecipientInfo([]);
     setRoomName("");
     setIsVideoDisabled(false);
     setIframeLoaded(false);
@@ -156,17 +156,17 @@ export default function MeetingModal() {
     await postData("/messages", {
       objectId: messageId,
       text: `[Jitsi_Call_Log:]: {"sender": ${JSON.stringify(senderInfo)}, "receiver": ${JSON.stringify(recipientInfo)}, "type": "Call ended", "duration": "${new Date().getTime() - startTime}", "audioOnly": ${isVideoDisabled}}`,
-      chatId: dmId,
+      chatId: channelId || dmId,
       workspaceId,
-      chatType: "Direct",
+      chatType: channelId ? "Channel" : "Direct",
     });
   }
 
-  const handleCallingButton = async (receiver: any) => {
+  const handleCallingButton = async (user: any) => {
     try {
       await axios.post('/send-message', {
         sender: userdata,
-        receiver,
+        receiver: [user],
         type: "Calling",
         room: roomName,
         audioOnly: isVideoDisabled,
@@ -226,9 +226,9 @@ export default function MeetingModal() {
             leaveFrom="opacity-100 translate-y-0 sm:scale-100"
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
-            <div className="th-bg-for inline-block align-bottom rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:align-middle sm:max-w-6xl sm:w-full">
-              <div className="th-bg-for px-4 pt-2 pb-4 sm:p-2 sm:px-4 flex justify-between items-center">
-                <h5 className="font-bold th-color-bg">
+            <div className="th-bg-bg inline-block align-bottom rounded-lg th-border-for text-left overflow-hidden shadow-xl transform transition-all sm:align-middle sm:max-w-6xl sm:w-full">
+              <div className="th-bg-bg px-4 pt-2 pb-4 sm:p-2 sm:px-4 flex justify-between items-center">
+                <h5 className="font-bold th-color-for">
                   {isVideoDisabled ? "Voice Call" : "Video Call"}
                 </h5>
                 <div className="flex items-center space-x-4">
@@ -262,23 +262,25 @@ export default function MeetingModal() {
                         >
                           <Menu.Items
                             static
-                            className="th-bg-bg border th-border-selbg origin-top-right z-20 absolute right-0 mt-2 w-40 h-64 overflow-y-auto rounded-md shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none py-3"
+                            className="th-bg-bg border th-border-for origin-top-right z-20 absolute right-0 mt-2 w-40 h-64  rounded-md shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none py-3"
                           >
                             <div className="px-5 flex items-center justify-between">
-                              <div className="text-base">Users</div>
+                              <div className="text-base th-color-for">Users</div>
                             </div>
-                            <div className="w-full h-px th-bg-selbg" />
-                            {users.filter((u: any) => (u.objectId !== recipientInfo?.objectId && u.objectId !== senderInfo && u.objectId !== userdata.objectId)).map((item: any, index: number) => (
-                              <div className="flex justify-between items-center p-2 th-bg-bg th-color-for border-b hover:bg-gray-200 w-full" key={index}>
-                                <div className="flex items-center space-x-2">
-                                  <img src={getHref(item.thumbnailURL) || getHref(item.photoURL) || `${process.env.PUBLIC_URL}/blank_user.png`} alt={item.displayName} className="w-6" />
-                                  <div className="font-bold text-sm">{item.displayName}</div>
+                            <div className="w-full h-px th-bg-for" />
+                            <div className="overflow-y-auto h-56">
+                              {users.filter((u: any) => (!recipientInfo.includes(u) && u.objectId !== senderInfo && u.objectId !== userdata.objectId)).map((item: any, index: number) => (
+                                <div className="flex justify-between items-center p-2 th-bg-bg th-color-for border-b th-border-for hover:bg-gray-500 w-full" key={index}>
+                                  <div className="flex items-center space-x-2">
+                                    <img src={getHref(item.thumbnailURL) || getHref(item.photoURL) || `${process.env.PUBLIC_URL}/blank_user.png`} alt={item.displayName} className="w-6" />
+                                    <div className="font-bold text-sm">{item.displayName}</div>
+                                  </div>
+                                  <button className="rounded-full bg-transparent th-color-brwhite" onClick={() => {handleCallingButton(item)}}>
+                                    <img src={`${process.env.PUBLIC_URL}/call_start.png`} className="h-5 w-5" alt="mic_on" />
+                                  </button>
                                 </div>
-                                <button className="rounded-full bg-transparent th-color-brwhite" onClick={() => {handleCallingButton(item)}}>
-                                  <img src={`${process.env.PUBLIC_URL}/call_start.png`} className="h-5 w-5" alt="mic_on" />
-                                </button>
-                              </div>
-                            ))}
+                              ))}
+                            </div>
                           </Menu.Items>
                         </Transition>
                       </>
@@ -290,7 +292,7 @@ export default function MeetingModal() {
                     className="cursor-pointer focus:outline-none"
                     onClick={handleClose}
                   >
-                    <XIcon className="h-5 w-5 th-color-bg" />
+                    <XIcon className="h-5 w-5 th-color-for" />
                   </div>
                 </div>
               </div>

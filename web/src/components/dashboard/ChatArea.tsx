@@ -8,7 +8,7 @@ import { useUser } from "contexts/UserContext";
 import { useChannelById } from "hooks/useChannels";
 import { useDetailByChat } from "hooks/useDetails";
 import { useDirectMessageById } from "hooks/useDirects";
-import { useUserById } from "hooks/useUsers";
+import { useUserById, useUsersByWorkspace } from "hooks/useUsers";
 import { Fragment, KeyboardEvent, useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
@@ -36,7 +36,35 @@ const SelectChannel = styled.button`
   }
 `;
 
+function InviteUserItem({
+  item,
+  handleSelect,
+}: {
+  item: any;
+  handleSelect: any;
+}) {
+  const [checked, setChecked] = useState(false);
+
+  useEffect(() => {
+    handleSelect(checked, item);
+  }, [checked]);
+
+  return (
+    <div className="flex items-center space-x-2 p-2 th-bg-bg th-color-for border-b th-border-for hover:bg-gray-500 w-full">
+      <div className="flex items-center">
+        <input type="checkbox" className="appearance-none checked:bg-blue-500" checked={checked} onChange={(e) => setChecked(e.target.checked)} />
+      </div>
+      <div className="flex items-center space-x-4">
+        <img src={getHref(item.thumbnailURL) || getHref(item.photoURL) || `${process.env.PUBLIC_URL}/blank_user.png`} alt={item.displayName} className="w-6" />
+        <div className="font-bold text-sm">{item.displayName}</div>
+      </div>
+    </div>
+  )
+}
+
 function HeaderChannel() {
+  const { userdata } = useUser();
+  const { value: users } = useUsersByWorkspace();
   const navigate = useNavigate();
   const { themeColors } = useTheme();
   const [open, setOpen] = useState(false);
@@ -44,6 +72,98 @@ function HeaderChannel() {
   const { value } = useChannelById(channelId);
   const { visibleSearch, setVisibleSearch } = useContext(ReactionsContext);
   const { visibleFileSearch, setVisibleFileSearch } = useContext(ReactionsContext);
+  const { openCalling, setOpenCalling, recipientInfo, setRecipientInfo, senderInfo, setSenderInfo, setRoomName, setIsVideoDisabled, openMeetingModal, isVideoDisabled } = useModal();
+  const [checkedUsers, setCheckedUsers] = useState<any[]>([]);
+
+  const handleSelectUsers = (checked: boolean, userdata: any) => {
+    if (checked) {
+      console.log('Checked:', userdata);
+      setCheckedUsers([...checkedUsers, userdata]);
+    } else {
+      console.log('Unchecked: ', userdata);
+      setCheckedUsers(checkedUsers.filter((u: any) => u?.objectId !== userdata?.objectId));
+    }
+  }
+
+  const handleCallingButton = async (audioOnly: boolean) => {
+    try {
+      const room = randomRoomName();
+      await axios.post('/send-message', {
+        sender: userdata,
+        receiver: checkedUsers,
+        type: "Calling",
+        room,
+        audioOnly,
+      });
+      console.log('Message sent successfully');
+      setOpenCalling(true);
+      setRecipientInfo(checkedUsers);
+      setSenderInfo(userdata);
+      setRoomName(room);
+      setIsVideoDisabled(audioOnly);
+    } catch (error) {
+      console.error('Error sending message', error);
+    }
+  }
+  
+  const handleTimeout = async (sender: any, receiver: any[]) => {
+    try {
+      await axios.post('/send-message', {
+        sender,
+        receiver,
+        type: "Timeout",
+        roomName: "",
+      });
+      console.log('Message sent successfully');
+      setOpenCalling(false);
+      setRecipientInfo([]);
+      setSenderInfo(null);
+      setRoomName("");
+      setIsVideoDisabled(false);
+      toast.info('Sorry, but the recipient you are calling right now is not responding.', {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+    } catch (error) {
+      console.error('Error sending message', error);
+    }
+  }
+ 
+  const sendCallMessage = async (type: string, startTime: Date) => {
+    const messageId = uuidv4();
+    await postData("/messages", {
+      objectId: messageId,
+      text: `[Jitsi_Call_Log:]: {"sender": ${JSON.stringify(senderInfo)}, "receiver": ${JSON.stringify(recipientInfo)}, "type": "${type}", "duration": "${startTime}", "audioOnly": ${isVideoDisabled}}`,
+      chatId: channelId,
+      workspaceId,
+      chatType: "Channel",
+    });
+  }
+
+  useEffect(() => {
+    console.log(checkedUsers);
+  }, [checkedUsers]);
+
+  useEffect(() => {
+    console.log(new Date());
+    let timer: NodeJS.Timeout | undefined;
+    if (openCalling && !openMeetingModal) {
+      timer = setTimeout(() => {
+        sendCallMessage("Missed Call", new Date());
+        handleTimeout(userdata, checkedUsers);
+        setCheckedUsers([]);
+      }, 35000);
+    } else {
+      clearTimeout(timer);
+    }
+    return () => clearTimeout(timer);
+  }, [openCalling, openMeetingModal, senderInfo, recipientInfo, isVideoDisabled]);
 
   return (
     <div className="w-full border-b flex items-center justify-between px-5 py-1 h-14 th-color-selbg th-border-for">
@@ -72,15 +192,15 @@ function HeaderChannel() {
           createdAt={new Date(value?.createdAt)?.toDateString()}
         />
       </div>
-      <div className="space-x-2">
+      <div className="flex space-x-2">
         <button
-          className="border-2 th-border-ford th-bg-bg th-color-for inline-flex justify-center items-center text-sm w-10 h-10 rounded-lg font-extrabold focus:z-10 focus:outline-none"
+          className="border-2 th-border-ford th-bg-selbg th-color-for inline-flex justify-center items-center text-sm w-10 h-10 rounded-lg font-extrabold focus:z-10 focus:outline-none"
           onClick={() => navigate(`/dashboard/workspaces/${workspaceId}/channels/${channelId}/teamcal`)}
         >
           <img className="h-5 w-5" alt="gallery" src={`${process.env.PUBLIC_URL}/calendar_channel.png`} />
         </button>
         <button
-          className="border-2 th-border-ford th-bg-bg th-color-for inline-flex justify-center items-center text-sm w-10 h-10 rounded-lg font-extrabold focus:z-10 focus:outline-none"
+          className="border-2 th-border-ford th-bg-selbg th-color-for inline-flex justify-center items-center text-sm w-10 h-10 rounded-lg font-extrabold focus:z-10 focus:outline-none"
           onClick={() => setVisibleSearch(!visibleSearch)}
         >
           <SearchIcon
@@ -88,11 +208,122 @@ function HeaderChannel() {
           />
         </button>
         <button
-          className="border-2 th-border-ford th-bg-bg th-color-for inline-flex justify-center items-center text-sm w-10 h-10 rounded-lg font-extrabold focus:z-10 focus:outline-none"
+          className="border-2 th-border-ford th-bg-selbg th-color-for inline-flex justify-center items-center text-sm w-10 h-10 rounded-lg font-extrabold focus:z-10 focus:outline-none"
           onClick={() => setVisibleFileSearch(!visibleFileSearch)}
         >
           <img className="h-5 w-5" alt="gallery" src={`${process.env.PUBLIC_URL}/gallery.png`} />
         </button>
+        {users?.filter((u: any) => (value?.members.includes(u?.objectId) && u?.objectId !== userdata?.objectId)).length > 0 && (
+          <Menu as="div" className="relative">
+            {({ open, close }) => (
+              <>
+                <div>
+                  <Menu.Button
+                    as="div"
+                    className="relative"
+                  >
+                    <button className="border-2 th-border-ford th-bg-selbg th-color-for inline-flex justify-center items-center text-sm w-10 h-10 rounded-lg font-extrabold focus:z-10 focus:outline-none disabled:opacity-50" disabled={openCalling}>
+                      <img className="h-5 w-5" alt="call" src={`${process.env.PUBLIC_URL}/voice_call.png`} />
+                    </button>
+                  </Menu.Button>
+                </div>
+                <Transition
+                  show={open}
+                  as={Fragment}
+                  enter="transition ease-out duration-100"
+                  enterFrom="transform opacity-0 scale-95"
+                  enterTo="transform opacity-100 scale-100"
+                  leave="transition ease-in duration-75"
+                  leaveFrom="transform opacity-100 scale-100"
+                  leaveTo="transform opacity-0 scale-95"
+                >
+                  <Menu.Items
+                    static
+                    className="th-bg-bg border th-border-for origin-top-right z-20 absolute right-0 mt-2 w-48 h-72  rounded-md shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none py-2"
+                  >
+                    <div className="px-5 flex items-center justify-between">
+                      <div className="text-base th-color-for">Choose members</div>
+                    </div>
+                    <div className="w-full h-px th-bg-for" />
+                    <div className="overflow-y-auto h-52">
+                      {users?.filter((u: any) => (value?.members.includes(u?.objectId) && u?.objectId !== userdata?.objectId)).map((item: any, index: number) => (
+                        <div key={index}>
+                          <InviteUserItem item={item} handleSelect={handleSelectUsers} />
+                        </div>
+                      ))}
+                    </div>
+                    <div className="flex justify-end items-center border-t th-border-for pt-2 px-2 space-x-2">
+                      <button className="th-color-cyan border-2 th-border-cyan rounded text-xs px-2 py-1" onClick={() => {
+                        handleCallingButton(true);
+                        setCheckedUsers([]);
+                        close();
+                      }}>Confirm</button>
+                      <button className="th-color-for border-2 th-border-for rounded text-xs px-2 py-1" onClick={() =>  {
+                        setCheckedUsers([]);
+                        close();
+                      }}>Cancel</button>
+                    </div>
+                  </Menu.Items>
+                </Transition>
+              </>
+            )}
+          </Menu>
+        )}
+        {users?.filter((u: any) => (value?.members.includes(u?.objectId) && u?.objectId !== userdata?.objectId)).length > 0 && (
+          <Menu as="div" className="relative">
+            {({ open, close }) => (
+              <>
+                <div>
+                  <Menu.Button
+                    as="div"
+                    className="relative"
+                  >
+                    <button className="border-2 th-border-ford th-bg-selbg th-color-for inline-flex justify-center items-center text-sm w-10 h-10 rounded-lg font-extrabold focus:z-10 focus:outline-none disabled:opacity-50" disabled={openCalling}>
+                      <img className="h-5 w-5" alt="call" src={`${process.env.PUBLIC_URL}/video_call.png`} />
+                    </button>
+                  </Menu.Button>
+                </div>
+                <Transition
+                  show={open}
+                  as={Fragment}
+                  enter="transition ease-out duration-100"
+                  enterFrom="transform opacity-0 scale-95"
+                  enterTo="transform opacity-100 scale-100"
+                  leave="transition ease-in duration-75"
+                  leaveFrom="transform opacity-100 scale-100"
+                  leaveTo="transform opacity-0 scale-95"
+                >
+                  <Menu.Items
+                    static
+                    className="th-bg-bg border th-border-for origin-top-right z-20 absolute right-0 mt-2 w-48 h-72  rounded-md shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none py-2"
+                  >
+                    <div className="px-5 flex items-center justify-between">
+                      <div className="text-base th-color-for">Choose members</div>
+                    </div>
+                    <div className="w-full h-px th-bg-for" />
+                    <div className="overflow-y-auto h-52">
+                      {users?.filter((u: any) => (value?.members.includes(u?.objectId) && u?.objectId !== userdata?.objectId)).map((item: any, index: number) => (
+                        <div key={index}>
+                          <InviteUserItem item={item} handleSelect={handleSelectUsers} />
+                        </div>
+                      ))}
+                    </div>
+                    <div className="flex justify-end items-center border-t th-border-for pt-2 px-2 space-x-2">
+                      <button className="th-color-cyan border-2 th-border-cyan rounded text-xs px-2 py-1" onClick={() => {
+                        handleCallingButton(false);
+                        close();
+                      }}>Confirm</button>
+                      <button className="th-color-for border-2 th-border-for rounded text-xs px-2 py-1" onClick={() =>  {
+                        setCheckedUsers([]);
+                        close();
+                      }}>Cancel</button>
+                    </div>
+                  </Menu.Items>
+                </Transition>
+              </>
+            )}
+          </Menu>
+        )}
       </div>
     </div>
   );
@@ -143,23 +374,23 @@ function HeaderDirectMessage() {
       const room = randomRoomName();
       await axios.post('/send-message', {
         sender: userdata,
-        receiver: value,
+        receiver: [value],
         type: "Calling",
         room,
         audioOnly,
       });
       console.log('Message sent successfully');
-      setOpenCalling(true);
-      setRecipientInfo(value);
+      setRecipientInfo([value]);
       setSenderInfo(userdata);
       setRoomName(room);
       setIsVideoDisabled(audioOnly);
+      setOpenCalling(true);
     } catch (error) {
       console.error('Error sending message', error);
     }
   }
   
-  const handleTimeout = async (sender: any, receiver: any) => {
+  const handleTimeout = async (sender: any, receiver: any[]) => {
     try {
       await axios.post('/send-message', {
         sender,
@@ -169,7 +400,7 @@ function HeaderDirectMessage() {
       });
       console.log('Message sent successfully');
       setOpenCalling(false);
-      setRecipientInfo(null);
+      setRecipientInfo([]);
       setSenderInfo(null);
       setRoomName("");
       setIsVideoDisabled(false);
@@ -205,7 +436,7 @@ function HeaderDirectMessage() {
     if (openCalling && !openMeetingModal) {
       timer = setTimeout(() => {
         sendCallMessage("Missed Call", new Date());
-        handleTimeout(userdata, value);
+        handleTimeout(userdata, [value]);
       }, 35000);
     } else {
       clearTimeout(timer);
@@ -238,7 +469,7 @@ function HeaderDirectMessage() {
       </SelectChannel>
       <div className="flex space-x-2">
         {value?.objectId !== user?.uid && (
-          <button className="border-2 th-border-ford th-bg-bg th-color-for inline-flex justify-center items-center text-sm w-10 h-10 rounded-lg font-extrabold focus:z-10 focus:outline-none" disabled={loading} onClick={() =>setOpen(true)}>
+          <button className="border-2 th-border-ford th-bg-selbg th-color-for inline-flex justify-center items-center text-sm w-10 h-10 rounded-lg font-extrabold focus:z-10 focus:outline-none" disabled={loading} onClick={() =>setOpen(true)}>
             {loading ? <Spinner className="h-5 w-5" /> : 
             <img className="h-5 w-5" alt="add member" src={`${process.env.PUBLIC_URL}/add_user.png`} />}
           </button>

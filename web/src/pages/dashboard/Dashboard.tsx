@@ -236,7 +236,7 @@ export default function Dashboard() {
     await postData("/messages", {
       objectId: messageId,
       text: `[Jitsi_Call_Log:]: {"sender": ${JSON.stringify(senderInfo)}, "receiver": ${JSON.stringify(recipientInfo)}, "type": "${type}", "duration": "${startTime}", "audioOnly": ${isVideoDisabled}}`,
-      chatId: dmId,
+      chatId: channelId || dmId,
       workspaceId,
       chatType: "Direct",
     });
@@ -261,7 +261,7 @@ export default function Dashboard() {
       console.log(user);
       console.log('openCalling: ', openCalling);
       console.log('openReceiving: ', openReceiving);
-      if (receiver?.objectId === user?.uid && !openCalling && type === "Calling" && !openReceiving) {
+      if (receiver?.filter((r: any) => r?.objectId === user?.uid).length > 0 && !openCalling && type === "Calling" && !openReceiving) {
         setOpenReceiving(true);
         setSenderInfo(sender);
         setRecipientInfo(receiver);
@@ -274,11 +274,11 @@ export default function Dashboard() {
           audioOnly,
         }, "*");
       }
-      if (receiver?.objectId === user?.uid && !openCalling && type === "Timeout" && openReceiving) {
+      if (receiver?.filter((r: any) => r?.objectId === user?.uid).length > 0 && !openCalling && type === "Timeout" && openReceiving) {
         // sendCallMessage("Missed Call", new Date());
         setOpenReceiving(false);
         setSenderInfo(null);
-        setRecipientInfo(null);
+        setRecipientInfo([]);
         setRoomName("");
         setIsVideoDisabled(false);
         toast.info('Sorry, but this call timed out.', {
@@ -292,10 +292,10 @@ export default function Dashboard() {
           theme: "dark",
         });
       }
-      if (receiver?.objectId === user?.uid && !openCalling && type === "Stop" && openReceiving) {
+      if (receiver?.filter((r: any) => r?.objectId === user?.uid).length > 0 && !openCalling && type === "Stop" && openReceiving) {
         setOpenReceiving(false);
         setSenderInfo(null);
-        setRecipientInfo(null);
+        setRecipientInfo([]);
         setRoomName("");
         setIsVideoDisabled(false);
         toast.info('The caller has interrupted the call.', {
@@ -309,25 +309,27 @@ export default function Dashboard() {
           theme: "dark",
         });
       }
-      if (receiver?.objectId === user?.uid && openCalling && type === "Reject" && !openReceiving) {
-        sendCallMessage("Refused Call", new Date());
-        setOpenCalling(false);
-        setSenderInfo(null);
-        setRecipientInfo(null);
-        setRoomName("");
-        setIsVideoDisabled(false);
-        toast.info('The recipient has declined the call.', {
-          position: "top-right",
-          autoClose: 2000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "dark",
-        });
+      if (receiver?.filter((r: any) => r?.objectId === user?.uid).length > 0 && openCalling && type === "Reject" && !openReceiving) {
+        setRecipientInfo(recipientInfo.filter((u: any) => u?.objectId !== sender?.objectId));
+        if (recipientInfo.length < 2) {
+          sendCallMessage("Refused Call", new Date());
+          setOpenCalling(false);
+          setSenderInfo(null);
+          setRoomName("");
+          setIsVideoDisabled(false);
+          toast.info('The recipient has declined the call.', {
+            position: "top-right",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          });
+        }
       }
-      if (receiver?.objectId === user?.uid && openCalling && type === "Accept" && !openReceiving) {
+      if (receiver?.filter((r: any) => r?.objectId === user?.uid).length > 0 && openCalling && type === "Accept" && !openReceiving) {
         setOpenMeetingModal(true);
         // setOpenCalling(false);
         // setSenderInfo(null);
@@ -349,7 +351,7 @@ export default function Dashboard() {
     return () => {
       socket.disconnect();
     }
-  }, [openCalling, openReceiving, roomName, isVideoDisabled]);
+  }, [openCalling, openReceiving, roomName, recipientInfo, isVideoDisabled]);
 
   useEffect(() => {
     if (owner) {

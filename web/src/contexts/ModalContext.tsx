@@ -79,7 +79,7 @@ export const ModalContext = createContext({
 
   openCalling: false,
   setOpenCalling: null as any,
-  recipientInfo: null as any,
+  recipientInfo: [] as any[],
   setRecipientInfo: null as any,
 
   openReceiving: false,
@@ -136,7 +136,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
   const [currentWorkspaceId, setCurrentWorkspaceId] = useState("");
   const [openMeetingModal, setOpenMeetingModal] = useState(false);
   const [openCalling, setOpenCalling] = useState(false);
-  const [recipientInfo, setRecipientInfo] = useState<any>(null);
+  const [recipientInfo, setRecipientInfo] = useState<any[]>([]);
   const [openReceiving, setOpenReceiving] = useState(false);
   const [senderInfo, setSenderInfo] = useState<any>(null);
   const [roomName, setRoomName] = useState("");

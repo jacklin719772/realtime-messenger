@@ -17,8 +17,8 @@ function Receiving() {
   const handleAcceptButton = async () => {
     try {
       await axios.post('/send-message', {
-        sender: recipientInfo,
-        receiver: senderInfo,
+        sender: userdata,
+        receiver: [senderInfo],
         type: "Accept",
         room: roomName,
         audioOnly: isVideoDisabled,
@@ -45,15 +45,15 @@ function Receiving() {
   const handleStopButton = async () => {
     try {
       await axios.post('/send-message', {
-        sender: recipientInfo,
-        receiver: senderInfo,
+        sender: userdata,
+        receiver: [senderInfo],
         type: "Reject",
         room: "",
       });
       console.log('Message sent successfully');
       setOpenReceiving(false);
       setSenderInfo(null);
-      setRecipientInfo(null);
+      setRecipientInfo([]);
       setRoomName("");
       setIsVideoDisabled(false);
     } catch (error) {
@@ -68,13 +68,13 @@ function Receiving() {
 
   return (
     <div className="absolute w-full h-full bg-transparent">
-      <div className="absolute w-1/3 m-auto inset-0 th-bg-for h-32 p-4 flex items-center" hidden={!openReceiving}>
+      <div className="absolute w-96 m-auto inset-0 th-bg-bgdark h-40 p-4 flex items-center rounded-xl border th-border-for" hidden={!openReceiving}>
         <div className="w-full flex flex-col justify-center space-y-4">
           <div className="flex items-center space-x-4">
             <img src={getHref(senderInfo?.photoURL) || `${process.env.PUBLIC_URL}/blank_user.png`} className="w-10 h-10" alt={senderInfo?.displayName} />
             <div className="flex flex-col">
-              <div className="font-bold text-base text-white">{senderInfo?.displayName}</div>
-              <div className="w-full text-xs text-white">Inviting you to a  {isVideoDisabled ? "Voice" : "Video"}  call...</div>
+              <div className="font-bold text-base th-color-for">{senderInfo?.displayName}</div>
+              <div className="w-full text-xs th-color-for">Inviting you to a  {isVideoDisabled ? "Voice" : "Video"}  call...</div>
             </div>
           </div>
           <div className="w-full flex justify-end space-x-4">

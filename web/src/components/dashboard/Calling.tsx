@@ -11,7 +11,7 @@ import { v4 as uuidv4 } from "uuid";
 
 function Calling() {
   const { userdata } = useUser();
-  const { workspaceId, dmId } = useParams();
+  const { workspaceId, channelId, dmId } = useParams();
   const { openCalling, setOpenCalling, recipientInfo, setRecipientInfo, senderInfo, setSenderInfo, setRoomName, isVideoDisabled, enableMic, setEnableMic, iframeLoaded, setIframeLoaded } = useModal();
   
   const sendCallMessage = async (type: string, startTime: Date) => {
@@ -19,9 +19,9 @@ function Calling() {
     await postData("/messages", {
       objectId: messageId,
       text: `[Jitsi_Call_Log:]: {"sender": ${JSON.stringify(senderInfo)}, "receiver": ${JSON.stringify(recipientInfo)}, "type": "${type}", "duration": "${startTime}", "audioOnly": ${isVideoDisabled}}`,
-      chatId: dmId,
+      chatId: channelId || dmId,
       workspaceId,
-      chatType: "Direct",
+      chatType: channelId ? "Channel" : "Direct",
     });
   }
 
@@ -30,13 +30,13 @@ function Calling() {
       await sendCallMessage("Stopped Call", new Date());
       await axios.post('/send-message', {
         sender: userdata,
-        receiver: recipientInfo,
+        receiver: [recipientInfo],
         type: "Stop",
         room: "",
       });
       console.log('Message sent successfully');
       setOpenCalling(false);
-      setRecipientInfo(null);
+      setRecipientInfo([]);
       setSenderInfo(null);
       setRoomName("");
     } catch (error) {
@@ -47,17 +47,18 @@ function Calling() {
   useEffect(() => {
     setEnableMic(true);
     setIframeLoaded(false);
+    console.log(recipientInfo);
   }, []);
 
   return (
     <div className="absolute w-full h-full bg-transparent">
-      <div className="absolute w-1/3 m-auto inset-0 th-bg-for h-32 p-4 flex items-center" hidden={!openCalling}>
+      <div className="absolute w-96 m-auto inset-0 th-bg-bgdark h-40 p-4 flex items-center rounded-xl border th-border-for" hidden={!openCalling}>
         <div className="w-full flex flex-col justify-center space-y-4">
           <div className="flex items-center space-x-4">
-            <img src={getHref(recipientInfo?.photoURL) || `${process.env.PUBLIC_URL}/blank_user.png`} className="w-10 h-10" alt={recipientInfo?.displayName} />
+            <img src={getHref(recipientInfo[0]?.photoURL) || `${process.env.PUBLIC_URL}/blank_user.png`} className="w-10 h-10" alt={recipientInfo[0]?.displayName} />
             <div className="flex flex-col">
-              <div className="font-bold text-base text-white">{recipientInfo?.displayName}</div>
-              <div className="w-full text-xs text-white">Waiting for  {recipientInfo?.displayName}  to accept the invitation...</div>
+              <div className="font-bold text-base th-color-for">{recipientInfo[0]?.displayName}</div>
+              <div className="w-full text-xs th-color-for">Waiting for  {recipientInfo[0]?.displayName}  to accept the invitation...</div>
             </div>
           </div>
           <div className="w-full flex justify-end space-x-4">
