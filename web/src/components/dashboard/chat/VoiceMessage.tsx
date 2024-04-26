@@ -103,7 +103,7 @@ export default function VoiceMessage() {
           >
             <div
               style={{ backgroundColor: themeColors?.background }}
-              className="inline-block align-bottom rounded-lg text-left shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full"
+              className="inline-block align-bottom rounded-xl border th-border-for text-left shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full"
             >
               <div
                 className="pl-8 p-6 pb-4 flex justify-between items-center"
@@ -128,43 +128,41 @@ export default function VoiceMessage() {
               </div>
               <div>
                 <div
-                  className="space-y-6 pt-2 pb-8 border-t th-border-selbg rounded">
+                  className="space-y-6 pt-2 pb-8 border-t th-border-for">
                   <div className="w-full px-5">
                     <div className="ml-2 flex items-center">
                       {(status === "idle" ||
                         status === "acquiring_media" ||
                         status === "stopped" ||
                         error) ? (
-                        <button className="button border th-border-for p-2 rounded disabled:opacity-50 mr-2" onClick={startRecording} title="start">
+                        <button className="button border-2 th-border-for p-2 rounded disabled:opacity-50 mr-2" onClick={startRecording} title="start">
                           <img src={`${process.env.PUBLIC_URL}/start.png`} alt="start" className="w-4 h-4" />
                         </button>
                       ) : (
-                        <button className="button border th-border-for p-2 rounded disabled:opacity-50 mr-2" title="recording">
+                        <button className="button border-2 th-border-for p-2 rounded disabled:opacity-50 mr-2" title="recording">
                           <img src={`${process.env.PUBLIC_URL}/recording.png`} alt="recording" className="w-4 h-4" />
                         </button>
                       )}
                       {status === "recording" && (
                         <button className={classNames(
-                          status === "recording" ? "border-2" : "border",
-                          "button th-border-for p-2 rounded disabled:opacity-50 mr-2"
+                          "border-2 button th-border-for p-2 rounded disabled:opacity-50 mr-2"
                         )} disabled={status === "recording" ? false : true} onClick={pauseRecording} title="pause">
                           <img src={`${process.env.PUBLIC_URL}/pause.png`} alt="pause" className="w-4 h-4" />
                         </button>
                       )}
                       {status !== "recording" && (
                         <button className={classNames(
-                          status === "paused" ? "border-2" : "border",
-                          "button th-border-for p-2 rounded disabled:opacity-50 mr-2"
+                          "border-2 button th-border-for p-2 rounded disabled:opacity-50 mr-2"
                         )} disabled={status === "paused" ? false : true} onClick={resumeRecording} title="resume">
                           <img src={`${process.env.PUBLIC_URL}/play.png`} alt="resume" className="w-4 h-4" />
                         </button>
                       )}
-                      <button className="button border th-border-for p-2 rounded disabled:opacity-50 mr-2" disabled={(status === "recording" || status === "paused") ? false : true} onClick={stopRecording} title="stop">
+                      <button className="button border-2 th-border-for p-2 rounded disabled:opacity-50 mr-2" disabled={(status === "recording" || status === "paused") ? false : true} onClick={stopRecording} title="stop">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 7.5A2.25 2.25 0 0 1 7.5 5.25h9a2.25 2.25 0 0 1 2.25 2.25v9a2.25 2.25 0 0 1-2.25 2.25h-9a2.25 2.25 0 0 1-2.25-2.25v-9Z" />
                         </svg>
                       </button>
-                      <button className="button border th-border-for p-2 rounded disabled:opacity-50 mr-2" disabled={status === "stopped" ? false : true} onClick={() => audioFileBlob(mediaBlobUrl || "")} title="save">
+                      <button className="button border-2 th-border-for p-2 rounded disabled:opacity-50 mr-2" disabled={status === "stopped" ? false : true} onClick={() => audioFileBlob(mediaBlobUrl || "")} title="save">
                         <img src={`${process.env.PUBLIC_URL}/video_camera.png`} alt="save" className="w-4 h-4" />
                       </button>
                     </div>

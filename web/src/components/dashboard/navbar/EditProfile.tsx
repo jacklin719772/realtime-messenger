@@ -104,7 +104,7 @@ export default function EditProfile({
             leaveFrom="opacity-100 translate-y-0 sm:scale-100"
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
-            <div className="inline-block align-bottom rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full th-bg-bg">
+            <div className="inline-block align-bottom rounded-xl border th-border-for text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full th-bg-bg">
               <Formik
                 initialValues={{
                   fullName: userdata?.fullName || "",
@@ -143,8 +143,8 @@ export default function EditProfile({
                     noValidate
                     onSubmit={handleSubmit}
                   >
-                    <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4 flex justify-between items-center th-bg-bg">
-                      <h5 className="font-bold text-2xl th-color-for">
+                    <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4 flex justify-between items-center th-bg-bg border-b th-border-for">
+                      <h5 className="font-bold th-color-for">
                         Edit your profile
                       </h5>
                       <div
@@ -156,7 +156,7 @@ export default function EditProfile({
                         <XIcon className="h-5 w-5 th-color-for" />
                       </div>
                     </div>
-                    <div className="p-6 pt-0 pb-6 grid grid-cols-3 th-bg-bg">
+                    <div className="p-6 pt-2 pb-6 grid grid-cols-3 th-bg-bg">
                       <div className="col-span-2 space-y-6 px-px max-h-450 overflow-y-auto">
                         <TextField
                           label="Full name"
@@ -213,7 +213,7 @@ export default function EditProfile({
                         />
                         <button
                           type="button"
-                          className="th-bg-blue th-color-brwhite inline-flex justify-center py-2 px-4 text-base font-bold rounded focus:outline-none focus:ring-4 focus:ring-blue-200 mt-4 sm:w-auto sm:text-sm"
+                          className="th-bg-cyan th-color-for inline-flex justify-center py-2 px-4 text-base font-bold rounded focus:outline-none focus:ring-4 focus:ring-blue-200 mt-4 sm:w-auto sm:text-sm"
                           onClick={() => fileRef?.current?.click()}
                         >
                           Upload an Image
@@ -221,7 +221,7 @@ export default function EditProfile({
                         {userPhotoURL && (
                           <button
                             type="button"
-                            className="w-44 text-center text-sm mt-3 th-color-blue"
+                            className="th-bg-brred th-color-for inline-flex justify-center py-2 px-4 text-base font-bold rounded focus:outline-none focus:ring-4 focus:ring-blue-200 mt-4 sm:w-auto sm:text-sm"
                             onClick={handleDeletePicture}
                           >
                             Remove photo
@@ -229,7 +229,7 @@ export default function EditProfile({
                         )}
                       </div>
                     </div>
-                    <div className="px-4 py-5 sm:px-6 sm:flex sm:flex-row-reverse border-t th-border-selbg">
+                    <div className="px-4 py-5 sm:px-6 sm:flex sm:flex-row-reverse border-t th-border-for">
                       <ModalButton text="Save" isSubmitting={isSubmitting} />
                       <CancelButton setOpen={setOpen} />
                     </div>

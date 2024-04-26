@@ -203,7 +203,7 @@ export default function VideoMessage() {
           >
             <div
               style={{ backgroundColor: themeColors?.background }}
-              className="inline-block align-bottom rounded-lg text-left shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full"
+              className="inline-block align-bottom rounded-xl border th-border-for text-left shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full"
             >
               <div
                 className="pl-8 p-6 pb-4 flex justify-between items-center"
@@ -228,12 +228,12 @@ export default function VideoMessage() {
               </div>
               <div>
                 <div
-                  className="space-y-6 py-2 border-t th-border-selbg rounded h-[500px] max-h-[500px]">
+                  className="space-y-6 py-2 border-t th-border-for h-[500px] max-h-[500px]">
                   <div className="w-full px-5">
                     <div className="ml-2 flex items-center">
                       <select
                         disabled={(status === "idle" || status === "acquiring_media" || status === "stopped" || error) ? false : true}
-                        className="block appearance-none w-48 border th-border-for bg-color-for py-2 px-4 pr-8 mr-2 text-sm rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                        className="block appearance-none w-48 th-bg-bg th-color-for border th-border-for bg-color-for py-2 px-4 pr-8 mr-2 text-sm rounded leading-tight"
                         onChange={handleChange}
                       >
                         <option value={1}>Camera + Microphone</option>
@@ -245,36 +245,34 @@ export default function VideoMessage() {
                         status === "stopped" ||
                         status === "paused" ||
                         error) ? (
-                        <button className="button border th-border-for p-2 rounded disabled:opacity-50 mr-2" onClick={startRecording} title="start">
+                        <button className="button border-2 th-border-for p-2 rounded disabled:opacity-50 mr-2" onClick={startRecording} title="start">
                           <img src={`${process.env.PUBLIC_URL}/start.png`} alt="start" className="w-4 h-4" />
                         </button>
                       ) : (
-                        <button className="button border th-border-for p-2 rounded disabled:opacity-50 mr-2" title="recording">
+                        <button className="button border-2 th-border-for p-2 rounded disabled:opacity-50 mr-2" title="recording">
                           <img src={`${process.env.PUBLIC_URL}/recording.png`} alt="recording" className="w-4 h-4" />
                         </button>
                       )}
                       {(status === "recording" ) && (
                         <button className={classNames(
-                          status === "recording" ? "border-2" : "border",
-                          "button th-border-for p-2 rounded disabled:opacity-50 mr-2"
+                          "border-2 button th-border-for p-2 rounded disabled:opacity-50 mr-2"
                         )} disabled={status === "recording" ? false : true} onClick={pauseRecording} title="pause">
                           <img src={`${process.env.PUBLIC_URL}/pause.png`} alt="pause" className="w-4 h-4" />
                         </button>
                       )}
                       {status !== "recording" && (
                         <button className={classNames(
-                          status === "paused" ? "border-2" : "border",
-                          "button th-border-for p-2 rounded disabled:opacity-50 mr-2"
+                          "border-2 button th-border-for p-2 rounded disabled:opacity-50 mr-2"
                         )} disabled={status === "paused" ? false : true} onClick={resumeRecording} title="resume">
                           <img src={`${process.env.PUBLIC_URL}/play.png`} alt="resume" className="w-4 h-4" />
                         </button>
                       )}
-                      <button className="button border th-border-for p-2 rounded disabled:opacity-50 mr-2" disabled={(status === "recording" || status === "paused") ? false : true} onClick={stopRecording} title="stop">
+                      <button className="button border-2 th-border-for p-2 rounded disabled:opacity-50 mr-2" disabled={(status === "recording" || status === "paused") ? false : true} onClick={stopRecording} title="stop">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 7.5A2.25 2.25 0 0 1 7.5 5.25h9a2.25 2.25 0 0 1 2.25 2.25v9a2.25 2.25 0 0 1-2.25 2.25h-9a2.25 2.25 0 0 1-2.25-2.25v-9Z" />
                         </svg>
                       </button>
-                      <button className="button border th-border-for p-2 rounded disabled:opacity-50 mr-2" disabled={status === "stopped" ? false : true} onClick={() => videoFileBlob(mediaBlobUrl || "")} title="save">
+                      <button className="button border-2 th-border-for p-2 rounded disabled:opacity-50 mr-2" disabled={status === "stopped" ? false : true} onClick={() => videoFileBlob(mediaBlobUrl || "")} title="save">
                         <img src={`${process.env.PUBLIC_URL}/video_camera.png`} alt="save" className="w-4 h-4" />
                       </button>
                     </div>
@@ -282,7 +280,7 @@ export default function VideoMessage() {
                   <div className="w-full flex flex-1 flex-col px-5 pt-1">
                     <div className="mx-2 pb-2">
                       <div>
-                        <div className="flex items-center justify-center h-auto">
+                        <div className="flex items-center justify-center h-auto th-color-for">
                           {(status === "stopped" && mediaBlobUrl && mediaBlobUrl !== "") ?
                             <video src={mediaBlobUrl} controls className="w-full" /> :
                             (<>
@@ -302,7 +300,7 @@ export default function VideoMessage() {
                             <div className="flex items-center">
                               <div className="py-1"><svg className="fill-current h-6 w-6 text-red-500 mr-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zm12.73-1.41A8 8 0 1 0 4.34 4.34a8 8 0 0 0 11.32 11.32zM9 11V9h2v6H9v-4zm0-6h2v2H9V5z"/></svg></div>
                               <div>
-                                <p className="font-bold text-sm">{error}</p>
+                                <p className="font-bold text-sm th-color-for">{error}</p>
                               </div>
                             </div>
                           </div>

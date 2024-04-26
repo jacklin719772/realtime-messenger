@@ -61,15 +61,15 @@ export default function AddTeammatesModal() {
           >
             <div
               style={{ backgroundColor: themeColors?.background }}
-              className="inline-block align-bottom rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
+              className="inline-block align-bottom rounded-xl border th-border-for text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
             >
               <div
                 style={{ backgroundColor: themeColors?.background }}
-                className=" p-6 pb-4 flex justify-between items-center"
+                className=" p-6 pb-4 flex justify-between items-center border-b th-border-for"
               >
                 <h5
                   style={{ color: themeColors?.foreground }}
-                  className="font-bold text-2xl"
+                  className="font-bold"
                 >
                   {t("Invite_member")}
                 </h5>
@@ -124,7 +124,7 @@ export default function AddTeammatesModal() {
                         />
                       </div>
                     </div>
-                    <div className="px-4 pb-5 pt-1 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <div className="px-4 pb-2 pt-2 sm:px-6 sm:flex sm:flex-row-reverse border-t th-border-for">
                       <ModalButton isSubmitting={isSubmitting} text={t("Send")} />
                     </div>
                   </form>

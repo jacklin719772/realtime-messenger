@@ -192,15 +192,15 @@ function HeaderChannel() {
           createdAt={new Date(value?.createdAt)?.toDateString()}
         />
       </div>
-      <div className="flex space-x-2">
+      <div className="flex">
         <button
-          className="border-2 th-border-ford th-bg-selbg th-color-for inline-flex justify-center items-center text-sm w-10 h-10 rounded-lg font-extrabold focus:z-10 focus:outline-none"
+          className="th-color-for inline-flex justify-center items-center text-sm w-10 h-10 rounded-lg font-extrabold focus:z-10 focus:outline-none"
           onClick={() => navigate(`/dashboard/workspaces/${workspaceId}/channels/${channelId}/teamcal`)}
         >
           <img className="h-5 w-5" alt="gallery" src={`${process.env.PUBLIC_URL}/calendar_channel.png`} />
         </button>
         <button
-          className="border-2 th-border-ford th-bg-selbg th-color-for inline-flex justify-center items-center text-sm w-10 h-10 rounded-lg font-extrabold focus:z-10 focus:outline-none"
+          className="th-color-for inline-flex justify-center items-center text-sm w-10 h-10 rounded-lg font-extrabold focus:z-10 focus:outline-none"
           onClick={() => setVisibleSearch(!visibleSearch)}
         >
           <SearchIcon
@@ -208,7 +208,7 @@ function HeaderChannel() {
           />
         </button>
         <button
-          className="border-2 th-border-ford th-bg-selbg th-color-for inline-flex justify-center items-center text-sm w-10 h-10 rounded-lg font-extrabold focus:z-10 focus:outline-none"
+          className="th-color-for inline-flex justify-center items-center text-sm w-10 h-10 rounded-lg font-extrabold focus:z-10 focus:outline-none"
           onClick={() => setVisibleFileSearch(!visibleFileSearch)}
         >
           <img className="h-5 w-5" alt="gallery" src={`${process.env.PUBLIC_URL}/gallery.png`} />
@@ -222,7 +222,7 @@ function HeaderChannel() {
                     as="div"
                     className="relative"
                   >
-                    <button className="border-2 th-border-ford th-bg-selbg th-color-for inline-flex justify-center items-center text-sm w-10 h-10 rounded-lg font-extrabold focus:z-10 focus:outline-none disabled:opacity-50" disabled={openCalling}>
+                    <button className="th-color-for inline-flex justify-center items-center text-sm w-10 h-10 rounded-lg font-extrabold focus:z-10 focus:outline-none disabled:opacity-50" disabled={openCalling}>
                       <img className="h-5 w-5" alt="call" src={`${process.env.PUBLIC_URL}/voice_call.png`} />
                     </button>
                   </Menu.Button>
@@ -278,7 +278,7 @@ function HeaderChannel() {
                     as="div"
                     className="relative"
                   >
-                    <button className="border-2 th-border-ford th-bg-selbg th-color-for inline-flex justify-center items-center text-sm w-10 h-10 rounded-lg font-extrabold focus:z-10 focus:outline-none disabled:opacity-50" disabled={openCalling}>
+                    <button className="th-color-for inline-flex justify-center items-center text-sm w-10 h-10 rounded-lg font-extrabold focus:z-10 focus:outline-none disabled:opacity-50" disabled={openCalling}>
                       <img className="h-5 w-5" alt="call" src={`${process.env.PUBLIC_URL}/video_call.png`} />
                     </button>
                   </Menu.Button>
@@ -469,13 +469,13 @@ function HeaderDirectMessage() {
       </SelectChannel>
       <div className="flex space-x-2">
         {value?.objectId !== user?.uid && (
-          <button className="border-2 th-border-ford th-bg-selbg th-color-for inline-flex justify-center items-center text-sm w-10 h-10 rounded-lg font-extrabold focus:z-10 focus:outline-none" disabled={loading} onClick={() =>setOpen(true)}>
+          <button className="th-color-for inline-flex justify-center items-center text-sm w-10 h-10 rounded-lg font-extrabold focus:z-10 focus:outline-none" disabled={loading} onClick={() =>setOpen(true)}>
             {loading ? <Spinner className="h-5 w-5" /> : 
             <img className="h-5 w-5" alt="add member" src={`${process.env.PUBLIC_URL}/add_user.png`} />}
           </button>
         )}
         <button
-          className="border-2 th-border-ford th-bg-selbg th-color-for inline-flex justify-center items-center text-sm w-10 h-10 rounded-lg font-extrabold focus:z-10 focus:outline-none"
+          className="th-color-for inline-flex justify-center items-center text-sm w-10 h-10 rounded-lg font-extrabold focus:z-10 focus:outline-none"
           onClick={() => setVisibleSearch(!visibleSearch)}
         >
           <SearchIcon
@@ -483,18 +483,18 @@ function HeaderDirectMessage() {
           />
         </button>
         <button
-          className="border-2 th-border-ford th-bg-selbg th-color-for inline-flex justify-center items-center text-sm w-10 h-10 rounded-lg font-extrabold focus:z-10 focus:outline-none"
+          className="th-color-for inline-flex justify-center items-center text-sm w-10 h-10 rounded-lg font-extrabold focus:z-10 focus:outline-none"
           onClick={() => setVisibleFileSearch(!visibleFileSearch)}
         >
           <img className="h-5 w-5" alt="gallery" src={`${process.env.PUBLIC_URL}/gallery.png`} />
         </button>
         {value?.objectId !== user?.uid && (
-          <button className="border-2 th-border-ford th-bg-selbg th-color-for inline-flex justify-center items-center text-sm w-10 h-10 rounded-lg font-extrabold focus:z-10 focus:outline-none disabled:opacity-50" disabled={openCalling} onClick={() => handleCallingButton(true)}>
+          <button className="th-color-for inline-flex justify-center items-center text-sm w-10 h-10 rounded-lg font-extrabold focus:z-10 focus:outline-none disabled:opacity-50" disabled={openCalling} onClick={() => handleCallingButton(true)}>
             <img className="h-5 w-5" alt="call" src={`${process.env.PUBLIC_URL}/voice_call.png`} />
           </button>
         )}
         {value?.objectId !== user?.uid && (
-          <button className="border-2 th-border-ford th-bg-selbg th-color-for inline-flex justify-center items-center text-sm w-10 h-10 rounded-lg font-extrabold focus:z-10 focus:outline-none disabled:opacity-50" disabled={openCalling} onClick={() => handleCallingButton(false)}>
+          <button className="th-color-for inline-flex justify-center items-center text-sm w-10 h-10 rounded-lg font-extrabold focus:z-10 focus:outline-none disabled:opacity-50" disabled={openCalling} onClick={() => handleCallingButton(false)}>
             <img className="h-5 w-5" alt="call" src={`${process.env.PUBLIC_URL}/video_call.png`} />
           </button>
         )}

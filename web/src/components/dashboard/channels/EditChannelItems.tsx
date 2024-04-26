@@ -38,7 +38,7 @@ export default function EditChannelItems({
         role="button"
         tabIndex={0}
         onClick={() => onClick ? onClick() : setOpen(true)}
-        className="th-border-selbg flex focus:outline-none flex-col space-y-1 first:rounded-t-xl p-4 border-b cursor-pointer last:border-0 last:rounded-b-xl"
+        className="th-border-for flex focus:outline-none flex-col space-y-1 first:rounded-t-xl p-4 border-b cursor-pointer last:border-0 last:rounded-b-xl"
       >
         <span
           className={classNames(

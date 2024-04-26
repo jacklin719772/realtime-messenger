@@ -70,11 +70,11 @@ export default function AddPadModal({
           >
             <div
               style={{ backgroundColor: themeColors?.background }}
-              className="inline-block align-bottom rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
+              className="inline-block align-bottom rounded-xl border th-border-for text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
             >
               <div
                 style={{ backgroundColor: themeColors?.background }}
-                className=" p-6 pb-4 flex justify-between items-center"
+                className=" p-6 pb-4 flex justify-between items-center border-b th-border-for"
               >
                 <h5
                   style={{ color: themeColors?.foreground }}

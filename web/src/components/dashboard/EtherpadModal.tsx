@@ -31,10 +31,10 @@ function CheckItem ({
   }, [checked]);
 
   return (
-    <div className="w-full p-2 flex items-center justify-between text-sm border-b">
+    <div className="w-full p-2 flex items-center justify-between text-sm border-b th-border-for th-color-for">
       <div className="flex items-center space-x-2 w-[20%]">
         <EyeIcon className="w-6 h-6 cursor-pointer" onClick={() => handleOpen(data.padName)} />
-        <TrashIcon className="w-6 h-6 cursor-pointer" onClick={openDeleteModal} />
+        <TrashIcon className="w-6 h-6 cursor-pointer th-color-brred" onClick={openDeleteModal} />
         <input type="checkbox" ref={checkRef} className="w-5 h-5 rounded th-bg-blue" value={checked} checked={checked} onChange={(e) => setChecked(!checked)} />
       </div>
       <div className="flex items-center space-x-2 w-[20%]">
@@ -216,13 +216,16 @@ export default function EtherpadModal() {
             leaveFrom="opacity-100 translate-y-0 sm:scale-100"
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
-            <div className="th-bg-bg inline-block align-bottom rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-5xl sm:w-full">
-              <div className="th-bg-bg px-4 pt-2 pb-4 sm:p-2 sm:px-4 flex justify-between items-center">
+            <div className="th-bg-bg inline-block align-bottom rounded-xl border th-border-for text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-5xl sm:w-full">
+              <div className="th-bg-bg px-4 pt-2 pb-4 sm:p-2 sm:px-4 flex justify-between items-center border-b th-border-for">
                 <div className="flex items-center">
                   <button className="p-1" hidden={iframeHidden} onClick={closeIframe}>
                     <img src={`${process.env.PUBLIC_URL}/back.png`} className="w-6 h-6" /> 
                   </button>
-                  <h5 className="font-bold th-color-for">
+                  <div className="p-1" hidden={!iframeHidden}>
+                    <img src={`${process.env.PUBLIC_URL}/etherpad.png`} className="w-6 h-6" /> 
+                  </div>
+                  <h5 className="font-bold th-color-for pl-2">
                     {iframeHidden ? "E-Pad" : currentPadName}
                   </h5>
                 </div>
@@ -261,24 +264,24 @@ export default function EtherpadModal() {
                       placeholder="Please input the epad name"
                     />
                     <div className="w-auto flex items-center space-x-2">
-                      <button className="rounded w-10 h-10 th-border-for text-sm flex items-center justify-center border th-border-for" onClick={() => getEtherpadList(key)}>
+                      <button className="rounded w-10 h-10 th-color-for text-sm flex items-center justify-center border-2 th-border-for" onClick={() => getEtherpadList(key)}>
                         <SearchIcon className="w-5 h-5" />
                       </button>
-                      <button className="rounded w-10 h-10 th-border-for text-sm flex items-center justify-center border th-border-for" onClick={handleReset}>
+                      <button className="rounded w-10 h-10 th-color-for text-sm flex items-center justify-center border-2 th-border-for" onClick={handleReset}>
                         <XIcon className="w-5 h-5" />
                       </button>
                     </div>
                     <div className="w-auto flex items-center space-x-2">
-                      <button className="rounded w-10 h-10 th-bg-blue th-color-bg text-sm flex items-center justify-center" onClick={() => setOpenAddModal(true)}>
+                      <button className="rounded w-10 h-10 th-color-cyan text-sm flex items-center justify-center border-2 th-border-cyan" onClick={() => setOpenAddModal(true)}>
                         <PlusIcon className="w-5 h-5" />
                       </button>
-                      <button className="rounded w-10 h-10 th-bg-brred th-color-bg text-sm flex items-center justify-center" onClick={() => setOpenDeletePad(true)}>
+                      <button className="rounded w-10 h-10 th-color-brred text-sm flex items-center justify-center border-2 th-border-brred" onClick={() => setOpenDeletePad(true)}>
                         <TrashIcon className="w-5 h-5" />
                       </button>
                     </div>
                   </div>
-                  <div className="w-full p-2 flex flex-col items-center justify-between text-sm border-b h-80 overflow-y-auto">
-                    <div className="w-full p-2 flex items-center justify-between text-sm border-b">
+                  <div className="w-full p-2 flex flex-col items-center justify-between text-sm border-b th-border-for h-80 overflow-y-auto">
+                    <div className="w-full p-2 flex items-center justify-between text-sm th-color-for border-b th-border-for">
                       <div className="font-bold w-[20%]">Operation</div>
                       <div className="font-bold w-[20%]">Name</div>
                       <div className="font-bold w-[30%]">Updated At</div>
@@ -286,7 +289,7 @@ export default function EtherpadModal() {
                       <div className="font-bold w-[10%]">Revisions</div>
                       <div className="font-bold w-[10%]">Size</div>
                     </div>
-                    {epads.length === 0 && <div className="w-full text-center text-sm">No Epad Files</div>}
+                    {epads.length === 0 && <div className="w-full text-center text-sm th-color-for">No Epad Files</div>}
                     {epads.length > 0 && (
                       epads.map((p: any, index: number) => (
                         <CheckItem key={index} data={p} handleOpen={handleOpen} handleSelect={handleSelect} />

@@ -842,7 +842,7 @@ function Editor({
 
             /* Link */
             .ql-snow .ql-editor a {
-              color: ${themeColors?.blue};
+              color: ${themeColors?.cyan};
               text-decoration: none;
             }
             .ql-snow .ql-editor a:hover {

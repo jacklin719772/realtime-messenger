@@ -51,7 +51,7 @@ export default function TextField({
         ref={inputRef}
         disabled={disabled}
         readOnly={readOnly}
-        className="th-bg-bg th-border-brblack th-color-for th-border- mt-2 focus:ring-indigo-400 focus:border-indigo-500 block w-full shadow-sm text-sm rounded disabled:opacity-50"
+        className="th-bg-bg th-border-for th-color-for th-border- mt-2 focus:ring-indigo-400 focus:border-indigo-500 block w-full shadow shadow-gray-500 text-sm rounded disabled:opacity-50"
       />
       <div className="text-xs font-normal mt-2 th-color-for">{infos}</div>
     </div>

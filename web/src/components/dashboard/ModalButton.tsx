@@ -6,7 +6,7 @@ export default function ModalButton({
   onClick,
   type = "submit",
   isDelete = false,
-  className = "w-full inline-flex sm:ml-3 justify-center items-center py-2 px-4 border border-transparent text-base font-bold rounded text-white focus:outline-none focus:ring-4 focus:ring-blue-200 sm:w-auto sm:text-sm disabled:opacity-50",
+  className = "w-full inline-flex sm:ml-3 justify-center items-center py-2 px-4 border-2 text-base font-bold rounded focus:outline-none focus:ring-4 focus:ring-blue-200 sm:w-auto sm:text-sm disabled:opacity-50",
   disabled = false,
   ref,
 }: {
@@ -25,8 +25,8 @@ export default function ModalButton({
       disabled={isSubmitting || disabled}
       className={classNames(
         !isDelete
-          ? "th-bg-blue th-color-brwhite"
-          : "th-bg-red th-color-brwhite",
+          ? "th-border-cyan th-color-cyan"
+          : "th-border-brred th-color-brred",
         className
       )}
       onClick={onClick}

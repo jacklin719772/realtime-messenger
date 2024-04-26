@@ -125,7 +125,7 @@ export default function MembersSection({
   return (
     <>
       <div className="px-8 w-full">
-        <div className="flex items-center border w-full shadow-sm rounded px-2 th-color-for th-bg-bg th-border-selbg">
+        <div className="flex items-center border w-full shadow shadow-gray-500 rounded px-2 th-color-for th-bg-bg th-border-for">
           <SearchIcon className="h-5 w-5 th-color-for" />
           <input
             type="text"

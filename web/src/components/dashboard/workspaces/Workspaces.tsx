@@ -269,7 +269,7 @@ function WorkspaceItem({
         src={photoURL || `${process.env.PUBLIC_URL}/blank_workspace.png`}
         alt="workspace"
         className={classNames(
-          selected ? "border-2" : "",
+          (selected && (!openEtherpad || etherpadMinimized) && !openCreateMessage) ? "border-2" : "",
           "h-8 w-8 rounded-md p-px"
         )}
         style={{ borderColor: (selected  && (!openEtherpad || etherpadMinimized) && !openCreateMessage) ? themeColors?.cyan : "" }}
@@ -306,7 +306,7 @@ export default function Workspaces() {
   const calendar = location.pathname.includes("calendar");
   const {openEtherpad, setOpenEtherpad, etherpadMinimized, setEtherpadMinimized, openCreateMessage, setOpenCreateMessage, createMessageSection, setCreateMessageSection, openMeetingModal, setOpenMeetingModal} = useModal();
   return (
-    <div className="row-span-2 flex flex-col items-center space-y-5 py-2 flex-1 overflow-y-auto th-bg-bgdark">
+    <div className="row-span-2 flex flex-col items-center space-y-5 py-5 flex-1 overflow-y-auto th-bg-bgdark">
       {value?.map((doc: any) => (
         <WorkspaceItem
           key={doc.objectId}
@@ -331,7 +331,7 @@ export default function Workspaces() {
           src={`${process.env.PUBLIC_URL}/add_channel.png`}
           alt="workspace"
           className={classNames(
-            calendar ? "border-2" : "",
+            (openCreateMessage && createMessageSection === "channels") ? "border-2" : "",
             "h-8 w-8 rounded-md p-px"
           )}
           style={{ borderColor: (openCreateMessage && createMessageSection === "channels") ? themeColors?.cyan : "" }}
@@ -353,7 +353,7 @@ export default function Workspaces() {
           src={`${process.env.PUBLIC_URL}/add_member.png`}
           alt="workspace"
           className={classNames(
-            calendar ? "border-2" : "",
+            (openCreateMessage && createMessageSection === "members") ? "border-2" : "",
             "h-8 w-8 rounded-md p-px"
           )}
           style={{ borderColor: (openCreateMessage && createMessageSection === "members") ? themeColors?.cyan : "" }}
@@ -374,7 +374,7 @@ export default function Workspaces() {
           src={`${process.env.PUBLIC_URL}/calendar.png`}
           alt="workspace"
           className={classNames(
-            calendar ? "border-2" : "",
+            (calendar && (!openEtherpad || etherpadMinimized) && !openCreateMessage) ? "border-2" : "",
             "h-8 w-8 rounded-md p-px"
           )}
           style={{ borderColor: (calendar && (!openEtherpad || etherpadMinimized) && !openCreateMessage) ? themeColors?.cyan : "" }}
@@ -400,7 +400,7 @@ export default function Workspaces() {
           src={`${process.env.PUBLIC_URL}/etherpad.png`}
           alt="workspace"
           className={classNames(
-            calendar ? "border-2" : "",
+            openEtherpad ? "border-2" : "",
             "h-8 w-8 rounded-md p-px"
           )}
           style={{ borderColor: openEtherpad ? themeColors?.cyan : "" }}
@@ -419,7 +419,7 @@ export default function Workspaces() {
           src={`${process.env.PUBLIC_URL}/book_camera.png`}
           alt="workspace"
           className={classNames(
-            calendar ? "border-2" : "",
+            openMeetingModal ? "border-2" : "",
             "h-8 w-8 rounded-md p-px"
           )}
           style={{ borderColor: openMeetingModal ? themeColors?.cyan : "" }}

@@ -54,9 +54,9 @@ export default function EditPasswordModal() {
             leaveFrom="opacity-100 translate-y-0 sm:scale-100"
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
-            <div className="inline-block align-bottom rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full th-bg-bg">
-              <div className=" p-6 pb-4 flex justify-between items-center th-bg-bg">
-                <h5 className="font-bold text-2xl th-color-for">
+            <div className="inline-block align-bottom rounded-xl border th-border-for text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full th-bg-bg">
+              <div className=" p-6 pb-4 flex justify-between items-center th-bg-bg border-b th-border-for">
+                <h5 className="font-bold th-color-for">
                   Change password
                 </h5>
                 <div
@@ -112,7 +112,7 @@ export default function EditPasswordModal() {
                         />
                       </div>
                     </div>
-                    <div className="px-4 pb-5 pt-1 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <div className="px-4 pb-2 pt-2 sm:px-6 sm:flex sm:flex-row-reverse border-t th-border-for">
                       <ModalButton isSubmitting={isSubmitting} text="Save" />
                       <CancelButton setOpen={setOpen} />
                     </div>

@@ -12,6 +12,7 @@ import { useUser } from "contexts/UserContext";
 import { Fragment, useEffect, useMemo, useState } from "react";
 import { postData } from "utils/api-helpers";
 import classNames from "utils/classNames";
+import hexToRgbA from "utils/hexToRgbA";
 
 function ThemeItem({ name }: { name: string }) {
   const { themeColors } = useTheme();
@@ -36,10 +37,10 @@ function ThemeItem({ name }: { name: string }) {
         <div
           className="h-40 w-48 flex flex-col border rounded cursor-pointer"
           style={{
-            color: checked ? themeColors?.blue : themeColors?.foreground,
+            color: checked ? themeColors?.cyan : themeColors?.foreground,
             borderColor: checked
-              ? themeColors?.blue
-              : themeColors?.selectionBackground,
+              ? themeColors?.cyan
+              : hexToRgbA(themeColors?.foreground, "0.5"),
           }}
         >
           <div className="h-2/3">
@@ -111,13 +112,13 @@ function ThemeItem({ name }: { name: string }) {
           <div
             style={{
               borderColor: checked
-                ? themeColors?.blue
-                : themeColors?.selectionBackground,
+                ? themeColors?.cyan
+                : hexToRgbA(themeColors?.foreground, "0.5"),
             }}
             className="px-5 py-2 h-1/3 border-t flex items-center overflow-x-auto"
           >
             {checked && (
-              <CheckCircleIcon className="h-5 w-5 th-color-blue mr-2 flex-shrink-0" />
+              <CheckCircleIcon className="h-5 w-5 th-color-cyan mr-2 flex-shrink-0" />
             )}
             {previewTheme?.name}
           </div>
@@ -143,7 +144,7 @@ function Themes() {
 
   return (
     <div>
-      <span style={{ color: themeColors?.foreground }}>
+      <span style={{ color: themeColors?.foreground }} className="text-sm">
         {`Change the appearance of ${APP_NAME} across all of your workspaces.`}
       </span>
       <RadioGroup
@@ -212,15 +213,14 @@ export default function Preferences() {
             leaveFrom="opacity-100 translate-y-0 sm:scale-100"
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
-            <div className="inline-block border th-border-selbg th-bg-bg align-bottom rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-3xl sm:w-full">
+            <div className="inline-block border th-border-selbg th-bg-bg align-bottom rounded-xl border th-border-for text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-3xl sm:w-full">
               <div
                 style={{
                   backgroundColor: themeColors?.background,
-                  borderColor: themeColors?.selectionBackground,
                 }}
-                className="border-b p-6 flex justify-between items-center"
+                className="border-b th-border-for p-6 flex justify-between items-center"
               >
-                <h5 className="font-bold text-2xl th-color-for">Preferences</h5>
+                <h5 className="font-bold th-color-for">Preferences</h5>
                 <div
                   role="button"
                   tabIndex={0}
@@ -243,15 +243,13 @@ export default function Preferences() {
                     {({ checked }) => (
                       <div
                         className={classNames(
-                          "flex items-center px-2 py-px rounded space-x-2 cursor-pointer outline-none ring-0"
+                          "flex items-center px-2 py-1 rounded space-x-2 cursor-pointer outline-none ring-0"
                         )}
                         style={{
                           backgroundColor: checked
-                            ? themeColors?.blue
+                            ? themeColors?.cyan
                             : themeColors?.background,
-                          color: checked
-                            ? themeColors?.brightWhite
-                            : themeColors?.foreground,
+                          color: themeColors?.foreground,
                         }}
                       >
                         <EyeIcon className="h-4 w-4" />

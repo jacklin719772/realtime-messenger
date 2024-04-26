@@ -75,7 +75,7 @@ export default function Login() {
               alt="logo"
               className="h-full w-auto rounded-md"
             />
-            <h1 className="font-bold text-[3vw] th-color-for">Sign In</h1>
+            <h1 className="font-bold text-[3vw] text-black">Sign In</h1>
           </div>
           <Formik
             initialValues={{
