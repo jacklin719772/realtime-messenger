@@ -50,7 +50,7 @@ function InviteUserItem({
   }, [checked]);
 
   return (
-    <div className="flex items-center space-x-2 p-2 th-bg-bg th-color-for border-b th-border-for hover:bg-gray-500 w-full">
+    <div className="flex items-center space-x-2 px-2 py-1 th-bg-bg th-color-for border-b th-border-for hover:bg-gray-500 w-full">
       <div className="flex items-center">
         <input type="checkbox" className="appearance-none checked:bg-blue-500" checked={checked} onChange={(e) => setChecked(e.target.checked)} />
       </div>
