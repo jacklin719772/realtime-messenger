@@ -217,9 +217,7 @@ function HeaderChannel() {
           className="th-color-for inline-flex justify-center items-center text-sm w-10 h-10 rounded-lg font-extrabold focus:z-10 focus:outline-none"
           onClick={() => setVisibleSearch(!visibleSearch)}
         >
-          <SearchIcon
-            className="h-5 w-5 th-color-for"
-          />
+          <img className="h-5 w-5" alt="search" src={`${process.env.PUBLIC_URL}/search.png`} />
         </button>
         <button
           className="th-color-for inline-flex justify-center items-center text-sm w-10 h-10 rounded-lg font-extrabold focus:z-10 focus:outline-none"
@@ -478,7 +476,7 @@ function HeaderDirectMessage() {
         </h5>
         <ChevronDownIcon className="h-4 w-4 th-color-for" />
       </SelectChannel>
-      <div className="flex space-x-2">
+      <div className="flex">
         {value?.objectId !== user?.uid && (
           <button className="th-color-for inline-flex justify-center items-center text-sm w-10 h-10 rounded-lg font-extrabold focus:z-10 focus:outline-none" disabled={loading} onClick={() =>setOpen(true)}>
             {loading ? <Spinner className="h-5 w-5" /> : 
@@ -489,9 +487,7 @@ function HeaderDirectMessage() {
           className="th-color-for inline-flex justify-center items-center text-sm w-10 h-10 rounded-lg font-extrabold focus:z-10 focus:outline-none"
           onClick={() => setVisibleSearch(!visibleSearch)}
         >
-          <SearchIcon
-            className="h-5 w-5 th-color-for"
-          />
+          <img className="h-5 w-5" alt="search" src={`${process.env.PUBLIC_URL}/search.png`} />
         </button>
         <button
           className="th-color-for inline-flex justify-center items-center text-sm w-10 h-10 rounded-lg font-extrabold focus:z-10 focus:outline-none"
