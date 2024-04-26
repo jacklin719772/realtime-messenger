@@ -237,7 +237,7 @@ export default function MeetingModal() {
             leaveFrom="opacity-100 translate-y-0 sm:scale-100"
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
-            <div className="th-bg-bg inline-block align-bottom rounded-lg th-border-for text-left overflow-hidden shadow-xl transform transition-all sm:align-middle sm:max-w-6xl sm:w-full">
+            <div className="th-bg-bg inline-block align-bottom rounded-xl border th-border-for text-left overflow-hidden shadow-xl transform transition-all sm:align-middle sm:max-w-6xl sm:w-full">
               <div className="th-bg-bg px-4 pt-2 pb-4 sm:p-2 sm:px-4 flex justify-between items-center">
                 <h5 className="font-bold th-color-for">
                   {isVideoDisabled ? "Voice Call" : "Video Call"}
@@ -317,7 +317,7 @@ export default function MeetingModal() {
                   </div>
                 </div>
               </div>
-              <div className="px-4 pb-5 pt-1 w-full h-[500px] max-h-[490px] overflow-y-auto">
+              <div className="px-4 pb-5 pt-1 w-full h-[500px] max-h-[490px] overflow-y-auto border-t th-border-for">
                 <div className="w-full h-full relative">
                   {/* <iframe src="https://meeting.uteamwork.com/" allow="microphone *; camera *; display-capture *" className="w-full h-full" /> */}
                   <div id={jitsiContainerId} className="w-full h-full" />
