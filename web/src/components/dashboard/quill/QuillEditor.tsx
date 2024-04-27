@@ -39,6 +39,7 @@ import { getIdToken } from "gqlite-lib/dist/client/auth";
 import { UsersContext } from "contexts/UsersContext";
 import { useUser } from "contexts/UserContext";
 import { getHref } from "utils/get-file-url";
+import { useModal } from "contexts/ModalContext";
 
 // #2 register module
 // Quill.register("modules/imageUploader", ImageUploader);
@@ -188,6 +189,7 @@ function StickersDropdown() {
   }, []);
 
   const { workspaceId, channelId, dmId } = useParams();
+  const { setMessageSent } = useModal();
 
   const [loading, setLoading] = useState("");
 
@@ -200,6 +202,7 @@ function StickersDropdown() {
         chatType: channelId ? "Channel" : "Direct",
         sticker,
       });
+      setMessageSent(true);
     } catch (err: any) {
       toast.error(err.message);
     }

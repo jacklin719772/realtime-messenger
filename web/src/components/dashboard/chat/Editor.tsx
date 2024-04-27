@@ -17,6 +17,7 @@ import { v4 as uuidv4 } from "uuid";
 import { useTranslation } from "react-i18next";
 import { UsersContext } from "contexts/UsersContext";
 import { ReactionsContext } from "contexts/ReactionsContext";
+import { useModal } from "contexts/ModalContext";
 
 function TypingUser({ userId }: { userId: string }) {
   const { value } = useUserById(userId);
@@ -118,6 +119,8 @@ export default function Editor() {
   const { value: userData } = useUserById(otherUserId || user?.uid);
   const chat = channelId ? channel : dm;
 
+  const { setMessageSent } = useModal();
+
   useEffect(() => {
     if (voiceBlob) {
       setFiles([voiceBlob]);
@@ -208,6 +211,7 @@ export default function Editor() {
                 }),
                 chatType: channelId ? "Channel" : "Direct",
               });
+              setMessageSent(true);
               const el = document.getElementById("contentMain")!;
               el.scrollTo(el.scrollHeight, 0);
               resetForm();

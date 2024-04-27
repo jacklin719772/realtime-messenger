@@ -4,6 +4,7 @@ import CancelButton from "components/CancelButton";
 import ModalButton from "components/dashboard/ModalButton";
 import TextField from "components/TextField";
 import { APP_NAME } from "config";
+import { useModal } from "contexts/ModalContext";
 import { useUser } from "contexts/UserContext";
 import { Formik } from "formik";
 import { uploadFile } from "gqlite-lib/dist/client/storage";
@@ -27,6 +28,7 @@ export default function EditProfile({
   const [photo, setPhoto] = useState<File | null | undefined>(null);
   const [photoUrl, setPhotoUrl] = useState("");
   const fileRef = useRef<any>(null);
+  const { soundActivated, setSoundActivated } = useModal();
 
   useEffect(() => {
     if (photo) setPhotoUrl(URL.createObjectURL(photo));
@@ -156,7 +158,7 @@ export default function EditProfile({
                         <XIcon className="h-5 w-5 th-color-for" />
                       </div>
                     </div>
-                    <div className="p-6 pt-2 pb-6 grid grid-cols-3 th-bg-bg">
+                    <div className="p-6 pt-2 pb-2 grid grid-cols-3 th-bg-bg">
                       <div className="col-span-2 space-y-6 px-px max-h-450 overflow-y-auto">
                         <TextField
                           label="Full name"
@@ -189,6 +191,22 @@ export default function EditProfile({
                           placeholder="(123) 555-555"
                           infos="Enter a phone number."
                         />
+                        <div className="w-full">
+                          <div className="w-full space-x-2">
+                            <label htmlFor="sound" className="text-sm font-bold th-color-for">
+                              Promoting Sound
+                            </label>
+                            <input
+                              type="checkbox"
+                              name="sound"
+                              id="sound"
+                              checked={soundActivated}
+                              onChange={(e) => setSoundActivated(e.target.checked)}
+                              className="appearance-none checked:bg-blue-500"
+                            />
+                          </div>
+                          <div className="text-xs font-normal mt-2 th-color-for">Control the promoting sound status when receiving a messaage</div>
+                        </div>
                       </div>
                       <div className="col-span-1 flex flex-col pl-7">
                         <h4 className="block text-sm font-bold th-color-for">
@@ -229,7 +247,7 @@ export default function EditProfile({
                         )}
                       </div>
                     </div>
-                    <div className="px-4 py-5 sm:px-6 sm:flex sm:flex-row-reverse border-t th-border-for">
+                    <div className="px-4 py-2 sm:px-6 sm:flex sm:flex-row-reverse border-t th-border-for">
                       <ModalButton text="Save" isSubmitting={isSubmitting} />
                       <CancelButton setOpen={setOpen} />
                     </div>

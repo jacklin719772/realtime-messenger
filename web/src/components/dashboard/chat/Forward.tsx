@@ -25,6 +25,7 @@ import Style from "components/Style";
 import { string } from "yup";
 import { Autocomplete, Box, TextField as MuiTextField } from "@mui/material";
 import TextField from "components/TextField";
+import { useModal } from "contexts/ModalContext";
 
 function ForwardFooter({
   setEdit,
@@ -94,6 +95,7 @@ export default function Forward() {
   const [users, setUsers] = useState([]);
   const [chatId, setChatId] = useState(null);
   const [chatType, setChatType] = useState("Channel");
+  const { setMessageSent } = useModal();
 
   const location = useLocation();
   
@@ -195,6 +197,7 @@ export default function Forward() {
             forwardSenderId: forwardMessage?.senderId,
             forwardCreatedAt: new Date(forwardMessage?.createdAt),
           });
+          setMessageSent(true);
           if (chatType === "Channel") {
             navigate(`/dashboard/workspaces/${workspaceId}/channels/${chatId}#${messageId}`);
           } else {

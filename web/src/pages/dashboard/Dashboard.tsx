@@ -13,7 +13,7 @@ import Workspaces from "components/dashboard/workspaces/Workspaces";
 import LoadingScreen from "components/LoadingScreen";
 import { APP_NAME } from "config";
 import { DirectMessagesContext } from "contexts/DirectMessagesContext";
-import { ModalContext } from "contexts/ModalContext";
+import { ModalContext, useModal } from "contexts/ModalContext";
 import { ReactionsContext } from "contexts/ReactionsContext";
 import { useUser } from "contexts/UserContext";
 import { usePresenceByUserId } from "hooks/usePresence";
@@ -44,6 +44,7 @@ import { io, Socket } from 'socket.io-client';
 import Receiving from "components/dashboard/Receiving";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
+import { useMessages } from "hooks/useMessages";
 
 interface ServerToClientEvents {
   noArg: () => void;
@@ -229,7 +230,11 @@ export default function Dashboard() {
   const {openMailSender, openFavorite, uteamworkUserData, etherpadMinimized, setCurrentWorkspaceId, openMeetingModal, openCalling, setOpenCalling, openReceiving, setOpenReceiving, recipientInfo, setRecipientInfo, senderInfo, setSenderInfo, roomName, setRoomName, isVideoDisabled, setIsVideoDisabled, setOpenMeetingModal, iframeLoaded} = useContext(ModalContext);
   const [isOwner, setIsOwner] = useState(false);
   const [ownerData, setOwnerData] = useState<any>(null);
+  const { soundActivated, messageSent, setMessageSent } = useModal();
+  const { messageArrived, setMessageArrived } = useMessages(workspaceId);
   const audio = useMemo(() => new Audio('/ringtone.mp3'), []);
+  const soundSend = useMemo(() => new Audio('/sendnewmessage.mp3'), []);
+  const soundReceive = useMemo(() => new Audio('/receivednewmessage.mp3'), []);
 
   const sendCallMessage = async (type: string, startTime: Date, refusedUser?: any) => {
     const messageId = uuidv4();
@@ -241,6 +246,35 @@ export default function Dashboard() {
       chatType: "Direct",
     });
   }
+
+  useEffect(() => {
+    let timer: any;
+    console.log('Message Arrived: ', messageArrived);
+    console.log('Message Sent: ', messageSent);
+    if (soundActivated && messageArrived) {
+      if (messageSent) {
+        console.log('Message Sent');
+        soundSend.play();
+        timer = setTimeout(() => {
+          setMessageArrived(false);
+          setMessageSent(false);
+        }, 1200);
+      } else {
+        console.log('Message Arrived');
+        soundReceive.play();
+        timer = setTimeout(() => {
+          setMessageArrived(false);
+          setMessageSent(false);
+        }, 1200);
+      }
+    } else {
+      soundReceive.pause();
+      soundSend.pause();
+      setMessageSent(false);
+      clearTimeout(timer);
+    }
+    return () => clearTimeout(timer);
+  }, [messageSent, soundActivated, messageArrived]);
 
   useEffect(() => {
     if ((openCalling || openReceiving) && !iframeLoaded) {

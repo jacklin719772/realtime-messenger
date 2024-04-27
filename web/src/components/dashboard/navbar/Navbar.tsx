@@ -60,7 +60,7 @@ export default function Navbar() {
   const { value: users } = useContext(UsersContext);
   const { setOriginId } = useContext(ReactionsContext);
   const [deleteLoading, setDeleteLoading] = useState(false);
-  const { roomName, meetingMinimized, setMeetingMinimized } = useModal();
+  const { roomName, meetingMinimized, setMeetingMinimized, isVideoDisabled } = useModal();
 
   const { userdata } = useUser();
   const photoURL =
@@ -302,7 +302,7 @@ export default function Navbar() {
         </div>
         {meetingMinimized && roomName !== "" && (
           <div className="ml-5 flex items-center">
-            <div className="text-sm th-color-for">Meeting:  {roomName}</div>
+            <div className="text-sm th-color-for">{isVideoDisabled ? "Voice " : "Video "} Call is running...</div>
             <button className="p-2" onClick={() => setMeetingMinimized(false)}>
               <img src={`${process.env.PUBLIC_URL}/meeting_show.png`} alt="meeting show" title="Display Meeting Window" className="w-6 h-6" />
             </button>

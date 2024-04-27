@@ -251,7 +251,7 @@ function HeaderChannel() {
                 >
                   <Menu.Items
                     static
-                    className="th-bg-bg border th-border-for origin-top-right z-20 absolute right-0 mt-2 w-48 h-72  rounded-md shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none py-2"
+                    className="th-bg-bg border th-border-for origin-top-right z-20 absolute right-0 mt-1 w-48 h-72  rounded-md shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none py-2"
                   >
                     <div className="px-5 flex items-center justify-between">
                       <div className="text-base th-color-for">Choose members</div>
@@ -265,13 +265,25 @@ function HeaderChannel() {
                       ))}
                     </div>
                     <div className="flex justify-end items-center border-t th-border-for pt-2 px-2 space-x-2">
-                      <button className="th-color-cyan border-2 th-border-cyan rounded text-xs px-2 py-1" onClick={() => {
-                        handleCallingButton(true);
-                      }}>Confirm</button>
-                      <button className="th-color-for border-2 th-border-for rounded text-xs px-2 py-1" onClick={() =>  {
-                        setCheckedUsers(users?.filter((u: any) => (value?.members.includes(u?.objectId) && u?.objectId !== userdata?.objectId)));
-                        setChecked(true);
-                      }}>Select All</button>
+                      <Menu.Item>
+                      {({ active }) => (
+                        <button className="th-color-cyan border-2 th-border-cyan rounded text-xs px-2 py-1" onClick={() => {
+                          handleCallingButton(true);
+                        }}>Confirm</button>
+                      )}
+                      </Menu.Item>
+                      {checked &&
+                        <button className="th-color-for border-2 th-border-for rounded text-xs px-2 py-1" onClick={() =>  {
+                          setCheckedUsers(users?.filter((u: any) => (value?.members.includes(u?.objectId) && u?.objectId !== userdata?.objectId)));
+                          setChecked(true);
+                        }}>Select All</button>
+                      }
+                      {!checked &&
+                        <button className="th-color-for border-2 th-border-for rounded text-xs px-2 py-1" onClick={() =>  {
+                          setCheckedUsers([]);
+                          setChecked(false);
+                        }}>Unselect All</button>
+                      }
                     </div>
                   </Menu.Items>
                 </Transition>
@@ -305,7 +317,7 @@ function HeaderChannel() {
                 >
                   <Menu.Items
                     static
-                    className="th-bg-bg border th-border-for origin-top-right z-20 absolute right-0 mt-2 w-48 h-72  rounded-md shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none py-2"
+                    className="th-bg-bg border th-border-for origin-top-right z-20 absolute right-0 mt-1 w-48 h-72  rounded-md shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none py-2"
                   >
                     <div className="px-5 flex items-center justify-between">
                       <div className="text-base th-color-for">Choose members</div>
@@ -319,13 +331,25 @@ function HeaderChannel() {
                       ))}
                     </div>
                     <div className="flex justify-end items-center border-t th-border-for pt-2 px-2 space-x-2">
-                      <button className="th-color-cyan border-2 th-border-cyan rounded text-xs px-2 py-1" onClick={() => {
-                        handleCallingButton(false);
-                      }}>Confirm</button>
-                      <button className="th-color-for border-2 th-border-for rounded text-xs px-2 py-1" onClick={() =>  {
-                        setCheckedUsers(users?.filter((u: any) => (value?.members.includes(u?.objectId) && u?.objectId !== userdata?.objectId)));
-                        setChecked(true);
-                      }}>Cancel</button>
+                      <Menu.Item>
+                      {({ active }) => (
+                        <button className="th-color-cyan border-2 th-border-cyan rounded text-xs px-2 py-1" onClick={() => {
+                          handleCallingButton(false);
+                        }}>Confirm</button>
+                      )}
+                      </Menu.Item>
+                      {checked &&
+                        <button className="th-color-for border-2 th-border-for rounded text-xs px-2 py-1" onClick={() =>  {
+                          setCheckedUsers(users?.filter((u: any) => (value?.members.includes(u?.objectId) && u?.objectId !== userdata?.objectId)));
+                          setChecked(true);
+                        }}>Select All</button>
+                      }
+                      {!checked &&
+                        <button className="th-color-for border-2 th-border-for rounded text-xs px-2 py-1" onClick={() =>  {
+                          setCheckedUsers([]);
+                          setChecked(false);
+                        }}>Unselect All</button>
+                      }
                     </div>
                   </Menu.Items>
                 </Transition>
