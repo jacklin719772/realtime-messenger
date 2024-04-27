@@ -303,6 +303,8 @@ function FileGalleryView() {
 
   const [files, setFiles] = useState<File[]>([]);
   const [galleryUploaded, setGalleryUploaded] = useState(false);
+
+  const { setMessageSent } = useModal();
   
   const { value: messages } = useMessagesByChat(
     channelId || dmId,
@@ -363,6 +365,7 @@ function FileGalleryView() {
           }),
           chatType: channelId ? "Channel" : "Direct",
         });
+        setMessageSent(true);
         const el = document.getElementById("contentMain")!;
         el.scrollTo(el.scrollHeight, 0);
         setFiles([]);

@@ -21,6 +21,7 @@ import { getHref } from "utils/get-file-url";
 import { useUserById } from "hooks/useUsers";
 import classNames from "utils/classNames";
 import Style from "components/Style";
+import { useModal } from "contexts/ModalContext";
 
 function ForwardFooter({
   setEdit,
@@ -80,6 +81,7 @@ export default function Reply() {
   const editorRef = useRef<any>(null);
   const {setVisibleReply, forwardMessage, setForwardMessage} = useContext(ReactionsContext);
   const [isTyping, setIsTyping] = useState(false);
+  const { setMessageSent } = useModal();
 
   useEffect(() => {
     const type = dmId ? "directs" : "channels";
@@ -175,6 +177,7 @@ export default function Reply() {
             replySenderId: forwardMessage?.senderId,
             replyCreatedAt: new Date(forwardMessage?.createdAt),
           });
+          setMessageSent(true);
           const el = document.getElementById("contentMain")!;
           el.scrollTo(el.scrollHeight, 0);
           resetForm();

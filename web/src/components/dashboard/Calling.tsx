@@ -2,6 +2,7 @@ import { MicrophoneIcon, PhoneIcon } from '@heroicons/react/outline'
 import axios from 'axios';
 import { useModal } from 'contexts/ModalContext'
 import { useUser } from 'contexts/UserContext';
+import { useChannelById } from 'hooks/useChannels';
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -12,6 +13,7 @@ import { v4 as uuidv4 } from "uuid";
 function Calling() {
   const { userdata } = useUser();
   const { workspaceId, channelId, dmId } = useParams();
+  const { value } = useChannelById(channelId);
   const { openCalling, setOpenCalling, recipientInfo, setRecipientInfo, senderInfo, setSenderInfo, setRoomName, isVideoDisabled, enableMic, setEnableMic, iframeLoaded, setIframeLoaded, meetingMinimized } = useModal();
   
   const sendCallMessage = async (type: string, startTime: Date) => {
@@ -54,6 +56,16 @@ function Calling() {
     <div className="absolute w-full h-full bg-transparent" hidden={meetingMinimized}>
       <div className="absolute w-96 m-auto inset-0 th-bg-bgdark h-40 p-4 flex items-center rounded-xl border th-border-for">
         <div className="w-full flex flex-col justify-center space-y-4">
+          {channelId && (
+          <div className="flex items-center space-x-4">
+            <img src={`${process.env.PUBLIC_URL}/channel.png`} className="w-10 h-10" alt="channel" />
+            <div className="flex flex-col">
+              <div className="font-bold text-base th-color-for">{isVideoDisabled ? `${value?.name} Voice Call` : `${value?.name} Video Call`}</div>
+              <div className="w-full text-xs th-color-for">Waiting for invitees to accept the invitation...</div>
+            </div>
+          </div>
+          )}
+          {dmId && (
           <div className="flex items-center space-x-4">
             <img src={getHref(recipientInfo[0]?.photoURL) || `${process.env.PUBLIC_URL}/blank_user.png`} className="w-10 h-10" alt={recipientInfo[0]?.displayName} />
             <div className="flex flex-col">
@@ -61,6 +73,7 @@ function Calling() {
               <div className="w-full text-xs th-color-for">Waiting for  {recipientInfo[0]?.displayName}  to accept the invitation...</div>
             </div>
           </div>
+          )}
           <div className="w-full flex justify-end space-x-4">
             <button className="rounded-full bg-transparent th-color-brwhite" hidden={!iframeLoaded} onClick={() => setIframeLoaded(false)}>
               <img src={`${process.env.PUBLIC_URL}/tone_off.png`} className="h-10 w-10" alt="mic_off" />

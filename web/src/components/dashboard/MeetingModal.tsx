@@ -9,6 +9,7 @@ import { postData } from "utils/api-helpers";
 import { getHref } from "utils/get-file-url";
 import { v4 as uuidv4 } from "uuid";
 import axios from 'axios';
+import { useChannelById } from "hooks/useChannels";
 
 
 export default function MeetingModal() {
@@ -21,6 +22,7 @@ export default function MeetingModal() {
   const [meetStartTime, setMeetStartTime] = useState(new Date().getTime());
   const [meetEndTime, setMeetEndTime] = useState(new Date().getTime());
   const { value: users } = useContext(UsersContext);
+  const { value } = useChannelById(channelId);
 
   const loadJitsiScript = () => {
     let resolveLoadJitsiScriptPromise = null;
@@ -281,7 +283,7 @@ export default function MeetingModal() {
                             </div>
                             <div className="w-full h-px th-bg-for" />
                             <div className="overflow-y-auto h-48">
-                              {users.filter((u: any) => (!recipientInfo.includes(u) && u.objectId !== senderInfo && u.objectId !== userdata.objectId)).map((item: any, index: number) => (
+                              {users?.filter((u: any) => (value?.members.includes(u?.objectId) && u?.objectId !== userdata?.objectId)).map((item: any, index: number) => (
                                 <div className="flex justify-between items-center px-2 py-1 th-bg-bg th-color-for border-b th-border-for hover:bg-gray-500 w-full" key={index}>
                                   <div className="flex items-center space-x-2">
                                     <img src={getHref(item.thumbnailURL) || getHref(item.photoURL) || `${process.env.PUBLIC_URL}/blank_user.png`} alt={item.displayName} className="w-6" />

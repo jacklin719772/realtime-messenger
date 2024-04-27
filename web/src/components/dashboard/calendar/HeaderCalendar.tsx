@@ -28,6 +28,16 @@ function HeaderCalendar() {
             />
           </button>
         )}
+        {!teamcal && (
+          <button
+            className="th-bg-bg th-color-for inline-flex justify-center items-center text-sm w-10 h-10 rounded font-extrabold focus:z-10 focus:outline-none"
+            onClick={() => navigate(-1)}
+          >
+            <XIcon
+              className="h-5 w-5 th-color-for"
+            />
+          </button>
+        )}
       </div>
     </div>
   );

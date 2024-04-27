@@ -96,6 +96,7 @@ export function useMessages(
   workspaceId: any
 ) {
   const [messages, setMessages] = useState<any[]>([]);
+  const [messageArrived, setMessageArrived] = useState(false);
 
   const { data, loading } = useQuery(queries.LIST_MESSAGES, {
     variables: {
@@ -120,6 +121,7 @@ export function useMessages(
 
   useEffect(() => {
     if (dataPush) {
+      setMessageArrived(true);
       setMessages([
         ...messages.filter(
           (item) => item.objectId !== dataPush.onUpdateMessage.objectId
@@ -132,5 +134,7 @@ export function useMessages(
   return {
     value: [...messages].filter((m) => !m.isDeleted).sort(compareDate),
     loading,
+    messageArrived,
+    setMessageArrived,
   };
 }

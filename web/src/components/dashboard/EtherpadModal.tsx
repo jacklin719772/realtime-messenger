@@ -93,6 +93,23 @@ export default function EtherpadModal() {
     getEtherpadList("");
   }
 
+  const handleOpenDelete = () => {
+    if (checkedPads.length === 0) {
+      toast.error("Select more than 1 pad at least.", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+    } else {
+      setOpenDeletePad(true);
+    }
+  }
+
   const handleDelete = async (checkedPads: any[]) => {
     try {
       const response = await axios.post("https://uteamwork.com/_api/etherpad/delete", {
@@ -275,7 +292,7 @@ export default function EtherpadModal() {
                       <button className="rounded w-10 h-10 th-color-cyan text-sm flex items-center justify-center border-2 th-border-cyan" onClick={() => setOpenAddModal(true)}>
                         <PlusIcon className="w-5 h-5" />
                       </button>
-                      <button className="rounded w-10 h-10 th-color-brred text-sm flex items-center justify-center border-2 th-border-brred" onClick={() => setOpenDeletePad(true)}>
+                      <button className="rounded w-10 h-10 th-color-brred text-sm flex items-center justify-center border-2 th-border-brred" onClick={handleOpenDelete}>
                         <TrashIcon className="w-5 h-5" />
                       </button>
                     </div>
