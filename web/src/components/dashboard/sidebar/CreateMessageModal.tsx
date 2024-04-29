@@ -58,11 +58,11 @@ export default function CreateMessageModal() {
           >
             <div
               style={{ backgroundColor: themeColors?.background }}
-              className="inline-block align-bottom border th-border-for rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full"
+              className="inline-block align-bottom border th-border-for rounded-xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full"
             >
               <div
                 style={{ backgroundColor: themeColors?.background }}
-                className="pl-8 p-6 pb-4 flex justify-between items-center border-b th-border-for"
+                className="pl-8 p-6 pb-2 flex justify-between items-center"
               >
                 <h5
                   style={{ color: themeColors?.foreground }}

@@ -60,7 +60,7 @@ export default function WorkspaceSettings({ workspace }: { workspace: any }) {
           >
             <div
               style={{ backgroundColor: themeColors?.background }}
-              className="inline-block align-bottom rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full"
+              className="inline-block align-bottom rounded-xl border th-border-for text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full"
             >
               <div
                 style={{ backgroundColor: themeColors?.background }}
@@ -106,7 +106,7 @@ export default function WorkspaceSettings({ workspace }: { workspace: any }) {
                           "pb-2 cursor-pointer"
                         )}
                         style={{
-                          borderColor: checked ? themeColors?.brightBlue : "",
+                          borderColor: checked ? themeColors?.cyan : "",
                         }}
                       >
                         <span>Members</span>
@@ -124,7 +124,7 @@ export default function WorkspaceSettings({ workspace }: { workspace: any }) {
                           "pb-2 cursor-pointer"
                         )}
                         style={{
-                          borderColor: checked ? themeColors?.brightBlue : "",
+                          borderColor: checked ? themeColors?.cyan : "",
                         }}
                       >
                         <span>Settings</span>
@@ -135,10 +135,9 @@ export default function WorkspaceSettings({ workspace }: { workspace: any }) {
                 <div
                   style={{
                     backgroundColor: themeColors?.background,
-                    borderColor: themeColors?.selectionBackground,
                     height: 350, maxHeight: 350
                   }}
-                  className="pt-5 border-t flex flex-col overflow-y-auto"
+                  className="pt-5 border-t th-border-for flex flex-col overflow-y-auto"
                 >
                   {section === "members" && <MembersSection />}
                   {section === "settings" && (

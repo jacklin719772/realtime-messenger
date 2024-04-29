@@ -52,13 +52,13 @@ export function ReactionModal({
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
             >
-              <Listbox.Options className="origin-top-left bottom-0 right-0 absolute z-10 -ml-6 w-60 bg-white shadow rounded-lg py-3 text-base ring-1 ring-black ring-opacity-5 focus:outline-none sm:ml-auto sm:w-64 sm:text-sm">
+              <Listbox.Options className="origin-top-left bottom-0 right-0 absolute z-10 -ml-6 w-60 th-bg-bg shadow shadow-gray-500 rounded-lg border th-border-for py-3 text-base ring-1 ring-black ring-opacity-5 focus:outline-none sm:ml-auto sm:w-64 sm:text-sm">
                 {reactions.map((reaction) => (
                   <Listbox.Option
                     key={reaction.value}
                     className={({ active, selected }) =>
                       classNames(
-                        active ? "bg-gray-100" : "bg-white",
+                        active ? "bg-gray-500" : "th-bg-bg",
                         selected ? "font-semibold" : "",
                         "cursor-default select-none relative py-2 px-3"
                       )
@@ -66,7 +66,7 @@ export function ReactionModal({
                     value={reaction}
                   >
                     {({ selected }) => (
-                      <div className="flex items-center">
+                      <div className="flex items-center th-color-for">
                         <div
                           className={classNames(
                             reaction.bgColor,

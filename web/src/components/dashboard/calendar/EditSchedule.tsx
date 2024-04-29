@@ -128,15 +128,15 @@ function FileViewer({
         <Dropzone onDrop={acceptedFiles => onDrop(acceptedFiles)}>
           {({getRootProps, getInputProps}) => (
             <section className="w-auto h-10 cursor-pointer">
-              <div className="rounded w-full h-full flex justify-between border th-border-blue items-center px-4" {...getRootProps()}>
+              <div className="rounded w-full h-full flex justify-between border th-border-cyan items-center px-4" {...getRootProps()}>
                 <input {...getInputProps()} />
-                <p className="text-sm th-color-blue">Local File</p>
+                <p className="text-sm th-color-cyan">Local File</p>
               </div>
             </section>
           )}
         </Dropzone>
-        <div className="cursor-pointer rounded h-10 border th-border-blue text-sm th-color-blue px-4 flex items-center" onClick={() => setOpenPrivateFiles(true)}>Private File</div>
-        <div className="cursor-pointer rounded h-10 border th-border-blue text-sm th-color-blue px-4 flex items-center" onClick={() => setOpenRecordingFiles(true)}>Recording File</div>
+        <div className="cursor-pointer rounded h-10 border th-border-cyan text-sm th-color-cyan px-4 flex items-center" onClick={() => setOpenPrivateFiles(true)}>Private File</div>
+        <div className="cursor-pointer rounded h-10 border th-border-cyan text-sm th-color-cyan px-4 flex items-center" onClick={() => setOpenRecordingFiles(true)}>Recording File</div>
       </div>
       {attachFiles.length > 0 && <div className="w-full flex items-center space-x-2 p-2 pl-6">
         {attachFiles.map((f: any, index: number) => (
@@ -597,7 +597,7 @@ function EditSchedule({
             leaveFrom="opacity-100 translate-y-0 sm:scale-100"
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
-            <div className="th-bg-bg inline-block align-bottom rounded-lg text-left shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full">
+            <div className="th-bg-bg inline-block align-bottom rounded-xl border th-border-for text-left shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full">
               <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4 flex justify-between items-center">
                 <div className="flex items-center space-x-2">
                   <img src={`${process.env.PUBLIC_URL}/calendar.png`} className="w-6 h-6" alt="favorite" />
@@ -615,9 +615,9 @@ function EditSchedule({
                 </div>
               </div>
               <form noValidate onSubmit={handleSubmit}>
-                <div className="px-5 border-t th-border-selbg w-full h-80 overflow-y-auto">
+                <div className="px-5 border-t th-border-for w-full h-80 overflow-y-auto">
                   <div className="w-full flex items-center">
-                    <PencilIcon className="w-4 h-4 mr-2" />
+                    <PencilIcon className="w-4 h-4 mr-2 th-color-for" />
                     <TextField
                       value={values.title}
                       handleChange={handleChange}
@@ -630,10 +630,10 @@ function EditSchedule({
                     />
                   </div>
                   <div className="w-full flex items-center">
-                    <ClockIcon className="w-4 h-4 mr-2" />
+                    <ClockIcon className="w-4 h-4 mr-2 th-color-for" />
                     <div className="w-auto pr-1">
                       <DatePicker
-                        className="text-sm rounded"
+                        className="text-sm rounded th-bg-bg th-color-for border th-border-for"
                         selected={values.start_time}
                         name="start_time"
                         placeholderText="2024-04-02"
@@ -650,7 +650,7 @@ function EditSchedule({
                     </div>
                     <div className="w-auto pr-1">
                       <DatePicker
-                        className="text-sm rounded"
+                        className="text-sm rounded th-bg-bg th-color-for border th-border-for"
                         selected={values.end_time}
                         name="end_time"
                         placeholderText="2024-04-02"
@@ -663,7 +663,7 @@ function EditSchedule({
                       />
                     </div>
                     <div className="w-[42%] pr-1">
-                      <select name="timezone" onChange={handleChange} value={values.timezone} className="th-bg-bg th-border-brblack th-color-for th-border- focus:ring-indigo-400 focus:border-indigo-500 block w-full shadow-sm text-sm rounded disabled:opacity-50">
+                      <select name="timezone" onChange={handleChange} value={values.timezone} className="th-bg-bg th-border-for th-color-for focus:ring-indigo-400 focus:border-indigo-500 block w-full shadow-sm text-sm rounded disabled:opacity-50">
                         <option value="-12">(GMT-12:00) International Date Line West</option>
                         <option value="-11">(GMT-11:00) Midway Island, Samoa</option>
                         <option value="-10">(GMT-10:00) Hawaii</option>
@@ -699,7 +699,7 @@ function EditSchedule({
                       </select>
                     </div>
                     <div className="w-[10%] flex items-center justify-end">
-                      <span className="text-sm mr-2">All Day</span>
+                      <span className="text-sm mr-2 th-color-for">All Day</span>
                       <input
                         value={values.is_all_day}
                         type="checkbox"
@@ -715,7 +715,7 @@ function EditSchedule({
                     </div>
                   </div>
                   <div className="w-full flex items-center">
-                    <LocationMarkerIcon className="w-4 h-4 mr-2" /> 
+                    <LocationMarkerIcon className="w-4 h-4 mr-2 th-color-for" /> 
                     <TextField
                       value={values.location}
                       handleChange={handleChange}
@@ -727,7 +727,7 @@ function EditSchedule({
                     />
                   </div>
                   <div className="w-full flex items-center">
-                    <BellIcon className="w-4 h-4 mr-2" /> 
+                    <BellIcon className="w-4 h-4 mr-2 th-color-for" /> 
                     {/* <div className="w-[20%] flex items-center mr-2">
                       <select onChange={handleChange} disabled={true} value={values.repeat} className="th-bg-bg th-border-brblack th-color-for th-border- focus:ring-indigo-400 focus:border-indigo-500 block w-full shadow-sm text-sm rounded disabled:opacity-50" name="repeat">
                         <option value="0">Not Repeat</option>
@@ -737,9 +737,9 @@ function EditSchedule({
                         <option value="4">Yearly</option>
                       </select>
                     </div> */}
-                    <div className="flex items-center mr-2">
+                    <div className="flex items-center mr-2 th-color-for">
                       <div className="text-sm mr-2">Remind: </div>
-                      <select name="remind" onChange={handleChange} value={values.remind} className="th-bg-bg th-border-brblack th-color-for th-border- focus:ring-indigo-400 focus:border-indigo-500 block w-full shadow-sm text-sm rounded disabled:opacity-50">
+                      <select name="remind" onChange={handleChange} value={values.remind} className="th-bg-bg th-border-for th-color-for focus:ring-indigo-400 focus:border-indigo-500 block w-full shadow-sm text-sm rounded disabled:opacity-50">
                         <option value="0" selected >Never</option>
                         <option value="5" >5 mins</option>
                         <option value="15" >15 mins</option>
@@ -751,7 +751,7 @@ function EditSchedule({
                         <option value="10080" >1 week</option>
                       </select>
                     </div>
-                    <div className="flex items-center">
+                    <div className="flex items-center th-color-for">
                       <div className="text-sm mr-2">Mail remind at same time</div>
                       <input
                         value={values.is_mail_remind}
@@ -764,7 +764,7 @@ function EditSchedule({
                     </div>
                   </div>
                   <div className="w-full flex">
-                    <DocumentTextIcon className="w-4 h-4 mr-2 mt-2" />
+                    <DocumentTextIcon className="w-4 h-4 mr-2 mt-2 th-color-for" />
                     <TextArea
                       value={values.description}
                       handleChange={handleChange}
@@ -816,11 +816,11 @@ function EditSchedule({
                 <div className="w-full pb-2 px-4">
                   {isSubmitting && <ProgressBar completed={values.completed} className="w-full" />}
                 </div>
-                <div className="px-4 pb-5 pt-1 border-t th-border-selbg sm:px-6 sm:flex sm:flex-row-reverse sm:justify-start">
-                  <button onClick={handleClose} className="th-bg-bg th-color-for th-border-for border text-sm w-20 h-10 rounded font-bold focus:z-10 focus:outline-none ml-2">
+                <div className="px-4 pb-2 pt-2 border-t th-border-for sm:px-6 sm:flex sm:flex-row-reverse sm:justify-start">
+                  <button onClick={handleClose} className="th-bg-bg th-color-for th-border-for border-2 text-sm w-20 h-10 rounded font-bold focus:z-10 focus:outline-none ml-2">
                     Cancel
                   </button>
-                  <button type="submit" className={classNames(isSubmitting ? "w-24" : "w-20", "th-bg-bg th-color-blue th-border-blue border text-sm h-10 rounded font-bold focus:z-10 focus:outline-none ml-2 flex items-center justify-center")}>
+                  <button type="submit" className={classNames(isSubmitting ? "w-24" : "w-20", "th-bg-bg th-color-cyan th-border-cyan border-2 text-sm h-10 rounded font-bold focus:z-10 focus:outline-none ml-2 flex items-center justify-center")}>
                     {isSubmitting &&
                     <svg
                       className="animate-spin -ml-1 mr-2 h-4 w-4 th-color-brwhite"

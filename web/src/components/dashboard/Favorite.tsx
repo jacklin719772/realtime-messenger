@@ -210,7 +210,7 @@ function Favorite() {
             leaveFrom="opacity-100 translate-y-0 sm:scale-100"
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
-            <div className="th-bg-bg inline-block align-bottom rounded-lg text-left shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full">
+            <div className="th-bg-bg inline-block align-bottom rounded-xl border th-border-for text-left shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full">
               <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4 flex justify-between items-center">
                 <div className="flex items-center space-x-2">
                   <img src={`${process.env.PUBLIC_URL}/favorite_add.png`} className="w-6 h-6" alt="favorite" />
@@ -361,7 +361,7 @@ function Favorite() {
                   setFieldValue,
                 }) => (
                   <form noValidate onSubmit={handleSubmit}>
-                    <div className="px-5 border-t th-border-selbg w-full h-auto">
+                    <div className="px-5 border-t th-border-for w-full h-auto">
                       <div className="pt-3 w-full flex items-center">
                         <div className="w-1/3 pr-2">
                           <TextField
@@ -576,11 +576,11 @@ function Favorite() {
                         {isSubmitting && <ProgressBar completed={parseInt(values.completed)} className="w-full" />}
                       </div>
                     </div>
-                    <div className="px-4 pb-5 pt-1 border-t th-border-selbg sm:px-6 sm:flex sm:flex-row-reverse sm:justify-start">
-                      <button onClick={() => setOpenFavorite(false)} className="th-bg-bg th-color-for th-border-for border text-sm w-20 h-10 rounded font-bold focus:z-10 focus:outline-none ml-2">
+                    <div className="px-4 pb-5 pt-1 border-t th-border-for sm:px-6 sm:flex sm:flex-row-reverse sm:justify-start">
+                      <button onClick={() => setOpenFavorite(false)} className="th-bg-bg th-color-for th-border-for border-2 text-sm w-20 h-10 rounded font-bold focus:z-10 focus:outline-none ml-2">
                         Cancel
                       </button>
-                      <button type="submit" className={classNames(isSubmitting ? "w-24" : "w-20", "th-bg-bg th-color-blue th-border-blue border text-sm h-10 rounded font-bold focus:z-10 focus:outline-none ml-2 flex items-center justify-center")}>
+                      <button type="submit" className={classNames(isSubmitting ? "w-24" : "w-20", "th-bg-bg th-color-cyan th-border-cyan border-2 text-sm h-10 rounded font-bold focus:z-10 focus:outline-none ml-2 flex items-center justify-center")}>
                         {isSubmitting &&
                         <svg
                           className="animate-spin -ml-1 mr-2 h-4 w-4 th-color-brwhite"

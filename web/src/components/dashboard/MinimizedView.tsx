@@ -9,7 +9,7 @@ function MinimizedView() {
     setEtherpadMinimized(false);
   }
   return (
-    <div className="absolute w-30 h-8 flex items-center rounded border shadow top-40 right-10 space-x-2 p-2 th-bg-bg">
+    <div className="absolute w-30 h-8 flex items-center rounded border th-border-for th-color-for shadow top-40 right-10 space-x-2 p-2 th-bg-bg">
       <div className="w-1/2 flex items-center">
         <div className="text-sm font-bold truncate">{currentPadName}</div>
       </div>

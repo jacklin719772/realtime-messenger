@@ -41,7 +41,7 @@ export default function TextArea({
         onChange={handleChange}
         placeholder={placeholder}
         autoComplete={autoComplete}
-        className="th-bg-bg th-border-brblack th-color-for mt-2 focus:ring-indigo-400 focus:border-indigo-500 block w-full shadow-sm text-sm rounded-md h-28 resize-none"
+        className="th-bg-bg th-border-for th-color-for mt-2 focus:ring-indigo-400 focus:border-indigo-500 block w-full shadow shadow-gray-500 text-sm rounded-md h-28 resize-none"
       />
       <div className="text-xs font-normal mt-2 th-color-for">{infos}</div>
     </div>

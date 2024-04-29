@@ -75,7 +75,7 @@ export default function EditChannelItemsDialog({
           >
             <div
               style={{ backgroundColor: themeColors?.background }}
-              className="inline-block align-bottom rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
+              className="inline-block align-bottom rounded-xl border th-border-for text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
             >
               <div
                 style={{ backgroundColor: themeColors?.background }}
@@ -83,7 +83,7 @@ export default function EditChannelItemsDialog({
               >
                 <h5
                   style={{ color: themeColors?.foreground }}
-                  className="font-bold text-2xl"
+                  className="font-bold"
                 >
                   {title}
                 </h5>
@@ -131,7 +131,7 @@ export default function EditChannelItemsDialog({
                   <form noValidate onSubmit={handleSubmit}>
                     <div
                       style={{ backgroundColor: themeColors?.background }}
-                      className="p-6 pt-0 pb-6"
+                      className="p-6 pt-0 pb-6 border-t th-border-for"
                     >
                       <div className="space-y-6">
                         {textArea && (
@@ -165,7 +165,7 @@ export default function EditChannelItemsDialog({
                         )}
                       </div>
                     </div>
-                    <div className="px-4 pb-5 pt-1 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <div className="px-4 pb-3 pt-2 sm:px-6 sm:flex sm:flex-row-reverse border-t th-border-for">
                       <ModalButton text="Save" isSubmitting={isSubmitting} />
                       <CancelButton setOpen={setOpen} />
                     </div>
