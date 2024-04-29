@@ -61,6 +61,8 @@ function InviteUserItem({
   useEffect(() => {
     if (allChecked) {
       setChecked(true);
+    } else {
+      setChecked(false);
     }
   }, [allChecked]);
 
@@ -267,18 +269,18 @@ function HeaderChannel() {
                     <div className="flex justify-end items-center border-t th-border-for pt-2 px-2 space-x-2">
                       <Menu.Item>
                       {({ active }) => (
-                        <button className="th-color-cyan border-2 th-border-cyan rounded text-xs px-2 py-1" onClick={() => {
+                        <button className="th-color-cyan border-2 th-border-cyan rounded text-xs px-2 py-1" disabled={checkedUsers.length === 0} onClick={() => {
                           handleCallingButton(true);
                         }}>Confirm</button>
                       )}
                       </Menu.Item>
-                      {checked &&
+                      {!checked &&
                         <button className="th-color-for border-2 th-border-for rounded text-xs px-2 py-1" onClick={() =>  {
                           setCheckedUsers(users?.filter((u: any) => (value?.members.includes(u?.objectId) && u?.objectId !== userdata?.objectId)));
                           setChecked(true);
                         }}>Select All</button>
                       }
-                      {!checked &&
+                      {checked &&
                         <button className="th-color-for border-2 th-border-for rounded text-xs px-2 py-1" onClick={() =>  {
                           setCheckedUsers([]);
                           setChecked(false);
@@ -333,18 +335,18 @@ function HeaderChannel() {
                     <div className="flex justify-end items-center border-t th-border-for pt-2 px-2 space-x-2">
                       <Menu.Item>
                       {({ active }) => (
-                        <button className="th-color-cyan border-2 th-border-cyan rounded text-xs px-2 py-1" onClick={() => {
+                        <button className="th-color-cyan border-2 th-border-cyan rounded text-xs px-2 py-1" disabled={checkedUsers.length === 0} onClick={() => {
                           handleCallingButton(false);
                         }}>Confirm</button>
                       )}
                       </Menu.Item>
-                      {checked &&
+                      {!checked &&
                         <button className="th-color-for border-2 th-border-for rounded text-xs px-2 py-1" onClick={() =>  {
                           setCheckedUsers(users?.filter((u: any) => (value?.members.includes(u?.objectId) && u?.objectId !== userdata?.objectId)));
                           setChecked(true);
                         }}>Select All</button>
                       }
-                      {!checked &&
+                      {checked &&
                         <button className="th-color-for border-2 th-border-for rounded text-xs px-2 py-1" onClick={() =>  {
                           setCheckedUsers([]);
                           setChecked(false);
