@@ -230,7 +230,7 @@ export default function Preferences() {
                   <XIcon className="h-5 w-5 th-color-for" />
                 </div>
               </div>
-              <div className="p-6 pl-4 pr-1 pt-0 pb-0 max-h-400 grid grid-cols-5 th-bg-bg">
+              <div className="p-6 pl-4 pr-1 pt-0 pb-0 max-h-450 grid grid-cols-5 th-bg-bg">
                 <RadioGroup
                   className="col-span-1 h-full py-4"
                   value={selected}
