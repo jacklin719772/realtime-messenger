@@ -35,7 +35,7 @@ function ThemeItem({ name }: { name: string }) {
     <RadioGroup.Option value={name} className="focus:outline-none">
       {({ checked }) => (
         <div
-          className="h-40 w-48 flex flex-col border rounded cursor-pointer"
+          className="h-32 w-40 flex flex-col border rounded cursor-pointer"
           style={{
             color: checked ? themeColors?.cyan : themeColors?.foreground,
             borderColor: checked
@@ -148,7 +148,7 @@ function Themes() {
         {`Change the appearance of ${APP_NAME} across all of your workspaces.`}
       </span>
       <RadioGroup
-        className="grid grid-cols-2 gap-4 mt-5"
+        className="grid grid-cols-3 gap-4 mt-5"
         value={theme.replace(".json", "")}
         onChange={setTheme}
       >
@@ -230,7 +230,7 @@ export default function Preferences() {
                   <XIcon className="h-5 w-5 th-color-for" />
                 </div>
               </div>
-              <div className="p-6 px-4 pt-0 pb-0 max-h-screen min-h-400 grid grid-cols-4 th-bg-bg">
+              <div className="p-6 pl-4 pr-1 pt-0 pb-0 max-h-screen min-h-400 grid grid-cols-5 th-bg-bg">
                 <RadioGroup
                   className="col-span-1 h-full py-4"
                   value={selected}
@@ -258,7 +258,7 @@ export default function Preferences() {
                     )}
                   </RadioGroup.Option>
                 </RadioGroup>
-                <div className="col-span-3 flex flex-col px-6 py-3 overflow-y-scroll h-550">
+                <div className="col-span-4 flex flex-col pl-6 pr-2 py-3 overflow-y-scroll h-550">
                   {selected === "themes" && <Themes />}
                 </div>
               </div>

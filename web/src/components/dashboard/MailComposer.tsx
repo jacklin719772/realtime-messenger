@@ -22,6 +22,7 @@ import now from 'utils/now';
 import classNames from 'utils/classNames';
 import { getHref } from 'utils/get-file-url';
 import { TagsInput } from "react-tag-input-component";
+import { useTheme } from 'contexts/ThemeContext';
 
 function FileViewer({
   setFiles,
@@ -117,6 +118,7 @@ function MailComposer() {
   const [body, setBody] = useState("");
   const [recipients, setRecipients] = useState<string[]>([]);
   const [tempAddress, setTempAddress] = useState("");
+  const { themeColors } = useTheme();
 
   useEffect(() => {
     setBody(emailBody);
@@ -183,7 +185,10 @@ function MailComposer() {
             display: inline-block;
           }
           .rti--container {
-            padding: 2px;
+            padding-left: 2px;
+            padding-right: 2px;
+            padding-top: 0;
+            padding-bottom: 0;
             border-radius: 4px;
             border: none;
             width: 758px;
@@ -201,10 +206,15 @@ function MailComposer() {
             outline: none;
             width: 200px;
             background-color: transparent;
+            font-size: 0.875rem !important;
           }
           .rti--container input:focus {
             border: none;
             outline: none;
+          }
+          .rti--tag {
+            background-color: ${themeColors?.foreground} !important;
+            color: ${themeColors?.background} !important;
           }
           .note-link-popover .popover-content.note-children-container {
             width: 800px !important;
@@ -326,12 +336,12 @@ function MailComposer() {
                   <form noValidate onSubmit={handleSubmit}>
                     <div className="px-5 border-t th-border-for w-full h-auto">
                       <div className="mt-2 w-full flex border th-border-for rounded th-color-for">
-                        <span className="flex select-none items-center w-24 px-3 th-color-bg sm:text-sm border-r th-border-for th-bg-for rounded-l">Recipient</span>
-                        <TagsInput value={recipients} onChange={handleRecipients} onKeyUp={handleTempAddress} name="to" placeHolder="janesmith" />
+                        <span className="flex select-none items-center w-24 px-3 sm:text-sm border-r th-border-for rounded-l">Recipient</span>
+                        <TagsInput value={recipients} onChange={handleRecipients} onKeyUp={handleTempAddress} name="to" placeHolder="mail@example.com" />
                       </div>
-                      <div className="mt-2 w-full flex border th-border-for rounded">
-                        <span className="flex select-none items-center w-24 px-3 th-color-bg sm:text-sm border-r th-border-for th-bg-for rounded-l">Subject</span>
-                        <input type="text" name="subject" id="subject" onChange={handleChange} autoComplete="subject" className="rounded block flex-1 border-0 bg-transparent py-1.5 pl-2 th-color-for placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6" placeholder="janesmith" />
+                      <div className="mt-2 w-full flex border th-border-for rounded th-color-for">
+                        <span className="flex select-none items-center w-24 px-3 sm:text-sm border-r th-border-for rounded-l">Subject</span>
+                        <input type="text" name="subject" id="subject" onChange={handleChange} autoComplete="subject" className="rounded block flex-1 border-0 bg-transparent py-1.5 pl-2 th-color-for placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6" placeholder="Please input the subject" />
                       </div>
                       
                       <div className="mt-2 w-full rounded border th-border-for bg-white text-black quill-form">
