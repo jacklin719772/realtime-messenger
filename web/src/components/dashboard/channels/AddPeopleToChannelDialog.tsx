@@ -93,10 +93,10 @@ export default function AddPeopleToChannelDialog({
             leaveFrom="opacity-100 translate-y-0 sm:scale-100"
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
-            <div className="th-bg-bg inline-block align-bottom rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-              <div className="th-bg-bg px-4 pt-5 pb-4 sm:p-6 sm:pb-4 flex justify-between items-center">
+            <div className="th-bg-bg inline-block align-bottom rounded-xl border th-border-for text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+              <div className="th-bg-bg px-4 py-3 sm:p-6 sm:py-3 flex justify-between items-center">
                 <div>
-                  <h5 className="font-bold text-2xl th-color-for">
+                  <h5 className="font-bold th-color-for">
                     Add member
                   </h5>
                   <span className="opacity-70 text-sm th-color-for">{`#${channel?.name}`}</span>
@@ -152,14 +152,14 @@ export default function AddPeopleToChannelDialog({
                   </form>
                 )}
               </Formik> */}
-              <div className="bg-white p-6 pt-0 pb-6 th-bg-bg">
+              <div className="p-6 pt-0 pb-6 th-bg-bg border-t th-border-for">
                 <div className="space-y-6">
                   <TextField
                     name="searchMembers"
                     type="text"
                     focus
                     value={search}
-                    handleChange={e => setSearch(e.target.value)}
+                    handleChange={(e: any) => setSearch(e.target.value)}
                     placeholder="Search members"
                   />
                 </div>
@@ -186,7 +186,7 @@ export default function AddPeopleToChannelDialog({
                   </div>
                 </li>
               ))}
-              <div className="px-4 pb-5 pt-1 sm:px-6 sm:flex sm:flex-row-reverse">
+              <div className="px-4 pb-3 pt-2 sm:px-6 sm:flex sm:flex-row-reverse border-t th-border-for">
                 <ModalButton onClick={() => setOpen(false)} text="Done" />
               </div>
             </div>

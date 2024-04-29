@@ -59,7 +59,7 @@ function MultipleForwardMessage() {
           >
             <div
               style={{ backgroundColor: themeColors?.background }}
-              className="inline-block align-bottom rounded-lg text-left shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full"
+              className="inline-block align-bottom rounded-xl border th-border-for text-left shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full"
             >
               <div
                 className="pl-8 p-6 pb-4 flex justify-between items-center"
@@ -83,8 +83,8 @@ function MultipleForwardMessage() {
                 </div>
               </div>
               <div>
-                <div className="space-y-6 pt-2 pb-8 border-t th-border-selbg rounded"
-                  style={{height: 300, maxHeight: 300}}>
+                <div className="space-y-6 pt-2 pb-6 border-t th-border-for"
+                  style={{maxHeight: 300}}>
                   <div className="w-full flex flex-1 flex-col px-5 pt-1">
                     <div className="mx-5 pb-2">
                       <MultipleForward />

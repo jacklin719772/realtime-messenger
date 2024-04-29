@@ -60,8 +60,8 @@ function ScheduleView({
             leaveFrom="opacity-100 translate-y-0 sm:scale-100"
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
-            <div className="th-bg-bg inline-block align-bottom rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-              <div className="th-bg-bg px-4 pt-5 pb-4 sm:p-6 sm:pb-4 flex justify-between items-center border-b th-border-selbg">
+            <div className="th-bg-bg inline-block align-bottom rounded-xl border th-border-for text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+              <div className="th-bg-bg px-4 pt-5 pb-4 sm:p-6 sm:pb-4 flex justify-between items-center border-b th-border-for">
                 <div>
                   <h5 className="font-bold th-color-for">
                     {event.meetingId ? "Meeting" : "Event"}
@@ -76,7 +76,7 @@ function ScheduleView({
                   <XIcon className="h-5 w-5 th-color-for" />
                 </div>
               </div>
-              <div className="w-full py-4 px-6">
+              <div className="w-full py-4 px-6 th-color-for">
                 <div className="text-sm">Title: {event.title}</div>
                 <div className="text-sm">Time: {new Date(event.start_time).toLocaleString('zh-CN', {
                   year: "numeric",
@@ -94,11 +94,11 @@ function ScheduleView({
                   hour12: false,
                 })}</div>
               </div>
-              <div className="px-4 pb-5 pt-1 border-t th-border-selbg sm:px-6 sm:flex sm:flex-row-reverse sm:justify-start">
-                {event.id && <button onClick={handleDeleteClick} className="th-bg-bg th-color-blue th-border-blue border text-sm w-20 h-10 rounded font-bold focus:z-10 focus:outline-none ml-2">
+              <div className="px-4 pb-5 pt-1 border-t th-border-for sm:px-6 sm:flex sm:flex-row-reverse sm:justify-start">
+                {event.id && <button onClick={handleDeleteClick} className="th-bg-bg th-color-brred th-border-brred border-2 text-sm w-20 h-10 rounded font-bold focus:z-10 focus:outline-none ml-2">
                   Delete
                 </button>}
-                <button onClick={() => event.meetingId ? {} : setOpenEditSchedule(true)} className="th-bg-bg th-color-blue th-border-blue border text-sm w-20 h-10 rounded font-bold focus:z-10 focus:outline-none">
+                <button onClick={() => event.meetingId ? {} : setOpenEditSchedule(true)} className="th-bg-bg th-color-cyan th-border-cyan border-2 text-sm w-20 h-10 rounded font-bold focus:z-10 focus:outline-none">
                   Detail
                 </button>
                 {/* <ModalButton onClick={deleteMessage} text="Delete" />

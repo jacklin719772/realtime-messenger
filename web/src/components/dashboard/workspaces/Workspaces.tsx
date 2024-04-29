@@ -425,6 +425,53 @@ export default function Workspaces() {
           style={{ borderColor: openMeetingModal ? themeColors?.cyan : "" }}
         />
       </div>
+      <div
+        role="button"
+        tabIndex={0}
+        className={classNames(
+          "flex items-center justify-center cursor-pointer focus:outline-none"
+        )}
+        title="Contact"
+        onClick={() => {}}
+      >
+        <img
+          src={`${process.env.PUBLIC_URL}/contact.png`}
+          alt="contact"
+          className={classNames(
+            "h-8 w-8 rounded-md p-px"
+          )}
+          style={{ borderColor: "" }}
+        />
+      </div>
+      <div
+        role="button"
+        tabIndex={0}
+        className={classNames(
+          "flex items-center justify-center cursor-pointer focus:outline-none"
+        )}
+        title="Email"
+        onClick={() => {}}
+      >
+        <img
+          src={`${process.env.PUBLIC_URL}/email.png`}
+          alt="email"
+          className={classNames(
+            "h-8 w-8 rounded-md p-px"
+          )}
+          style={{ borderColor: "" }}
+        />
+      </div>
+      <div
+        role="button"
+        tabIndex={0}
+        className={classNames(
+          "flex items-center justify-center cursor-pointer focus:outline-none"
+        )}
+        title="Email"
+        onClick={() => {}}
+      >
+        <PlusIcon className="h-8 w-8 rounded-md p-px th-color-for" />
+      </div>
     </div>
   );
 }

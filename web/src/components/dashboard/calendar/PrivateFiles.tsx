@@ -125,8 +125,8 @@ function PrivateFiles() {
             leaveFrom="opacity-100 translate-y-0 sm:scale-100"
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
-            <div className="th-bg-bg inline-block align-bottom rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full">
-              <div className="th-bg-bg px-4 pt-5 pb-4 sm:p-6 sm:pb-4 flex justify-between items-center border-b th-border-selbg">
+            <div className="th-bg-bg inline-block align-bottom rounded-xl border th-border-for text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full">
+              <div className="th-bg-bg px-4 pt-5 pb-4 sm:p-6 sm:pb-4 flex justify-between items-center border-b th-border-for">
                 <div>
                   <h5 className="font-bold th-color-for">
                     Select Private Files
@@ -141,12 +141,12 @@ function PrivateFiles() {
                   <XIcon className="h-5 w-5 th-color-for" />
                 </div>
               </div>
-              <div className="w-full px-4 py-2">
+              <div className="w-full px-4 py-2 th-color-for">
                 <div className="w-full flex items-center">
                   <CalendarIcon className="w-6 h-6 mr-2" />
                   <div className="w-auto pr-1">
                     <DatePicker
-                      className="text-sm rounded"
+                      className="text-sm rounded th-color-for border th-border-for th-bg-bg"
                       selected={startDate}
                       name="start_time"
                       placeholderText="2024-04-02"
@@ -160,7 +160,7 @@ function PrivateFiles() {
                   </div>
                   <div className="w-auto pr-1">
                     <DatePicker
-                      className="text-sm rounded"
+                      className="text-sm rounded th-color-for border th-border-for th-bg-bg"
                       selected={endDate}
                       name="end_time"
                       placeholderText="2024-04-02"
@@ -190,7 +190,7 @@ function PrivateFiles() {
                   </div>
                 </div>
               </div>
-              <div className="w-full px-4 pb-2 h-60 overflow-y-auto flex flex-col items-center">
+              <div className="w-full px-4 pb-2 h-60 overflow-y-auto flex flex-col items-center th-color-for">
                 {privateFiles.length === 0 && <div className="w-full text-center text-sm">No Private Files</div>}
                 {privateFiles.length > 0 && (
                   privateFiles.map((p: any, index: number) => (
@@ -198,11 +198,11 @@ function PrivateFiles() {
                   ))
                 )}
               </div>
-              <div className="px-4 pb-5 pt-1 border-t th-border-selbg sm:px-6 sm:flex sm:flex-row-reverse sm:justify-start">
-                <button onClick={handleCancelClick} className="th-bg-bg th-color-for th-border-for border text-sm w-20 h-10 rounded font-bold focus:z-10 focus:outline-none ml-2">
+              <div className="px-4 pb-3 pt-2 border-t th-border-for sm:px-6 sm:flex sm:flex-row-reverse sm:justify-start">
+                <button onClick={handleCancelClick} className="th-bg-bg th-color-for th-border-for border-2 text-sm w-20 h-10 rounded font-bold focus:z-10 focus:outline-none ml-2">
                   Cancel
                 </button>
-                <button onClick={() => setOpenPrivateFiles(false)} className="th-bg-bg th-color-blue th-border-blue border text-sm w-20 h-10 rounded font-bold focus:z-10 focus:outline-none">
+                <button onClick={() => setOpenPrivateFiles(false)} className="th-bg-bg th-color-cyan th-border-cyan border-2 text-sm w-20 h-10 rounded font-bold focus:z-10 focus:outline-none">
                   Select
                 </button>
                 {/* <ModalButton onClick={deleteMessage} text="Delete" />

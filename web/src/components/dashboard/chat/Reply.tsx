@@ -44,20 +44,16 @@ function ForwardFooter({
     <div className="flex justify-end items-center space-x-2 mt-1">
       <button
         type="button"
-        className="border border-gray-500 font-medium text-sm h-10 w-20 rounded"
+        className="border-2 th-border-for th-color-for font-medium text-sm h-10 w-20 rounded"
         onClick={() => setEdit(false)}
       >
         Cancel
       </button>
       <button
-        className="border border-gray-500 font-medium flex justify-center items-center text-sm th-color-brwhite h-10 w-20 rounded disabled:opacity-50"
+        className="border-2 th-border-cyan font-medium flex justify-center items-center text-sm th-color-cyan h-10 w-20 rounded disabled:opacity-50"
         disabled={isSubmitting || !forwardMessage}
-        style={{
-          backgroundColor:
-            errors.text && isText ? themeColors?.red : themeColors?.blue,
-        }}
       >
-        {isSubmitting && <Spinner className="th-color-brwhite mr-2 h-3 w-3" />}
+        {isSubmitting && <Spinner className="th-color-for mr-2 h-3 w-3" />}
         {!isSubmitting && (
           <>
             {errors.text && isText ? (
@@ -216,7 +212,7 @@ export default function Reply() {
               border-bottom-right-radius: 0 !important;
             }
           `} />
-          <div className="px-3 py-1 mt-2 mb-2 th-bg-selbg overflow-y-auto" style={{borderLeft: '3px solid grey', maxHeight: 100}}>
+          <div className="px-3 py-1 mt-1 mb-2 th-color-for overflow-y-auto rounded-lg border border-l-4 th-border-for" style={{maxHeight: 100}}>
             <div className="flex items-center h-5 pt-1 w-auto">
               <div
                 role="button"
@@ -327,7 +323,7 @@ export default function Reply() {
                 )}
               </div>
           </div>        
-          <div className="w-full my-2 h-full border border-gray-500 rounded flex flex-col items-center bg-white">
+          <div className="w-full my-2 h-full border border-gray-500 rounded flex flex-col items-center">
             <QuillForwardEdit
               editorRef={editorRef}
               text={values.text}

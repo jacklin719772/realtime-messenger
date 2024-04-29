@@ -142,8 +142,8 @@ export default function SettingsSection({ workspace }: { workspace: any }) {
                       onClick={() => setOpenDeleteWorkspaceModal(true)}
                     />
                     <ConfirmationModal
-                      text="This action is irreversible."
-                      title="Delete workspace"
+                      text=""
+                      title="Are you want to delete this workspace?"
                       onConfirm={handleDeleteWorkspace}
                       open={openDeleteWorkspaceModal}
                       setOpen={setOpenDeleteWorkspaceModal}
@@ -174,7 +174,7 @@ export default function SettingsSection({ workspace }: { workspace: any }) {
                 />
                 <button
                   type="button"
-                  className="th-bg-blue th-color-brwhite w-44 inline-flex justify-center py-2 px-4 text-base font-bold rounded focus:outline-none focus:ring-4 focus:ring-blue-200 mt-6 sm:w-auto sm:text-sm"
+                  className="th-bg-cyan th-color-brwhite w-44 inline-flex justify-center py-2 px-4 text-base font-bold rounded focus:outline-none focus:ring-4 focus:ring-blue-200 mt-6 sm:w-auto sm:text-sm"
                   onClick={() => fileRef?.current?.click()}
                 >
                   Upload an Image
@@ -190,7 +190,7 @@ export default function SettingsSection({ workspace }: { workspace: any }) {
                 )}
               </div>
             </div>
-            <div className="pt-5 px-6 flex flex-row-reverse border-t mt-auto th-border-selbg">
+            <div className="pt-5 px-6 flex flex-row-reverse border-t mt-auto th-border-for">
               <ModalButton text="Save" isSubmitting={isSubmitting} />
               <CancelButton setOpen={setOpen} />
             </div>

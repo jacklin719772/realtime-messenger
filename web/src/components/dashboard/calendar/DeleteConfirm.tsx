@@ -52,28 +52,20 @@ export default function DeleteConfirm({
             leaveFrom="opacity-100 translate-y-0 sm:scale-100"
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
-            <div className="th-bg-bg inline-block align-bottom rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-              <div className="th-bg-bg px-4 pt-5 pb-4 sm:p-6 sm:pb-4 flex justify-between items-center">
+            <div className="th-bg-bg inline-block align-bottom rounded-xl border th-border-for text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+              <div className="th-bg-bg px-4 pt-5 pb-4 sm:p-6 sm:pb-4 flex items-center">
                 <div>
                   <h5 className="font-bold th-color-for">
                     Delete Event
                   </h5>
                   <span className="opacity-70 text-sm th-color-for">Are you want to delete this event?</span>
                 </div>
-                <div
-                  role="button"
-                  tabIndex={0}
-                  className="cursor-pointer focus:outline-none"
-                  onClick={() => setOpenDeleteEvent(false)}
-                >
-                  <XIcon className="h-5 w-5 th-color-for" />
-                </div>
               </div>
-              <div className="px-4 pb-5 pt-1 border-t th-border-selbg sm:px-6 sm:flex sm:flex-row-reverse sm:justify-start">
-                <button onClick={() => setOpenDeleteEvent(false)} className="th-bg-bg th-color-for th-border-for border text-sm w-20 h-10 rounded font-bold focus:z-10 focus:outline-none ml-2">
+              <div className="px-4 pb-5 pt-1 border-t th-border-for sm:px-6 sm:flex sm:flex-row-reverse sm:justify-start">
+                <button onClick={() => setOpenDeleteEvent(false)} className="th-bg-bg th-color-for th-border-for border-2 text-sm w-20 h-10 rounded font-bold focus:z-10 focus:outline-none ml-2">
                   Cancel
                 </button>
-                <button onClick={() => deleteEvent(event)} className="th-bg-bg th-color-brred th-border-for border text-sm w-20 h-10 rounded font-bold focus:z-10 focus:outline-none">
+                <button onClick={() => deleteEvent(event)} className="th-bg-bg th-color-brred th-border-brred border-2 text-sm w-20 h-10 rounded font-bold focus:z-10 focus:outline-none">
                   Delete
                 </button>
                 {/* <ModalButton onClick={deleteMessage} text="Delete" />

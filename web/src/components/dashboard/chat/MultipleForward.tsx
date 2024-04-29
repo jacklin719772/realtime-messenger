@@ -26,6 +26,7 @@ import { string } from "yup";
 import { Autocomplete, Box, TextField as MuiTextField } from "@mui/material";
 import TextField from "components/TextField";
 import { useModal } from "contexts/ModalContext";
+import hexToRgbA from "utils/hexToRgbA";
 
 function ForwardFooter({
   setEdit,
@@ -49,27 +50,27 @@ function ForwardFooter({
   const {checkedMessages} = useContext(ReactionsContext);
 
   return (
-    <div className="flex justify-end items-center space-x-2 mt-1">
+    <div className="flex justify-end items-center space-x-2 mt-2">
       <button
         type="button"
-        className="border border-gray-500 font-medium text-sm h-10 w-20 rounded"
+        className="border-2 th-border-for th-color-for font-medium text-sm h-10 w-20 rounded"
         onClick={() => setEdit(false)}
       >
         Cancel
       </button>
       <button
-        className="border border-gray-500 font-medium flex justify-center items-center text-sm th-color-brwhite h-10 w-20 rounded disabled:opacity-50"
+        className="border-2 th-color-cyan font-medium flex justify-center items-center text-sm h-10 w-20 rounded disabled:opacity-50"
         disabled={isSubmitting || checkedMessages.length === 0 || (!chatId || chatId === "")}
         style={{
-          backgroundColor:
-            errors.text && isText ? themeColors?.red : themeColors?.blue,
+          borderColor:
+            errors.text && isText ? themeColors?.brightRed : themeColors?.cyan,
         }}
       >
-        {isSubmitting && <Spinner className="th-color-brwhite mr-2 h-3 w-3" />}
+        {isSubmitting && <Spinner className="th-color-cyan mr-2 h-3 w-3" />}
         {!isSubmitting && (
           <>
             {errors.text && isText ? (
-              <span className="th-color-brwhite">
+              <span className="th-color-brred">
                 {MESSAGE_MAX_CHARACTERS - isText.length}
               </span>
             ) : (
@@ -96,6 +97,7 @@ export default function MultipleForward() {
   const [chatId, setChatId] = useState(null);
   const [chatType, setChatType] = useState("Channel");
   const { setMessageSent } = useModal();
+  const { themeColors } = useTheme();
   
   const channelList = channels.map((channel: any) => ({
     name: channel.name,
@@ -218,6 +220,84 @@ export default function MultipleForward() {
               border-bottom-left-radius: 0 !important;
               border-bottom-right-radius: 0 !important;
             }
+            .editor .ql-editor {
+              color: ${themeColors?.foreground};
+              background-color: ${themeColors?.background};
+              font-weight: ${themeColors?.messageFontWeight === "light"
+                ? "300"
+                : "400"};
+            }
+            .editor .ql-editor {
+              border-top-left-radius: 12px;
+              border-top-right-radius: 12px;
+            }
+            .quill > .ql-container > .ql-editor.ql-blank::before {
+              color: ${themeColors?.foreground};
+              font-style: normal;
+              opacity: 0.7;
+            }
+            .ql-snow.ql-toolbar {
+              background-color: ${themeColors?.background};
+              border-color: ${hexToRgbA(themeColors?.foreground, "0.5")};
+              border-bottom-left-radius: 12px;
+              border-bottom-right-radius: 12px;
+            }
+
+            /* Code editor */
+            .ql-snow .ql-editor pre.ql-syntax {
+              background-color: ${themeColors?.brightBlack};
+              color: ${themeColors?.brightWhite};
+              border-color: ${hexToRgbA(themeColors?.background!, "0.2")};
+              border-width: 1px;
+            }
+            .ql-snow .ql-editor code,
+            .ql-snow .ql-editor pre {
+              background-color: ${themeColors?.brightBlack};
+              color: ${themeColors?.brightWhite};
+              border-color: ${hexToRgbA(themeColors?.background!, "0.2")};
+              border-width: 1px;
+            }
+
+            /* Toolbar icons */
+            .ql-snow .ql-stroke {
+              stroke: ${themeColors?.foreground};
+            }
+            .ql-snow .ql-fill,
+            .ql-snow .ql-stroke.ql-fill {
+              fill: ${themeColors?.foreground};
+            }
+
+            /* Link */
+            .ql-snow .ql-editor a {
+              color: ${themeColors?.cyan};
+              text-decoration: none;
+            }
+            .ql-snow .ql-editor a:hover {
+              text-decoration: underline;
+            }
+            .ql-snow .ql-tooltip.ql-editing {
+              left: 0 !important;
+            }
+            .ql-editor.ql-blank::before {
+              color: ${themeColors?.foreground} !important;
+            }
+            fieldset.MuiOutlinedInput-notchedOutline {
+              border-color: ${hexToRgbA(themeColors?.foreground, "0.5")} !important;
+            }
+            .MuiIconButton-root.MuiIconButton-sizeMedium {
+              color: ${themeColors?.foreground} !important;
+            }
+            .MuiInputLabel-formControl {
+              color: ${themeColors?.foreground} !important;
+            }
+            .MuiInputBase-input {
+              color: ${themeColors?.foreground} !important;
+            }
+            .MuiAutocomplete-popper * {
+              background-color: ${themeColors?.background} !important;
+              border-color: ${themeColors?.foreground} !important;
+              color: ${themeColors?.foreground} !important;
+            }
           `} />
           <div className="pt-2 pb-2">
             <Autocomplete     
@@ -246,7 +326,7 @@ export default function MultipleForward() {
               )}
             />
           </div>
-          <div className="w-full h-full mb-2 border border-gray-500 rounded flex flex-col items-center bg-white">
+          <div className="w-full h-full border th-border-for rounded flex flex-col items-center th-color-for">
             <QuillForwardEdit
               editorRef={editorRef}
               text={values.text}

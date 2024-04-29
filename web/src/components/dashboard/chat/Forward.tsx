@@ -26,6 +26,7 @@ import { string } from "yup";
 import { Autocomplete, Box, TextField as MuiTextField } from "@mui/material";
 import TextField from "components/TextField";
 import { useModal } from "contexts/ModalContext";
+import hexToRgbA from "utils/hexToRgbA";
 
 function ForwardFooter({
   setEdit,
@@ -52,24 +53,24 @@ function ForwardFooter({
     <div className="flex justify-end items-center space-x-2 mt-1">
       <button
         type="button"
-        className="border border-gray-500 font-medium text-sm h-10 w-20 rounded"
+        className="border-2 th-border-for th-color-for font-medium text-sm h-10 w-20 rounded"
         onClick={() => setEdit(false)}
       >
         Cancel
       </button>
       <button
-        className="border border-gray-500 font-medium flex justify-center items-center text-sm th-color-brwhite h-10 w-20 rounded disabled:opacity-50"
+        className="border-2 th-color-cyan font-medium flex justify-center items-center text-sm th-color-brwhite h-10 w-20 rounded disabled:opacity-50"
         disabled={isSubmitting || !forwardMessage || (!chatId || chatId === "")}
         style={{
-          backgroundColor:
-            errors.text && isText ? themeColors?.red : themeColors?.blue,
+          borderColor:
+            errors.text && isText ? themeColors?.brightRed : themeColors?.cyan,
         }}
       >
         {isSubmitting && <Spinner className="th-color-brwhite mr-2 h-3 w-3" />}
         {!isSubmitting && (
           <>
             {errors.text && isText ? (
-              <span className="th-color-brwhite">
+              <span className="th-color-brred">
                 {MESSAGE_MAX_CHARACTERS - isText.length}
               </span>
             ) : (
@@ -96,6 +97,7 @@ export default function Forward() {
   const [chatId, setChatId] = useState(null);
   const [chatType, setChatType] = useState("Channel");
   const { setMessageSent } = useModal();
+  const { themeColors } = useTheme();
 
   const location = useLocation();
   
@@ -236,16 +238,35 @@ export default function Forward() {
               border-bottom-left-radius: 0 !important;
               border-bottom-right-radius: 0 !important;
             }
+            fieldset.MuiOutlinedInput-notchedOutline {
+              border-color: ${hexToRgbA(themeColors?.foreground, "0.5")} !important;
+            }
+            .MuiIconButton-root.MuiIconButton-sizeMedium {
+              color: ${themeColors?.foreground} !important;
+            }
+            .MuiInputLabel-formControl {
+              color: ${themeColors?.foreground} !important;
+            }
+            .MuiInputBase-input {
+              color: ${themeColors?.foreground} !important;
+            }
+            .MuiAutocomplete-popper * {
+              background-color: ${themeColors?.background} !important;
+              border-color: ${themeColors?.foreground} !important;
+              color: ${themeColors?.foreground} !important;
+            }
           `} />
           <div className="pt-2 pb-2">
-            <Autocomplete     
+            <Autocomplete 
+              className="th-border-for th-color-for"    
               options={autofillList}
               autoHighlight
               size="small"
               getOptionLabel={(option: any) => option.name}
               onChange={(event, option) => handleOnSelect(option)}
+              sx={{ backgroundColor: themeColors?.background }}
               renderOption={(props, option) => (
-                <Box component="li" sx={{ '& > img': { mr: 2, flexShrink: 0 } }} {...props}>
+                <Box component="li" sx={{ '& > img': { mr: 2, flexShrink: 0 }, backgroundColor: themeColors?.background }} {...props}>
                   <img
                     loading="lazy"
                     width={20}
@@ -260,11 +281,12 @@ export default function Forward() {
                   {...params}
                   autoFocus
                   label="Select for channel or person"
+                  className="th-color-for"
                 />
               )}
             />
           </div>
-          <div className="w-full h-full border border-gray-500 rounded flex flex-col items-center bg-white">
+          <div className="w-full h-full border th-border-for rounded flex flex-col items-center">
             <QuillForwardEdit
               editorRef={editorRef}
               text={values.text}
@@ -274,8 +296,8 @@ export default function Forward() {
               forceUpdate={forceUpdate}
             />
           </div>
-          <div className="px-3 py-1 mt-2 mb-2 th-bg-selbg overflow-y-auto" style={{borderLeft: '3px solid grey', maxHeight: 100}}>
-            <div className="flex items-center h-5 pt-1 w-auto">
+          <div className="px-3 py-1 mt-2 mb-2 th-bg-bg overflow-y-auto border border-l-4 th-border-for rounded-lg" style={{maxHeight: 100}}>
+            <div className="flex items-center h-5 pt-1 w-auto th-color-for">
               <div
                 role="button"
                 tabIndex={0}

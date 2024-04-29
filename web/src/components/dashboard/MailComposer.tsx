@@ -248,7 +248,7 @@ function MailComposer() {
             leaveFrom="opacity-100 translate-y-0 sm:scale-100"
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
-            <div className="th-bg-bg inline-block align-bottom rounded-lg text-left shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full">
+            <div className="th-bg-bg inline-block align-bottom rounded-xl border th-border-for text-left shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full">
               <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4 flex justify-between items-center">
                 <div>
                   <h5 className="font-bold th-color-for">
@@ -324,17 +324,17 @@ function MailComposer() {
                   handleSubmit,
                 }) => (
                   <form noValidate onSubmit={handleSubmit}>
-                    <div className="px-5 border-t th-border-selbg w-full h-auto">
-                      <div className="mt-2 w-full flex border th-border-for rounded">
-                        <span className="flex select-none items-center w-24 px-3 th-color-for sm:text-sm border-r th-border-for bg-gray-200 rounded-l">Recipient</span>
+                    <div className="px-5 border-t th-border-for w-full h-auto">
+                      <div className="mt-2 w-full flex border th-border-for rounded th-color-for">
+                        <span className="flex select-none items-center w-24 px-3 th-color-bg sm:text-sm border-r th-border-for th-bg-for rounded-l">Recipient</span>
                         <TagsInput value={recipients} onChange={handleRecipients} onKeyUp={handleTempAddress} name="to" placeHolder="janesmith" />
                       </div>
                       <div className="mt-2 w-full flex border th-border-for rounded">
-                        <span className="flex select-none items-center w-24 px-3 th-color-for sm:text-sm border-r th-border-for bg-gray-200 rounded-l">Subject</span>
+                        <span className="flex select-none items-center w-24 px-3 th-color-bg sm:text-sm border-r th-border-for th-bg-for rounded-l">Subject</span>
                         <input type="text" name="subject" id="subject" onChange={handleChange} autoComplete="subject" className="rounded block flex-1 border-0 bg-transparent py-1.5 pl-2 th-color-for placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6" placeholder="janesmith" />
                       </div>
                       
-                      <div className="mt-2 w-full rounded border th-border-for quill-form">
+                      <div className="mt-2 w-full rounded border th-border-for bg-white text-black quill-form">
                         <SummernoteLite
                           name="text"
                           defaultCodeValue={values.text}
@@ -371,7 +371,7 @@ function MailComposer() {
                         <Dropzone onDrop={acceptedFiles => onDrop(acceptedFiles)}>
                           {({getRootProps, getInputProps}) => (
                             <section className="py-2 pr-4 w-1/5" style={{cursor: 'pointer'}}>
-                              <div className="rounded w-full h-12 th-bg-brwhite flex justify-between border th-border-for items-center px-4" {...getRootProps()}>
+                              <div className="rounded w-full h-12 th-bg-bg flex justify-between border th-border-for th-color-for items-center px-4" {...getRootProps()}>
                                 <input {...getInputProps()} />
                                 <p>Files</p>
                                 <AttachFileIcon className="h-5 w-5 cursor-pointer th-color-for" />
@@ -382,11 +382,11 @@ function MailComposer() {
                         <FileViewer files={files} setFiles={setFiles} />
                       </div>
                     </div>
-                    <div className="px-4 pb-5 pt-1 border-t th-border-selbg sm:px-6 sm:flex sm:flex-row-reverse sm:justify-start">
-                      <button onClick={() => setOpenMailSender(false)} className="th-bg-bg th-color-for th-border-for border text-sm w-20 h-10 rounded font-bold focus:z-10 focus:outline-none ml-2">
+                    <div className="px-4 pb-4 pt-2 border-t th-border-for sm:px-6 sm:flex sm:flex-row-reverse sm:justify-start">
+                      <button onClick={() => setOpenMailSender(false)} className="th-bg-bg th-color-for th-border-for border-2 text-sm w-20 h-10 rounded font-bold focus:z-10 focus:outline-none ml-2">
                         Cancel
                       </button>
-                      <button type="submit" className="th-bg-bg th-color-blue th-border-blue border text-sm w-20 h-10 rounded font-bold focus:z-10 focus:outline-none ml-2 flex items-center justify-center">
+                      <button type="submit" className="th-bg-bg th-color-cyan th-border-cyan border-2 text-sm w-20 h-10 rounded font-bold focus:z-10 focus:outline-none ml-2 flex items-center justify-center">
                         {isSubmitting &&
                         <svg
                           className="animate-spin -ml-1 mr-2 h-4 w-4 th-color-brwhite"
