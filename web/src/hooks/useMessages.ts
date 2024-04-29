@@ -2,6 +2,7 @@ import { useQuery, useSubscription } from "@apollo/client";
 import * as queries from "graphql/queries";
 import * as subscriptions from "graphql/subscriptions";
 import { useEffect, useState } from "react";
+import useAuth from "./useAuth";
 
 function compareDate(a: any, b: any) {
   return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
@@ -97,6 +98,7 @@ export function useMessages(
 ) {
   const [messages, setMessages] = useState<any[]>([]);
   const [messageArrived, setMessageArrived] = useState(false);
+  const { user } = useAuth();
 
   const { data, loading } = useQuery(queries.LIST_MESSAGES, {
     variables: {
@@ -121,7 +123,9 @@ export function useMessages(
 
   useEffect(() => {
     if (dataPush) {
-      setMessageArrived(true);
+      if (dataPush.onUpdateMessage.senderId !== user.uid ) {
+        setMessageArrived(true);
+      }
       setMessages([
         ...messages.filter(
           (item) => item.objectId !== dataPush.onUpdateMessage.objectId

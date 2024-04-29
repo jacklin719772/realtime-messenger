@@ -251,7 +251,7 @@ export default function Dashboard() {
     let timer: any;
     console.log('Message Arrived: ', messageArrived);
     console.log('Message Sent: ', messageSent);
-    if (soundActivated && messageArrived) {
+    if (soundActivated) {
       if (messageSent) {
         console.log('Message Sent');
         soundSend.play();
@@ -259,7 +259,7 @@ export default function Dashboard() {
           setMessageArrived(false);
           setMessageSent(false);
         }, 1200);
-      } else {
+      } else if (messageArrived) {
         console.log('Message Arrived');
         soundReceive.play();
         timer = setTimeout(() => {
@@ -271,6 +271,7 @@ export default function Dashboard() {
       soundReceive.pause();
       soundSend.pause();
       setMessageSent(false);
+      setMessageArrived(false);
       clearTimeout(timer);
     }
     return () => clearTimeout(timer);
