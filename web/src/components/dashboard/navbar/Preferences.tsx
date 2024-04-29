@@ -213,7 +213,7 @@ export default function Preferences() {
             leaveFrom="opacity-100 translate-y-0 sm:scale-100"
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
-            <div className="inline-block border th-border-selbg th-bg-bg align-bottom rounded-xl border th-border-for text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-3xl sm:w-full">
+            <div className="inline-block border th-border-selbg th-bg-bg align-bottom rounded-xl border th-border-for text-left overflow-hidden shadow-xl transform transition-all sm:my-2 sm:align-middle sm:max-w-3xl sm:w-full">
               <div
                 style={{
                   backgroundColor: themeColors?.background,
@@ -230,7 +230,7 @@ export default function Preferences() {
                   <XIcon className="h-5 w-5 th-color-for" />
                 </div>
               </div>
-              <div className="p-6 pl-4 pr-1 pt-0 pb-0 max-h-screen min-h-400 grid grid-cols-5 th-bg-bg">
+              <div className="p-6 pl-4 pr-1 pt-0 pb-0 max-h-400 grid grid-cols-5 th-bg-bg">
                 <RadioGroup
                   className="col-span-1 h-full py-4"
                   value={selected}
