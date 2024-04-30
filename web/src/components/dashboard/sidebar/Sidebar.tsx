@@ -75,7 +75,7 @@ function WorkspaceDropdown({
               </h5>
               <ChevronDownIcon className="h-3 w-3 ml-1 flex-shrink-0 th-color-brblue" />
             </Menu.Button>
-            {!visibleGlobalSearch && <SearchIcon className="h-4 w-4 button" style={{cursor: "pointer"}} onClick={() => setVisibleGlobalSearch(!visibleGlobalSearch)} />}
+            {!visibleGlobalSearch && <SearchIcon className="h-4 w-4 button th-color-brblue" style={{cursor: "pointer"}} onClick={() => setVisibleGlobalSearch(!visibleGlobalSearch)} />}
           </div>
           <Transition
             show={open}

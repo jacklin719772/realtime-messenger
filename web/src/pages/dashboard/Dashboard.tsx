@@ -198,7 +198,7 @@ function ProfileView() {
             )}
           </div>
         </div>
-        <div className="w-full px-5 pt-2 flex items-center justify-between pb-8">
+        <div className="w-full px-5 pt-2 flex items-center justify-around pb-8">
           {dmUsers.includes(value.objectId) && (
             <button className="w-28 p-2 border-2 th-border-brred th-color-brred rounded text-xs shadow" onClick={() => setOpenRemove(true)}>
               Remove member
