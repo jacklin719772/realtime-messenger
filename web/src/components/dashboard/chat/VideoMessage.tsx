@@ -228,7 +228,7 @@ export default function VideoMessage() {
               </div>
               <div>
                 <div
-                  className="space-y-6 py-2 border-t th-border-for h-[500px] max-h-450 overflow-y-auto">
+                  className="space-y-2 py-2 border-t th-border-for h-[500px] max-h-450 overflow-y-auto">
                   <div className="w-full px-5">
                     <div className="ml-2 flex items-center">
                       <select
@@ -291,8 +291,8 @@ export default function VideoMessage() {
                       </button>
                     </div>
                   </div>
-                  <div className="w-full flex flex-1 flex-col px-5 pt-1">
-                    <div className="mx-2 pb-2">
+                  <div className="w-full flex flex-1 flex-col px-5">
+                    <div className="mx-2">
                       <div>
                         <div className="flex items-center justify-center h-auto th-color-for">
                           {(status === "stopped" && mediaBlobUrl && mediaBlobUrl !== "") ?

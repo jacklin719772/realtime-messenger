@@ -144,11 +144,8 @@ function Themes() {
 
   return (
     <div>
-      <span style={{ color: themeColors?.foreground }} className="text-sm">
-        {`Change the appearance of ${APP_NAME} across all of your workspaces.`}
-      </span>
       <RadioGroup
-        className="grid grid-cols-3 gap-4 mt-5"
+        className="grid grid-cols-4 gap-4 mt-5"
         value={theme.replace(".json", "")}
         onChange={setTheme}
       >
@@ -218,9 +215,14 @@ export default function Preferences() {
                 style={{
                   backgroundColor: themeColors?.background,
                 }}
-                className="border-b th-border-for p-6 flex justify-between items-center"
+                className="border-b th-border-for p-6 pb-2 flex justify-between items-center"
               >
-                <h5 className="font-bold th-color-for">Preferences</h5>
+                <div>
+                  <h5 className="font-bold th-color-for">Preferences</h5>
+                  <span style={{ color: themeColors?.foreground }} className="text-sm">
+                    {`Change the appearance of ${APP_NAME} across all of your workspaces.`}
+                  </span>
+                </div>
                 <div
                   role="button"
                   tabIndex={0}
@@ -231,7 +233,7 @@ export default function Preferences() {
                 </div>
               </div>
               <div className="p-6 pl-4 pr-1 pt-0 pb-1 grid grid-cols-5 th-bg-bg">
-                <RadioGroup
+                {/* <RadioGroup
                   className="col-span-1 h-full py-4"
                   value={selected}
                   onChange={setSelected}
@@ -257,8 +259,8 @@ export default function Preferences() {
                       </div>
                     )}
                   </RadioGroup.Option>
-                </RadioGroup>
-                <div className="col-span-4 flex flex-col pl-6 pr-2 py-3 overflow-y-scroll h-[450px] max-h-450 overflow-y-auto">
+                </RadioGroup> */}
+                <div className="col-span-5 flex flex-col px-2 py-3 overflow-y-scroll h-[450px] max-h-450 overflow-y-auto">
                   {selected === "themes" && <Themes />}
                 </div>
               </div>

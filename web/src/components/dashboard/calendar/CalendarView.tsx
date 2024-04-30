@@ -223,10 +223,11 @@ function CalendarView({
           color: #ff4040 !important;
         }
         .fc .fc-daygrid-day.fc-day-today, .fc .fc-timegrid-col.fc-day-today {
-          background-color: ${themeColors?.selectionBackground}
+          background-color: ${themeColors?.blue};
+          color: ${themeColors?.brightBlue};
         }
         .fc .fc-multimonth-singlecol .fc-multimonth-header, .fc .fc-multimonth-daygrid {
-          background-color: ${themeColors?.background}
+          background-color: ${themeColors?.background};
         }
       `} />
       <HeaderCalendar />

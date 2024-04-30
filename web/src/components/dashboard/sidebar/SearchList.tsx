@@ -27,7 +27,7 @@ function SearchList() {
   const { value: dms } = useContext(DirectMessagesContext);
   const { value: members } = useContext(UsersContext);
   const { user } = useUser();
-  const { value: messages, loading } = useMessages();
+  const { value: messages, loading } = useMessages(workspaceId);
   const { originId, setOriginId, setSearchText, setVisibleSearch, visibleGlobalSearch, setVisibleGlobalSearch } = useContext(ReactionsContext);
 
   const getFormattedTime = (date: any) => {
@@ -57,9 +57,9 @@ function SearchList() {
     //   return result;
     // }, [])
     .map((channel: any, index: number) => (
-      <div className="flex items-center p-2 th-bg-selbg th-color-for cursor-pointer hover:bg-gray-500" key={index} id={channel?.objectId} onClick={() => navigate(`/dashboard/workspaces/${channel?.workspaceId}/channels/${channel?.objectId}`)}>
+      <div className="flex items-center p-2 th-bg-selbg th-color-brblue cursor-pointer hover:bg-gray-500" key={index} id={channel?.objectId} onClick={() => navigate(`/dashboard/workspaces/${channel?.workspaceId}/channels/${channel?.objectId}`)}>
         <div className="flex justify-center items-center w-10 pr-2">
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-full h-auto th-color-for" fill="currentColor" height="384pt" viewBox="0 0 384 384" width="384pt">
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-full h-auto th-color-brblue" fill="currentColor" height="384pt" viewBox="0 0 384 384" width="384pt">
             <path d="m192 0c-105.863281 0-192 86.128906-192 192 0 105.863281 86.136719 192 192 192s192-86.136719 192-192c0-105.871094-86.136719-192-192-192zm0 352c-88.222656 0-160-71.777344-160-160s71.777344-160 160-160 160 71.777344 160 160-71.777344 160-160 160zm0 0"/><path d="m276.847656 141.089844-28.28125 28.285156-33.941406-33.941406 28.277344-28.28125-22.621094-22.632813-28.28125 28.28125-28.28125-28.28125-22.621094 22.632813 28.277344 28.28125-33.941406 33.941406-28.28125-28.285156-22.625 22.628906 28.28125 28.28125-28.28125 28.28125 22.625 22.621094 28.28125-28.277344 33.941406 33.941406-28.277344 28.28125 22.621094 22.625 28.28125-28.28125 28.28125 28.28125 22.621094-22.625-28.277344-28.28125 33.941406-33.941406 28.28125 28.277344 22.625-22.621094-28.28125-28.28125 28.28125-28.28125zm-84.847656 84.855468-33.945312-33.945312 33.945312-33.945312 33.945312 33.945312zm0 0"/>
           </svg>
         </div>
@@ -95,7 +95,7 @@ function SearchList() {
     //   return result;
     // }, [])
     .map((dm: any, index: number) => (
-      <div className="flex items-center p-2 th-bg-selbg th-color-for cursor-pointer hover:bg-gray-500" key={index} id={dm?.objectId} onClick={() => navigate(`/dashboard/workspaces/${dm?.workspaceId}/dm/${dm?.objectId}`)}>
+      <div className="flex items-center p-2 th-bg-selbg th-color-brblue cursor-pointer hover:bg-gray-500" key={index} id={dm?.objectId} onClick={() => navigate(`/dashboard/workspaces/${dm?.workspaceId}/dm/${dm?.objectId}`)}>
         <div className="flex justify-center items-center w-10 pr-2">
           <img src={getHref(dm?.thumbnailURL) || getHref(dm?.photoURL) || `${process.env.PUBLIC_URL}/blank_user.png`} alt={dm?.displayName} className="w-full rounded-full" />
         </div>
@@ -136,10 +136,10 @@ function SearchList() {
       return result;
     }, [])
     .map((message: any, index: number) => (
-      <div className="flex items-center p-2 th-bg-selbg th-color-for cursor-pointer hover:bg-gray-500 w-full" key={index} id={message?.objectId} onClick={() => goOriginal(message)}>
+      <div className="flex items-center p-2 th-bg-selbg th-color-brblue cursor-pointer hover:bg-gray-500 w-full" key={index} id={message?.objectId} onClick={() => goOriginal(message)}>
         <div className="flex justify-center items-center w-10 pr-2">
           {message?.chatType === "Channel" ?
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-full h-auto th-color-for" fill="currentColor" height="384pt" viewBox="0 0 384 384" width="384pt">
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-full h-auto th-color-brblue" fill="currentColor" height="384pt" viewBox="0 0 384 384" width="384pt">
             <path d="m192 0c-105.863281 0-192 86.128906-192 192 0 105.863281 86.136719 192 192 192s192-86.136719 192-192c0-105.871094-86.136719-192-192-192zm0 352c-88.222656 0-160-71.777344-160-160s71.777344-160 160-160 160 71.777344 160 160-71.777344 160-160 160zm0 0"/><path d="m276.847656 141.089844-28.28125 28.285156-33.941406-33.941406 28.277344-28.28125-22.621094-22.632813-28.28125 28.28125-28.28125-28.28125-22.621094 22.632813 28.277344 28.28125-33.941406 33.941406-28.28125-28.285156-22.625 22.628906 28.28125 28.28125-28.28125 28.28125 22.625 22.621094 28.28125-28.277344 33.941406 33.941406-28.277344 28.28125 22.621094 22.625 28.28125-28.28125 28.28125 28.28125 22.621094-22.625-28.277344-28.28125 33.941406-33.941406 28.28125 28.277344 22.625-22.621094-28.28125-28.28125 28.28125-28.28125zm-84.847656 84.855468-33.945312-33.945312 33.945312-33.945312 33.945312 33.945312zm0 0"/>
           </svg> :
           <img src={getHref(members.filter((m: any) => m?.objectId === message?.senderId)[0].thumbnailURL) || 
@@ -185,10 +185,10 @@ function SearchList() {
       return result;
     }, [])
     .map((message: any, index: number) => (
-      <div className="flex items-center p-2 th-bg-selbg th-color-for cursor-pointer hover:bg-gray-500 w-full" key={index} id={message?.objectId} onClick={() => goOriginal(message)}>
+      <div className="flex items-center p-2 th-bg-selbg th-color-brblue cursor-pointer hover:bg-gray-500 w-full" key={index} id={message?.objectId} onClick={() => goOriginal(message)}>
         <div className="flex justify-center items-center w-10 pr-2">
           {message?.chatType === "Channel" ?
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-full h-auto th-color-for" fill="currentColor" height="384pt" viewBox="0 0 384 384" width="384pt">
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-full h-auto th-color-brblue" fill="currentColor" height="384pt" viewBox="0 0 384 384" width="384pt">
             <path d="m192 0c-105.863281 0-192 86.128906-192 192 0 105.863281 86.136719 192 192 192s192-86.136719 192-192c0-105.871094-86.136719-192-192-192zm0 352c-88.222656 0-160-71.777344-160-160s71.777344-160 160-160 160 71.777344 160 160-71.777344 160-160 160zm0 0"/><path d="m276.847656 141.089844-28.28125 28.285156-33.941406-33.941406 28.277344-28.28125-22.621094-22.632813-28.28125 28.28125-28.28125-28.28125-22.621094 22.632813 28.277344 28.28125-33.941406 33.941406-28.28125-28.285156-22.625 22.628906 28.28125 28.28125-28.28125 28.28125 22.625 22.621094 28.28125-28.277344 33.941406 33.941406-28.277344 28.28125 22.621094 22.625 28.28125-28.28125 28.28125 28.28125 22.621094-22.625-28.277344-28.28125 33.941406-33.941406 28.28125 28.277344 22.625-22.621094-28.28125-28.28125 28.28125-28.28125zm-84.847656 84.855468-33.945312-33.945312 33.945312-33.945312 33.945312 33.945312zm0 0"/>
           </svg> :
           <img src={getHref(members.filter((m: any) => m?.objectId === message?.senderId)[0].thumbnailURL) || 
@@ -227,8 +227,8 @@ function SearchList() {
 
   return (
     <div className="col-span-2 row-span-2 p-0 my-2 ml-2 overflow-hidden flex flex-col border th-border-for rounded-xl th-bg-selbg">
-      <div className="flex items-center justify-between w-full px-4 py-4 h-14 th-color-for th-bg-selbg border-b th-border-for">
-        <h5 className="font-bold th-color-for max-w-sm truncate">{value?.name}</h5>
+      <div className="flex items-center justify-between w-full px-4 py-4 h-14 th-color-brblue th-bg-selbg border-b th-border-for">
+        <h5 className="font-bold th-color-brblue max-w-sm truncate">{value?.name}</h5>
         {visibleGlobalSearch && <XIcon className="h-4 w-4 button" style={{cursor: "pointer"}} onClick={() => setVisibleGlobalSearch(!visibleGlobalSearch)} />}
       </div>
       <div className="flex items-center border-y w-full pl-2 pr-4 text-gray-500 bg-white th-border-selbg mt-2">
@@ -254,7 +254,7 @@ function SearchList() {
         >
           <RadioGroup.Option
             value="all"
-            className="focus:outline-none"
+            className="focus:outline-none th-color-brblue"
           >
             {({ checked }) => (
               <div
@@ -272,7 +272,7 @@ function SearchList() {
           </RadioGroup.Option>
           <RadioGroup.Option
             value="dm"
-            className="focus:outline-none"
+            className="focus:outline-none th-color-brblue"
           >
             {({ checked }) => (
               <div
@@ -290,7 +290,7 @@ function SearchList() {
           </RadioGroup.Option>
           <RadioGroup.Option
             value="channel"
-            className="focus:outline-none"
+            className="focus:outline-none th-color-brblue"
           >
             {({ checked }) => (
               <div
@@ -308,7 +308,7 @@ function SearchList() {
           </RadioGroup.Option>
           <RadioGroup.Option
             value="message"
-            className="focus:outline-none"
+            className="focus:outline-none th-color-brblue"
           >
             {({ checked }) => (
               <div
@@ -326,7 +326,7 @@ function SearchList() {
           </RadioGroup.Option>
           <RadioGroup.Option
             value="file"
-            className="focus:outline-none"
+            className="focus:outline-none th-color-brblue"
           >
             {({ checked }) => (
               <div
@@ -346,28 +346,28 @@ function SearchList() {
       </div>
       <div className="border-r th-border-selbg overflow-y-auto mt-1">
         {(section === "all" || section === "dm") && (<div>
-          <div className="px-4 py-2 th-color-for th-bg-bgdark text-xs border-b th-border-for">
+          <div className="px-4 py-2 th-color-brblue th-bg-bgdark text-xs border-b th-border-for">
             Contacts
           </div>
-          {dmList.length > 0 ? dmList : <div className="p-2 text-center text-sm th-color-for">No Results</div>}
+          {dmList.length > 0 ? dmList : <div className="p-2 text-center text-sm th-color-brblue">No Results</div>}
         </div>)}
         {(section === "all" || section === "channel") && (<div>
-          <div className="px-4 py-2 th-color-for th-bg-bgdark text-xs border-b th-border-for">
+          <div className="px-4 py-2 th-color-brblue th-bg-bgdark text-xs border-b th-border-for">
             Channels
           </div>
-          {channelList.length > 0 ? channelList : <div className="p-2 text-center text-sm th-color-for">No Results</div>}
+          {channelList.length > 0 ? channelList : <div className="p-2 text-center text-sm th-color-brblue">No Results</div>}
         </div>)}
         {(section === "all" || section === "message") && (<div>
-          <div className="px-4 py-2 th-color-for th-bg-bgdark text-xs border-b th-border-for">
+          <div className="px-4 py-2 th-color-brblue th-bg-bgdark text-xs border-b th-border-for">
             Messages
           </div>
-          {messageList.length > 0 ? messageList : loading? <div className="flex justify-center items-center th-bg-bg h-16"><Spinner className="h-4 w-4 th-color-for" /></div> : <div className="p-2 text-center text-sm th-color-for">No Results</div>}
+          {messageList.length > 0 ? messageList : loading? <div className="flex justify-center items-center th-bg-bg h-16"><Spinner className="h-4 w-4 th-color-brblue" /></div> : <div className="p-2 text-center text-sm th-color-brblue">No Results</div>}
         </div>)}
         {(section === "all" || section === "file") && (<div>
-          <div className="px-4 py-2 th-color-for th-bg-bgdark text-xs border-b th-border-for">
+          <div className="px-4 py-2 th-color-brblue th-bg-bgdark text-xs border-b th-border-for">
             Files
           </div>
-          {fileList.length > 0 ? fileList : loading? <div className="flex justify-center items-center th-bg-bg h-16"><Spinner className="h-4 w-4 th-color-for" /></div> : <div className="p-2 text-center text-sm th-color-for">No Results</div>}
+          {fileList.length > 0 ? fileList : loading? <div className="flex justify-center items-center th-bg-bg h-16"><Spinner className="h-4 w-4 th-color-brblue" /></div> : <div className="p-2 text-center text-sm th-color-brblue">No Results</div>}
         </div>)}
       </div>
     </div>
