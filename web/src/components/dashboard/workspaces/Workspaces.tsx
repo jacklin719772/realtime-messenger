@@ -470,7 +470,7 @@ export default function Workspaces() {
         title="Email"
         onClick={() => {}}
       >
-        <PlusIcon className="h-8 w-8 rounded-md p-px th-color-for" />
+        <PlusIcon className="h-8 w-8 rounded-md p-px th-color-brblue" />
       </div>
     </div>
   );

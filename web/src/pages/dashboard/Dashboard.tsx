@@ -45,6 +45,7 @@ import Receiving from "components/dashboard/Receiving";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import { useMessages } from "hooks/useMessages";
+import Preferences from "components/dashboard/navbar/Preferences";
 
 interface ServerToClientEvents {
   noArg: () => void;
@@ -67,7 +68,13 @@ function ProfileViewItem({ value, text }: { value: string; text: string }) {
   return (
     <div className="flex flex-col px-5 w-full">
       <span className="font-bold text-sm th-color-for flex items-center">
-        {text} {text === "Email address" && <img src={`${process.env.PUBLIC_URL}/send_email.png`} alt={value} className="ml-2 w-6 h-6 cursor-pointer" onClick={initializeEmail} />}
+        {text} {text === "Email address" && 
+          <svg xmlns="http://www.w3.org/2000/svg" onClick={initializeEmail} className="ml-2 w-6 h-6 cursor-pointer th-color-for" fill="currentColor" height="512" viewBox="0 0 512 512" width="512">
+            <path d="m222.287 278.4 116.154-116.155a8 8 0 0 1 11.313 11.315l-116.154 116.153 85.551 185.36 163.395-445.619-445.619 163.394z"/>
+            <path d="m96 424a8 8 0 0 1 -5.657-13.657l96-96a8 8 0 1 1 11.314 11.314l-96 96a7.976 7.976 0 0 1 -5.657 2.343z"/>
+            <path d="m32 400a8 8 0 0 1 -5.657-13.657l96-96a8 8 0 0 1 11.314 11.314l-96 96a7.976 7.976 0 0 1 -5.657 2.343z"/>
+            <path d="m120 488a8 8 0 0 1 -5.657-13.657l96-96a8 8 0 1 1 11.314 11.314l-96 96a7.976 7.976 0 0 1 -5.657 2.343z"/>
+          </svg>}
       </span>
       <span className="font-normal text-sm truncate w-full th-color-for">{value}</span>
     </div>
@@ -501,6 +508,7 @@ export default function Dashboard() {
         )}
         <>{epadModalRender}</>
         {etherpadMinimized && <MinimizedView />}
+        <Preferences />
         <CreateMessageModal />
         {openCalling && <Calling />}
         {openReceiving && <Receiving />}

@@ -261,7 +261,12 @@ function MessageItem({
             onClick={() => initializeEmail(message)}
           >
             <span className="sr-only">Download</span>
-            <img className="h-4 w-4" alt="send-email" src={`${process.env.PUBLIC_URL}/send_email.png`} />
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 th-color-for" fill="currentColor" height="512" viewBox="0 0 512 512" width="512">
+              <path d="m222.287 278.4 116.154-116.155a8 8 0 0 1 11.313 11.315l-116.154 116.153 85.551 185.36 163.395-445.619-445.619 163.394z"/>
+              <path d="m96 424a8 8 0 0 1 -5.657-13.657l96-96a8 8 0 1 1 11.314 11.314l-96 96a7.976 7.976 0 0 1 -5.657 2.343z"/>
+              <path d="m32 400a8 8 0 0 1 -5.657-13.657l96-96a8 8 0 0 1 11.314 11.314l-96 96a7.976 7.976 0 0 1 -5.657 2.343z"/>
+              <path d="m120 488a8 8 0 0 1 -5.657-13.657l96-96a8 8 0 1 1 11.314 11.314l-96 96a7.976 7.976 0 0 1 -5.657 2.343z"/>
+            </svg>
           </button>
 
           {message?.fileURL && (
@@ -283,7 +288,13 @@ function MessageItem({
                 onClick={() => initializeFavorite(message)}
               >
                 <span className="sr-only">Favorite</span>
-                <img className="h-4 w-4" alt="forward" src={`${process.env.PUBLIC_URL}/favorite_add.png`} />
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" className="th-color-for w-4 h-4" fill="currentColor">
+                  <path d="M29,13a.71.71,0,0,0,0-.21c0-.06,0-.12-.05-.17s-.07-.1-.1-.15a.7.7,0,0,0-.13-.16l0,0L24,8.36V6a1,1,0,0,0-1-1H20L16.64,2.23a1,1,0,0,0-1.28,0L12,5H9A1,1,0,0,0,8,6V8.36L3.36,12.23l0,0a.7.7,0,0,0-.13.16c0,.05-.07.09-.1.15s0,.11-.05.17A.71.71,0,0,0,3,13s0,0,0,0V29a1,1,0,0,0,1,1H28a1,1,0,0,0,1-1V13S29,13,29,13Zm-3.75-1H24V11ZM16,4.3l.84.7H15.16ZM22,7v8.88l-6,3-6-3V7ZM8,12H6.76L8,11ZM27,28H5V14H8v1a1,1,0,0,0-.89.54,1,1,0,0,0,.44,1.34l8,4a1,1,0,0,0,.9,0l8-4a1,1,0,0,0,.44-1.34A1,1,0,0,0,24,15V14h3Z"/>
+                  <path d="M18,25H8a1,1,0,0,0,0,2H18a1,1,0,0,0,0-2Z"/>
+                  <circle cx="21" cy="26" r="1"/>
+                  <circle cx="24" cy="26" r="1"/>
+                  <polygon points="13.53 16.5 16 14.7 18.47 16.5 17.53 13.59 20 11.79 16.94 11.79 16 8.89 15.06 11.79 12 11.79 14.47 13.59 13.53 16.5"/>
+                </svg>
               </button>
               
             )}

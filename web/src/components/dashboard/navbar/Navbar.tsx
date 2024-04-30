@@ -244,7 +244,7 @@ export default function Navbar() {
             )}
           </Menu>
         </div>
-        <div className="font-bold text-base th-color-for w-20 truncate">{userdata?.displayName}</div>
+        <div className="font-bold text-base th-color-brblue w-20 truncate">{userdata?.displayName}</div>
         <div className="flex items-center justify-end">
           <Menu as="div" className="relative">
             {({ open }) => (
@@ -259,7 +259,7 @@ export default function Navbar() {
                         <div className="flex items-center justify-center rounded-full h-4 w-4 th-bg-red th-color-for font-medium" style={{fontSize: 10, lineHeight: 0}}>{notifications?.length}</div>
                       </div>
                     )}
-                    <BellIcon className="w-6 h-6 th-color-for" />
+                    <BellIcon className="w-6 h-6 th-color-brblue" />
                   </Menu.Button>
                 </div>
                 <Transition
@@ -302,9 +302,11 @@ export default function Navbar() {
         </div>
         {meetingMinimized && roomName !== "" && (
           <div className="ml-5 flex items-center">
-            <div className="text-sm th-color-for">{isVideoDisabled ? "Voice " : "Video "} Call is running...</div>
+            <div className="text-sm th-color-brblue">{isVideoDisabled ? "Voice " : "Video "} Call is running...</div>
             <button className="p-2" onClick={() => setMeetingMinimized(false)}>
-              <img src={`${process.env.PUBLIC_URL}/meeting_show.png`} alt="meeting show" title="Display Meeting Window" className="w-6 h-6" />
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 th-color-for" fill="currentColor" height="512" viewBox="0 0 512 512" width="512">
+                <path d="m507.53 129.124-126.612-124.807c-2.807-2.766-6.589-4.317-10.53-4.317h-295.557c-8.284 0-15 6.716-15 15v114.958c-34.332 8.632-59.831 39.752-59.831 76.725v157.483c0 36.973 25.499 68.093 59.831 76.725v56.109c0 8.284 6.716 15 15 15h422.169c8.284 0 15-6.716 15-15v-357.194c0-4.015-1.61-7.864-4.47-10.682zm-122.142-78.275 75.028 73.958h-60.037c-8.267 0-14.991-6.729-14.991-15zm-355.388 313.318v-157.484c0-27.08 22.031-49.111 49.111-49.111h157.395c27.08 0 49.111 22.031 49.111 49.111v157.483c0 27.08-22.031 49.111-49.111 49.111h-157.395c-27.08.001-49.111-22.03-49.111-49.11zm59.831 117.833v-38.722h146.675c43.622 0 79.111-35.489 79.111-79.111v-157.484c0-43.622-35.489-79.111-79.111-79.111h-146.675v-97.572h265.557v79.806c0 24.813 20.183 45 44.991 45h81.621v327.194z"/><path d="m255.542 293.902c3.501-5.109 3.501-11.846 0-16.955-58.629-80.42-137.239-79.916-195.468 0-3.501 5.109-3.501 11.846 0 16.955 58.629 80.419 137.238 79.918 195.468 0zm-164.021-8.44c32.543-37.58 71.694-56.868 116.626-16.324 6.638 5.817 12.088 11.708 15.979 16.287-3.891 4.579-9.341 10.469-15.979 16.287-34.054 30.238-66.681 30.186-100.679 0-6.62-5.803-12.06-11.679-15.947-16.25z"/><path d="m172.808 285.425c0-8.284-6.716-15-15-15-19.897.79-19.892 29.213 0 30 8.285 0 15-6.716 15-15z"/>
+              </svg>
             </button>
           </div>
         )}
@@ -339,7 +341,7 @@ export default function Navbar() {
                   as="div"
                   className="relative mr-2 cursor-pointer appearance-none"
                 >
-                  <div className="rounded w-auto bg-cover text-sm th-color-brwhite">
+                  <div className="rounded w-auto bg-cover text-sm th-color-brblue">
                     { i18n.language === "en" ? "English" : i18n.language === "zhs" ? "简体中文" : "繁體中文" }
                   </div>
                 </Menu.Button>

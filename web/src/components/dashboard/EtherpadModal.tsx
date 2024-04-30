@@ -237,7 +237,10 @@ export default function EtherpadModal() {
               <div className="th-bg-bg px-4 pt-2 pb-4 sm:p-2 sm:px-4 flex justify-between items-center border-b th-border-for">
                 <div className="flex items-center">
                   <button className="p-1" hidden={iframeHidden} onClick={closeIframe}>
-                    <img src={`${process.env.PUBLIC_URL}/back.png`} className="w-6 h-6" /> 
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 th-color-for" fill="currentColor" viewBox="0 0 469.333 469.333">
+                      <path d="M234.667,0C105.28,0,0,105.28,0,234.667c0,129.408,105.28,234.667,234.667,234.667s234.667-105.259,234.667-234.667 C469.333,105.28,364.053,0,234.667,0z M234.667,426.667c-105.877,0-192-86.123-192-192s86.123-192,192-192s192,86.123,192,192     S340.544,426.667,234.667,426.667z"/>
+                      <path d="M277.333,170.667h-97.835L222.165,128L192,97.835L97.835,192L192,286.187l30.165-30.165l-42.667-42.667h97.835 c23.552,0,42.667,19.157,42.667,42.667c0,23.531-19.115,42.667-42.667,42.667H256v42.667h21.333     c47.04,0,85.333-38.272,85.333-85.333S324.373,170.667,277.333,170.667z"/>
+                    </svg>
                   </button>
                   <div className="p-1" hidden={!iframeHidden}>
                     <img src={`${process.env.PUBLIC_URL}/etherpad.png`} className="w-6 h-6" /> 

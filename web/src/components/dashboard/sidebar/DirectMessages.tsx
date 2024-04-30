@@ -98,7 +98,7 @@ function DirectMessage({ dm }: { dm: any }) {
           className={classNames(
             notifications ? "font-semibold" : "",
             "truncate w-36",
-            selected ? "th-color-brwhite" : "th-color-for"
+            selected ? "th-color-brwhite" : "th-color-brblue"
           )}
         >
           {!isMe ? value?.displayName : `${value?.displayName} (me)`}
@@ -174,10 +174,10 @@ function AddTeammates() {
         setSection("members");
       }}
     >
-      <div className="flex items-center justify-center rounded p-1 mr-2 th-bg-blue">
+      <div className="flex items-center justify-center rounded p-1 mr-2 th-bg-brblue">
         <PlusIcon className="h-3 w-3 th-color-brwhite" />
       </div>
-      <h5 className="th-color-for">{t("Add_members")}</h5>
+      <h5 className="th-color-brblue">{t("Add_members")}</h5>
     </div>
   );
 }
@@ -199,10 +199,10 @@ export default function DirectMessages() {
                     "h-4 w-4 mr-2"
                   )}
                   style={{
-                    color: themeColors?.foreground,
+                    color: themeColors?.brightBlue,
                   }}
                 />
-                <h5 className="th-color-for">{t("Direct_messages")}</h5>
+                <h5 className="th-color-brblue">{t("Direct_messages")}</h5>
               </div>
             </Disclosure.Button>
             <Disclosure.Panel

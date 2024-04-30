@@ -59,7 +59,9 @@ function SearchList() {
     .map((channel: any, index: number) => (
       <div className="flex items-center p-2 th-bg-selbg th-color-for cursor-pointer hover:bg-gray-500" key={index} id={channel?.objectId} onClick={() => navigate(`/dashboard/workspaces/${channel?.workspaceId}/channels/${channel?.objectId}`)}>
         <div className="flex justify-center items-center w-10 pr-2">
-          <img src={`${process.env.PUBLIC_URL}/channel.png`} alt="channel" className="w-full" />
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-full h-auto th-color-for" fill="currentColor" height="384pt" viewBox="0 0 384 384" width="384pt">
+            <path d="m192 0c-105.863281 0-192 86.128906-192 192 0 105.863281 86.136719 192 192 192s192-86.136719 192-192c0-105.871094-86.136719-192-192-192zm0 352c-88.222656 0-160-71.777344-160-160s71.777344-160 160-160 160 71.777344 160 160-71.777344 160-160 160zm0 0"/><path d="m276.847656 141.089844-28.28125 28.285156-33.941406-33.941406 28.277344-28.28125-22.621094-22.632813-28.28125 28.28125-28.28125-28.28125-22.621094 22.632813 28.277344 28.28125-33.941406 33.941406-28.28125-28.285156-22.625 22.628906 28.28125 28.28125-28.28125 28.28125 22.625 22.621094 28.28125-28.277344 33.941406 33.941406-28.277344 28.28125 22.621094 22.625 28.28125-28.28125 28.28125 28.28125 22.621094-22.625-28.277344-28.28125 33.941406-33.941406 28.28125 28.277344 22.625-22.621094-28.28125-28.28125 28.28125-28.28125zm-84.847656 84.855468-33.945312-33.945312 33.945312-33.945312 33.945312 33.945312zm0 0"/>
+          </svg>
         </div>
         <div className="w-60">
           <div className="font-bold text-sm" dangerouslySetInnerHTML={{__html: channel?.name}} />
@@ -136,10 +138,13 @@ function SearchList() {
     .map((message: any, index: number) => (
       <div className="flex items-center p-2 th-bg-selbg th-color-for cursor-pointer hover:bg-gray-500 w-full" key={index} id={message?.objectId} onClick={() => goOriginal(message)}>
         <div className="flex justify-center items-center w-10 pr-2">
-          <img src={message?.chatType === "Channel" ? `${process.env.PUBLIC_URL}/channel.png` : 
-            getHref(members.filter((m: any) => m?.objectId === message?.senderId)[0].thumbnailURL) || 
+          {message?.chatType === "Channel" ?
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-full h-auto th-color-for" fill="currentColor" height="384pt" viewBox="0 0 384 384" width="384pt">
+            <path d="m192 0c-105.863281 0-192 86.128906-192 192 0 105.863281 86.136719 192 192 192s192-86.136719 192-192c0-105.871094-86.136719-192-192-192zm0 352c-88.222656 0-160-71.777344-160-160s71.777344-160 160-160 160 71.777344 160 160-71.777344 160-160 160zm0 0"/><path d="m276.847656 141.089844-28.28125 28.285156-33.941406-33.941406 28.277344-28.28125-22.621094-22.632813-28.28125 28.28125-28.28125-28.28125-22.621094 22.632813 28.277344 28.28125-33.941406 33.941406-28.28125-28.285156-22.625 22.628906 28.28125 28.28125-28.28125 28.28125 22.625 22.621094 28.28125-28.277344 33.941406 33.941406-28.277344 28.28125 22.621094 22.625 28.28125-28.28125 28.28125 28.28125 22.621094-22.625-28.277344-28.28125 33.941406-33.941406 28.28125 28.277344 22.625-22.621094-28.28125-28.28125 28.28125-28.28125zm-84.847656 84.855468-33.945312-33.945312 33.945312-33.945312 33.945312 33.945312zm0 0"/>
+          </svg> :
+          <img src={getHref(members.filter((m: any) => m?.objectId === message?.senderId)[0].thumbnailURL) || 
             getHref(members.filter((m: any) => m?.objectId === message?.senderId)[0].photoURL) || 
-            `${process.env.PUBLIC_URL}/blank_user.png`} alt={message?.chat} className="w-full rounded-full" />
+            `${process.env.PUBLIC_URL}/blank_user.png`} alt={message?.chat} className="w-full rounded-full" />}
         </div>
         <div className="w-60">
           <div className="font-bold text-sm">{message?.chat}</div>
@@ -182,10 +187,13 @@ function SearchList() {
     .map((message: any, index: number) => (
       <div className="flex items-center p-2 th-bg-selbg th-color-for cursor-pointer hover:bg-gray-500 w-full" key={index} id={message?.objectId} onClick={() => goOriginal(message)}>
         <div className="flex justify-center items-center w-10 pr-2">
-          <img src={message?.chatType === "Channel" ? `${process.env.PUBLIC_URL}/channel.png` : 
-            getHref(members.filter((m: any) => m?.objectId === message?.senderId)[0].thumbnailURL) || 
+          {message?.chatType === "Channel" ?
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-full h-auto th-color-for" fill="currentColor" height="384pt" viewBox="0 0 384 384" width="384pt">
+            <path d="m192 0c-105.863281 0-192 86.128906-192 192 0 105.863281 86.136719 192 192 192s192-86.136719 192-192c0-105.871094-86.136719-192-192-192zm0 352c-88.222656 0-160-71.777344-160-160s71.777344-160 160-160 160 71.777344 160 160-71.777344 160-160 160zm0 0"/><path d="m276.847656 141.089844-28.28125 28.285156-33.941406-33.941406 28.277344-28.28125-22.621094-22.632813-28.28125 28.28125-28.28125-28.28125-22.621094 22.632813 28.277344 28.28125-33.941406 33.941406-28.28125-28.285156-22.625 22.628906 28.28125 28.28125-28.28125 28.28125 22.625 22.621094 28.28125-28.277344 33.941406 33.941406-28.277344 28.28125 22.621094 22.625 28.28125-28.28125 28.28125 28.28125 22.621094-22.625-28.277344-28.28125 33.941406-33.941406 28.28125 28.277344 22.625-22.621094-28.28125-28.28125 28.28125-28.28125zm-84.847656 84.855468-33.945312-33.945312 33.945312-33.945312 33.945312 33.945312zm0 0"/>
+          </svg> :
+          <img src={getHref(members.filter((m: any) => m?.objectId === message?.senderId)[0].thumbnailURL) || 
             getHref(members.filter((m: any) => m?.objectId === message?.senderId)[0].photoURL) || 
-            `${process.env.PUBLIC_URL}/blank_user.png`} alt={message?.chat} className="w-full rounded-full" />
+            `${process.env.PUBLIC_URL}/blank_user.png`} alt={message?.chat} className="w-full rounded-full" />}
         </div>
         <div className="w-60">
           <div className="font-bold text-sm">{message?.chat}</div>

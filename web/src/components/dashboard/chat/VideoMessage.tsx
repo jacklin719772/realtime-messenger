@@ -203,7 +203,7 @@ export default function VideoMessage() {
           >
             <div
               style={{ backgroundColor: themeColors?.background }}
-              className="inline-block align-bottom rounded-xl border th-border-for text-left shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full"
+              className="inline-block align-bottom rounded-xl border th-border-for text-left shadow-xl transform transition-all sm:my-2 sm:align-middle sm:max-w-xl sm:w-full"
             >
               <div
                 className="pl-8 p-6 pb-4 flex justify-between items-center"
@@ -228,7 +228,7 @@ export default function VideoMessage() {
               </div>
               <div>
                 <div
-                  className="space-y-6 py-2 border-t th-border-for h-[500px] max-h-[500px]">
+                  className="space-y-6 py-2 border-t th-border-for h-[500px] max-h-450 overflow-y-auto">
                   <div className="w-full px-5">
                     <div className="ml-2 flex items-center">
                       <select
@@ -246,7 +246,10 @@ export default function VideoMessage() {
                         status === "paused" ||
                         error) ? (
                         <button className="button border-2 th-border-for p-2 rounded disabled:opacity-50 mr-2" onClick={startRecording} title="start">
-                          <img src={`${process.env.PUBLIC_URL}/start.png`} alt="start" className="w-4 h-4" />
+                          <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 th-color-for" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2Zm0,18a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z"/>
+                            <circle cx="12" cy="12" r="5"/>
+                          </svg>
                         </button>
                       ) : (
                         <button className="button border-2 th-border-for p-2 rounded disabled:opacity-50 mr-2" title="recording">
@@ -257,14 +260,21 @@ export default function VideoMessage() {
                         <button className={classNames(
                           "border-2 button th-border-for p-2 rounded disabled:opacity-50 mr-2"
                         )} disabled={status === "recording" ? false : true} onClick={pauseRecording} title="pause">
-                          <img src={`${process.env.PUBLIC_URL}/pause.png`} alt="pause" className="w-4 h-4" />
+                          <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 th-color-for" fill="currentColor" height="512" viewBox="0 0 512 512" width="512">
+                            <path d="m425.7 86.3c-45.3-45.3-105.6-70.3-169.7-70.3s-124.4 25-169.7 70.3-70.3 105.6-70.3 169.7 25 124.4 70.3 169.7 105.6 70.3 169.7 70.3 124.4-25 169.7-70.3 70.3-105.6 70.3-169.7-25-124.4-70.3-169.7zm-169.7 377.7c-114.7 0-208-93.3-208-208s93.3-208 208-208 208 93.3 208 208-93.3 208-208 208z"/>
+                            <path d="m201.1 144c-8.8 0-16 7.2-16 16v192c0 8.8 7.2 16 16 16s16-7.2 16-16v-192c0-8.8-7.1-16-16-16z"/>
+                            <path d="m310.9 144c-8.8 0-16 7.2-16 16v192c0 8.8 7.2 16 16 16s16-7.2 16-16v-192c0-8.8-7.2-16-16-16z"/>
+                          </svg>
                         </button>
                       )}
                       {status !== "recording" && (
                         <button className={classNames(
                           "border-2 button th-border-for p-2 rounded disabled:opacity-50 mr-2"
                         )} disabled={status === "paused" ? false : true} onClick={resumeRecording} title="resume">
-                          <img src={`${process.env.PUBLIC_URL}/play.png`} alt="resume" className="w-4 h-4" />
+                          <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 th-color-for" fill="currentColor" viewBox="0 0 512 512" width="512" height="512">
+                            <path d="M437.019,74.98C388.667,26.628,324.38,0,256,0C187.619,0,123.332,26.628,74.98,74.98C26.629,123.331,0,187.619,0,256    c0,68.38,26.629,132.667,74.98,181.019C123.332,485.371,187.62,512,256,512s132.667-26.629,181.019-74.981    C485.371,388.667,512,324.379,512,256C512,187.619,485.371,123.332,437.019,74.98z M256,482C131.383,482,30,380.617,30,256    S131.383,30,256,30s226,101.383,226,226S380.617,482,256,482z"/>
+                            <path d="M392.033,243.01L199.232,131.697c-4.641-2.68-10.359-2.68-15,0c-4.641,2.679-7.5,7.631-7.5,12.99v222.621    c0,5.359,2.859,10.311,7.5,12.99c2.32,1.34,4.91,2.01,7.5,2.01c2.59,0,5.18-0.67,7.5-2.009L392.033,268.99    c4.641-2.68,7.5-7.632,7.5-12.991C399.533,250.641,396.674,245.689,392.033,243.01z M206.732,341.329V170.668L354.532,256    L206.732,341.329z"/>
+                          </svg>
                         </button>
                       )}
                       <button className="button border-2 th-border-for p-2 rounded disabled:opacity-50 mr-2" disabled={(status === "recording" || status === "paused") ? false : true} onClick={stopRecording} title="stop">
@@ -273,7 +283,11 @@ export default function VideoMessage() {
                         </svg>
                       </button>
                       <button className="button border-2 th-border-for p-2 rounded disabled:opacity-50 mr-2" disabled={status === "stopped" ? false : true} onClick={() => videoFileBlob(mediaBlobUrl || "")} title="save">
-                        <img src={`${process.env.PUBLIC_URL}/video_camera.png`} alt="save" className="w-4 h-4" />
+                        <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 th-color-for" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeMiterlimit="10" strokeWidth="2">
+                          <rect className="cls-1" height="6.68" width="5.73" x="7.23" y="7.2"/>
+                          <polygon className="cls-1" points="12.96 10.07 12.96 11.02 15.82 13.89 16.77 13.89 16.77 7.21 15.82 7.21 12.96 10.07 12.96 10.07"/>
+                          <path className="cls-1" d="M1.5,5.3v9.54a3.82,3.82,0,0,0,3.82,3.82H7.23v2.86L13,18.66h5.73a3.82,3.82,0,0,0,3.82-3.82V5.3a3.82,3.82,0,0,0-3.82-3.82H5.32A3.82,3.82,0,0,0,1.5,5.3Z"/>
+                        </svg>
                       </button>
                     </div>
                   </div>
@@ -284,7 +298,9 @@ export default function VideoMessage() {
                           {(status === "stopped" && mediaBlobUrl && mediaBlobUrl !== "") ?
                             <video src={mediaBlobUrl} controls className="w-full" /> :
                             (<>
-                              {!hasCamera ? <div className="py-20"><img className="h-40" src={`${process.env.PUBLIC_URL}/no_device.png`} alt="no device" /></div> :
+                              {!hasCamera ? <div className="py-20">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-40 th-color-for" height="512" viewBox="0 0 32 32" width="512" fill="currentColor"><path d="m31 20.133c.004.513-.034.927-.153 1.314s-.36.787-.738 1.02c-.377.232-.784.243-1.078.213-.294-.031-.521-.104-.717-.162-1.457-.438-2.932-.871-4.377-1.326v-8.969c1.419-.525 2.85-1.047 4.272-1.568.199-.072.401-.103.599-.1.59.01 1.138.324 1.463.691.434.49.674 1.092.678 1.764zm-30-9.265v11.671c0 1.645 1.354 3.005 2.997 3.005h14.938c.841 0 1.602-.358 2.147-.926l-16.747-16.747c-1.824.149-3.292 1.62-3.335 2.997zm20.933 8.943v-8.943c0-1.645-1.354-2.997-2.997-2.997h-8.944l-4.587-4.586c-.187-.193-.446-.304-.716-.302-.553 0-1 .448-1 1 0 .271.11.531.306.719 8 8 16 15.999 23.999 23.998.376.403 1.01.425 1.413.049.404-.377.427-1.01.026-1.437z"/></svg>
+                              </div> :
                               (<>
                                 {(video && !recording && initialStream) && <video ref={ref} controls autoPlay className="w-full" />}
                                 {(video && !recording && !initialStream) && <div className="text-sm font-bold py-24">Click the start button to record the video</div>}

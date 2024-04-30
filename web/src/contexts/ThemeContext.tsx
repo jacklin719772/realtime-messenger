@@ -31,6 +31,7 @@ export interface IColor {
   brightCyan: string;
   brightWhite: string;
   background: string;
+  backgroundDark: string;
   foreground: string;
   cursorColor: string;
   selectionBackground: string;
@@ -185,6 +186,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
           .th-border-blue {
             border-color: ${themeColors?.blue};
           }
+          .th-border-brblue {
+            border-color: ${themeColors?.brightBlue};
+          }
           .th-border-selbg {
             border-color: ${themeColors?.selectionBackground};
           }
@@ -215,6 +219,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
           }
           .th-color-blue {
             color: ${themeColors?.blue};
+          }
+          .th-color-brblue {
+            color: ${themeColors?.brightBlue};
           }
           .th-color-red {
             color: ${themeColors?.red};

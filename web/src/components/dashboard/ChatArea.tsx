@@ -506,7 +506,7 @@ function HeaderDirectMessage() {
         {value?.objectId !== user?.uid && (
           <button className="th-color-for inline-flex justify-center items-center text-sm w-8 h-10 rounded-lg font-extrabold focus:z-10 focus:outline-none" disabled={loading} onClick={() =>setOpen(true)}>
             {loading ? <Spinner className="h-5 w-5" /> : 
-            <img className="h-5 w-5" alt="add member" src={`${process.env.PUBLIC_URL}/add_user.png`} />}
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 th-color-for" height="512" viewBox="0 0 32 32" width="512" fill="currentColor"><g><path d="m12 13c2.757 0 5-2.243 5-5s-2.243-5-5-5-5 2.243-5 5 2.243 5 5 5zm0-8c1.654 0 3 1.346 3 3s-1.346 3-3 3-3-1.346-3-3 1.346-3 3-3z"/><path d="m12 14c-2.404 0-4.664.936-6.363 2.635-1.7 1.7-2.637 3.96-2.637 6.365v5c0 .552.447 1 1 1h4c.553 0 1-.448 1-1s-.447-1-1-1h-3v-4c0-1.871.729-3.628 2.051-4.95s3.08-2.05 4.949-2.05c1.87 0 3.628.728 4.95 2.05 1.322 1.321 2.05 3.079 2.05 4.95v4h-8c-.553 0-1 .448-1 1s.447 1 1 1h9c.553 0 1-.448 1-1v-5c0-2.406-.937-4.666-2.636-6.364-1.699-1.7-3.96-2.636-6.364-2.636z"/><path d="m28 11h-3v-3c0-.552-.447-1-1-1s-1 .448-1 1v3h-3c-.553 0-1 .448-1 1s.447 1 1 1h3v3c0 .552.447 1 1 1s1-.448 1-1v-3h3c.553 0 1-.448 1-1s-.447-1-1-1z"/></g></svg>}
           </button>
         )}
         <button
