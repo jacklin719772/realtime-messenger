@@ -474,10 +474,7 @@ export default function Workspaces() {
         title="Email"
         onClick={() => setOpenMailSender(true)}
       >
-        <PlusIcon
-          className="h-8 w-8 rounded-md p-px th-color-for"
-          style={{ borderColor: "" }}
-        />
+        <PlusIcon className="h-8 w-8 rounded-md p-px th-color-brblue" />
       </div>
     </div>
   );

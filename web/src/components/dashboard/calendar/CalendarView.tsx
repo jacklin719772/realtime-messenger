@@ -185,7 +185,7 @@ function CalendarView({
   }, [allMeeting])
 
   return (
-    <div className={classNames(teamcal ? "" : "col-span-2", "flex flex-col row-span-2 overflow-hidden m-2 th-bg-bg rounded-xl border th-border-for")}>
+    <div className={classNames(teamcal ? "" : "col-span-2", "flex flex-col row-span-2 overflow-hidden m-2 ml-0 th-bg-bg rounded-xl border th-border-for")}>
       <Style css={`
         .fc .fc-view-harness {
           height: 360px !important;

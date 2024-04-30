@@ -216,7 +216,7 @@ function Channel({ name, objectId }: { name: string; objectId: string }) {
         <HashtagIcon
           className={classNames(
             "h-4 w-4 mr-3",
-            selected ? "th-color-brwhite" : "th-color-for"
+            selected ? "th-color-brwhite" : "th-color-brblue"
           )}
         />
         <h5
@@ -227,7 +227,7 @@ function Channel({ name, objectId }: { name: string; objectId: string }) {
           style={{
             color: selected
               ? themeColors?.brightWhite
-              : themeColors?.foreground,
+              : themeColors?.brightBlue,
           }}
         >
           {name.replace("#", "")}
@@ -275,10 +275,10 @@ function AddChannels() {
         setSection("channels");
       }}
     >
-      <div className="flex items-center justify-center rounded p-1 mr-2 th-bg-blue">
+      <div className="flex items-center justify-center rounded p-1 mr-2 th-bg-brblue">
         <PlusIcon className="h-3 w-3 th-color-brwhite" />
       </div>
-      <h5 className="th-color-for">{t("Add_channels")}</h5>
+      <h5 className="th-color-brblue">{t("Add_channels")}</h5>
     </div>
   );
 }
@@ -305,12 +305,12 @@ export default function Channels({
                     open ? "transform rotate-90" : ""
                   }`}
                   style={{
-                    color: themeColors?.foreground,
+                    color: themeColors?.brightBlue,
                   }}
                 />
                 <h5
                   style={{
-                    color: themeColors?.foreground,
+                    color: themeColors?.brightBlue,
                   }}
                 >
                   {t("Channels")}

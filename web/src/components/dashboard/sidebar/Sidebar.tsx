@@ -70,10 +70,10 @@ function WorkspaceDropdown({
               as="button"
               className="flex items-center focus:outline-none w-52"
             >
-              <h5 className="font-bold tracking-tight truncate">
+              <h5 className="font-bold tracking-tight truncate th-color-brblue">
                 {workspaceName}
               </h5>
-              <ChevronDownIcon className="h-3 w-3 ml-1 flex-shrink-0" />
+              <ChevronDownIcon className="h-3 w-3 ml-1 flex-shrink-0 th-color-brblue" />
             </Menu.Button>
             {!visibleGlobalSearch && <SearchIcon className="h-4 w-4 button" style={{cursor: "pointer"}} onClick={() => setVisibleGlobalSearch(!visibleGlobalSearch)} />}
           </div>
@@ -165,7 +165,6 @@ export default function Sidebar() {
           <DirectMessages />
         </div>
       </div>
-      <Preferences />
       <WorkspaceSettings workspace={value} />
     </div>
   );
