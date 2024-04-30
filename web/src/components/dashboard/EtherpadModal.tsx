@@ -233,7 +233,7 @@ export default function EtherpadModal() {
             leaveFrom="opacity-100 translate-y-0 sm:scale-100"
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
-            <div className="th-bg-bg inline-block align-bottom rounded-xl border th-border-for text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-5xl sm:w-full">
+            <div className="th-bg-bg inline-block align-bottom rounded-xl border th-border-for text-left overflow-hidden shadow-xl transform transition-all sm:my-2 sm:align-middle sm:max-w-5xl sm:w-full">
               <div className="th-bg-bg px-4 pt-2 pb-4 sm:p-2 sm:px-4 flex justify-between items-center border-b th-border-for">
                 <div className="flex items-center">
                   <button className="p-1" hidden={iframeHidden} onClick={closeIframe}>
@@ -297,7 +297,7 @@ export default function EtherpadModal() {
                       </button>
                     </div>
                   </div>
-                  <div className="w-full p-2 flex flex-col items-center justify-between text-sm border-b th-border-for h-80 overflow-y-auto">
+                  <div className="w-full p-2 flex flex-col items-center text-sm border-b th-border-for">
                     <div className="w-full p-2 flex items-center justify-between text-sm th-color-for border-b th-border-for">
                       <div className="font-bold w-[20%]">Operation</div>
                       <div className="font-bold w-[20%]">Name</div>
@@ -306,12 +306,14 @@ export default function EtherpadModal() {
                       <div className="font-bold w-[10%]">Revisions</div>
                       <div className="font-bold w-[10%]">Size</div>
                     </div>
-                    {epads.length === 0 && <div className="w-full text-center text-sm th-color-for">No Epad Files</div>}
-                    {epads.length > 0 && (
-                      epads.map((p: any, index: number) => (
-                        <CheckItem key={index} data={p} handleOpen={handleOpen} handleSelect={handleSelect} />
-                      ))
-                    )}
+                    <div className="w-full flex flex-col items-center h-72 overflow-y-auto">
+                      {epads.length === 0 && <div className="flex w-full h-full justify-center items-center text-center text-sm th-color-for">No Epad Files</div>}
+                      {epads.length > 0 && (
+                        epads.map((p: any, index: number) => (
+                          <CheckItem key={index} data={p} handleOpen={handleOpen} handleSelect={handleSelect} />
+                        ))
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>

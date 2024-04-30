@@ -250,7 +250,7 @@ function WorkspaceItem({
 }) {
   const { themeColors } = useTheme();
   const { workspaceId } = useParams();
-  const {openEtherpad, etherpadMinimized, openCreateMessage} = useModal();
+  const {openEtherpad, etherpadMinimized, openCreateMessage, openMailSender} = useModal();
   const navigate = useNavigate();
   const selected = workspaceId && objectId === workspaceId;
   const photoURL = src;
@@ -269,10 +269,10 @@ function WorkspaceItem({
         src={photoURL || `${process.env.PUBLIC_URL}/blank_workspace.png`}
         alt="workspace"
         className={classNames(
-          (selected && (!openEtherpad || etherpadMinimized) && !openCreateMessage) ? "border-2" : "",
+          (selected && (!openEtherpad || etherpadMinimized) && !openCreateMessage && !openMailSender) ? "border-2" : "",
           "h-8 w-8 rounded-md p-px"
         )}
-        style={{ borderColor: (selected  && (!openEtherpad || etherpadMinimized) && !openCreateMessage) ? themeColors?.cyan : "" }}
+        style={{ borderColor: (selected  && (!openEtherpad || etherpadMinimized) && !openCreateMessage && !openMailSender) ? themeColors?.cyan : "" }}
       />
     </div>
   );
@@ -304,7 +304,13 @@ export default function Workspaces() {
   const navigate = useNavigate();
   const { themeColors } = useTheme();
   const calendar = location.pathname.includes("calendar");
-  const {openEtherpad, setOpenEtherpad, etherpadMinimized, setEtherpadMinimized, openCreateMessage, setOpenCreateMessage, createMessageSection, setCreateMessageSection, openMeetingModal, setOpenMeetingModal} = useModal();
+  const {openEtherpad, setOpenEtherpad, etherpadMinimized, setEtherpadMinimized, openCreateMessage, setOpenCreateMessage, createMessageSection, setCreateMessageSection, openMeetingModal, openMailSender, setOpenMailSender} = useModal();
+  
+  const handleOpenRecord = () => {
+    window.parent.postMessage({
+      recording: true,
+    }, "*");
+  }
   return (
     <div className="row-span-2 flex flex-col items-center space-y-5 py-5 flex-1 overflow-y-auto th-bg-bgdark">
       {value?.map((doc: any) => (
@@ -374,10 +380,10 @@ export default function Workspaces() {
           src={`${process.env.PUBLIC_URL}/calendar.png`}
           alt="workspace"
           className={classNames(
-            (calendar && (!openEtherpad || etherpadMinimized) && !openCreateMessage) ? "border-2" : "",
+            (calendar && (!openEtherpad || etherpadMinimized) && !openCreateMessage && !openMailSender) ? "border-2" : "",
             "h-8 w-8 rounded-md p-px"
           )}
-          style={{ borderColor: (calendar && (!openEtherpad || etherpadMinimized) && !openCreateMessage) ? themeColors?.cyan : "" }}
+          style={{ borderColor: (calendar && (!openEtherpad || etherpadMinimized) && !openCreateMessage && !openMailSender) ? themeColors?.cyan : "" }}
         />
       </div>
       <div
@@ -412,17 +418,14 @@ export default function Workspaces() {
         className={classNames(
           "flex items-center justify-center cursor-pointer focus:outline-none"
         )}
-        title="Web meeting"
-        onClick={() => {}}
+        title="Web record"
+        onClick={handleOpenRecord}
       >
         <img
           src={`${process.env.PUBLIC_URL}/book_camera.png`}
           alt="workspace"
-          className={classNames(
-            openMeetingModal ? "border-2" : "",
-            "h-8 w-8 rounded-md p-px"
-          )}
-          style={{ borderColor: openMeetingModal ? themeColors?.cyan : "" }}
+          className="h-8 w-8 rounded-md p-px"
+          style={{ borderColor: "" }}
         />
       </div>
       <div
@@ -450,15 +453,16 @@ export default function Workspaces() {
           "flex items-center justify-center cursor-pointer focus:outline-none"
         )}
         title="Email"
-        onClick={() => {}}
+        onClick={() => setOpenMailSender(true)}
       >
         <img
           src={`${process.env.PUBLIC_URL}/email.png`}
           alt="email"
           className={classNames(
+            openMailSender ? "border-2" : "",
             "h-8 w-8 rounded-md p-px"
           )}
-          style={{ borderColor: "" }}
+          style={{ borderColor: openMailSender ? themeColors?.cyan : "" }}
         />
       </div>
       <div
@@ -468,9 +472,12 @@ export default function Workspaces() {
           "flex items-center justify-center cursor-pointer focus:outline-none"
         )}
         title="Email"
-        onClick={() => {}}
+        onClick={() => setOpenMailSender(true)}
       >
-        <PlusIcon className="h-8 w-8 rounded-md p-px th-color-for" />
+        <PlusIcon
+          className="h-8 w-8 rounded-md p-px th-color-for"
+          style={{ borderColor: "" }}
+        />
       </div>
     </div>
   );
