@@ -101,6 +101,9 @@ export const ModalContext = createContext({
   setSoundActivated: null as any,
   messageSent: false,
   setMessageSent: null as any,
+
+  visibleContact: false,
+  setVisibleContact: null as any,
 });
 
 export function ModalProvider({ children }: { children: React.ReactNode }) {
@@ -153,6 +156,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
   const [meetingMinimized, setMeetingMinimized] = useState(false);
   const [soundActivated, setSoundActivated] = useState(true);
   const [messageSent, setMessageSent] = useState(false);
+  const [visibleContact, setVisibleContact] = useState(false);
   return (
     <ModalContext.Provider
       value={{
@@ -269,6 +273,9 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
         setSoundActivated,
         messageSent,
         setMessageSent,
+
+        visibleContact,
+        setVisibleContact,
       }}
     >
       {children}

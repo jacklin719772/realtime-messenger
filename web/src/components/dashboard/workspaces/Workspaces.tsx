@@ -307,9 +307,10 @@ export default function Workspaces() {
   const {openEtherpad, setOpenEtherpad, etherpadMinimized, setEtherpadMinimized, openCreateMessage, setOpenCreateMessage, createMessageSection, setCreateMessageSection, openMeetingModal, openMailSender, setOpenMailSender} = useModal();
   
   const handleOpenRecord = () => {
-    window.parent.postMessage({
-      recording: true,
-    }, "*");
+    // window.parent.postMessage({
+    //   recording: true,
+    // }, "*");
+    window.open("https://record.uteamwork.com", "_blank");
   }
   return (
     <div className="row-span-2 flex flex-col items-center space-y-5 py-5 flex-1 overflow-y-auto th-bg-bgdark">

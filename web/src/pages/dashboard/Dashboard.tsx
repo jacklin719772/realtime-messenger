@@ -46,6 +46,7 @@ import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import { useMessages } from "hooks/useMessages";
 import Preferences from "components/dashboard/navbar/Preferences";
+import Contact from "components/dashboard/SearchList";
 
 interface ServerToClientEvents {
   noArg: () => void;
@@ -234,6 +235,7 @@ export default function Dashboard() {
   const calendar = location.pathname?.includes("calendar");
   const teamcal = location.pathname?.includes("teamcal");
   const {visibleFileSearch, visibleGlobalSearch} = useContext(ReactionsContext);
+  const {visibleContact, setVisibleContact} = useModal();
   const {openMailSender, openFavorite, uteamworkUserData, etherpadMinimized, setCurrentWorkspaceId, openMeetingModal, openCalling, setOpenCalling, openReceiving, setOpenReceiving, recipientInfo, setRecipientInfo, senderInfo, setSenderInfo, roomName, setRoomName, isVideoDisabled, setIsVideoDisabled, setOpenMeetingModal, iframeLoaded} = useContext(ModalContext);
   const [isOwner, setIsOwner] = useState(false);
   const [ownerData, setOwnerData] = useState<any>(null);
@@ -489,17 +491,26 @@ export default function Dashboard() {
         <Navbar />
         {(!workspaceId && calendar) ? (
           <>
-            <Workspaces />
-            <CalendarView isOwner={isOwner} ownerData={ownerData} />
+          {visibleContact ? (
+            <>
+              <Workspaces />
+              <CalendarView isOwner={isOwner} ownerData={ownerData} />
+            </>
+          ) : (
+            <>
+              <Contact />
+              <CalendarView isOwner={isOwner} ownerData={ownerData} />
+            </>
+          )}
           </>
         ) : (
           <>
-            {!visibleGlobalSearch ? (
+            {(!visibleGlobalSearch && !visibleContact) ? (
               <>
                 <Workspaces />
                 <Sidebar />
               </>
-            ) : <SearchList />}
+            ) : visibleContact ? <Contact /> : <SearchList />}
             {teamcal ? <CalendarView isOwner={isOwner} ownerData={ownerData} /> : <ChatArea />}
             {visibleFileSearch ? <FileGalleryView /> : profile && <ProfileView />}
             {openMailSender && <MailComposer />}

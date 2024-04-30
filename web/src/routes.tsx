@@ -51,14 +51,6 @@ const routes = [
         ),
       },
       {
-        path: "calendar",
-        element: (
-          <AuthGuard>
-            <Dashboard />
-          </AuthGuard>
-        ),
-      },
-      {
         path: "new_workspace",
         element: (
           <AuthGuard>
@@ -71,6 +63,14 @@ const routes = [
         children: [
           {
             path: "",
+            element: (
+              <AuthGuard>
+                <Dashboard />
+              </AuthGuard>
+            ),
+          },
+          {
+            path: "calendar",
             element: (
               <AuthGuard>
                 <Dashboard />
