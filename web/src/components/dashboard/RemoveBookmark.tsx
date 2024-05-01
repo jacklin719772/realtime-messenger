@@ -3,22 +3,29 @@ import { TrashIcon, XIcon } from "@heroicons/react/outline";
 import { useModal } from "contexts/ModalContext";
 import React, { Fragment,  useRef } from "react";
 
-export default function DeleteConfirm({
+export default function RemoveBookmark({
+  open,
+  setOpen,
+  item,
+  getData,
   handleDelete,
 }: {
+  open: boolean;
+  setOpen: any;
+  item: any;
+  getData: any;
   handleDelete: any;
 }) {
   const cancelButtonRef = useRef(null);
-  const {openDeletePad, setOpenDeletePad, checkedPads} = useModal();
 
   return (
-    <Transition.Root show={openDeletePad} as={Fragment}>
+    <Transition.Root show={open} as={Fragment}>
       <Dialog
         as="div"
         static
         className="fixed z-10 inset-0 overflow-y-auto"
         initialFocus={cancelButtonRef}
-        open={openDeletePad}
+        open={open}
         onClose={() => {}}
       >
         <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
@@ -55,27 +62,25 @@ export default function DeleteConfirm({
                 <div className="flex items-center space-x-2">
                   <TrashIcon className="th-color-for w-6" />
                   <h5 className="font-bold th-color-for">
-                    Are you want to delete this pad?
+                    Are you want to delete this bookmark?
                   </h5>
                 </div>
                 <div
                   role="button"
                   tabIndex={0}
                   className="cursor-pointer focus:outline-none"
-                  onClick={() => setOpenDeletePad(false)}
+                  onClick={() => setOpen(false)}
                 >
                   <XIcon className="h-5 w-5 th-color-for" />
                 </div>
               </div>
               <div className="px-4 pb-2 pt-2 border-t th-border-for sm:px-6 sm:flex sm:flex-row-reverse sm:justify-start">
-                <button onClick={() => setOpenDeletePad(false)} className="th-bg-bg th-color-for th-border-for border-2 text-sm w-20 h-10 rounded font-bold focus:z-10 focus:outline-none ml-2">
+                <button onClick={() => setOpen(false)} className="th-bg-bg th-color-for th-border-for border-2 text-sm w-20 h-10 rounded font-bold focus:z-10 focus:outline-none ml-2">
                   Cancel
                 </button>
-                <button onClick={() => handleDelete(checkedPads)} className="th-bg-bg th-color-brred th-border-brred border-2 text-sm w-20 h-10 rounded font-bold focus:z-10 focus:outline-none">
+                <button onClick={() => handleDelete(item?.id)} className="th-bg-bg th-color-brred th-border-brred border-2 text-sm w-20 h-10 rounded font-bold focus:z-10 focus:outline-none">
                   Delete
                 </button>
-                {/* <ModalButton onClick={deleteMessage} text="Delete" />
-                <ModalButton onClick={() => setOpen(false)} text="Cancel" /> */}
               </div>
             </div>
           </Transition.Child>

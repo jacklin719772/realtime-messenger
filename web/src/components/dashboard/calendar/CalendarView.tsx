@@ -48,6 +48,7 @@ function CalendarView({
 }) {
   const location = useLocation();
   const teamcal = location.pathname?.includes("teamcal");
+  const calendar = location.pathname?.includes("calendar");
   
   const { themeColors } = useTheme();
 
@@ -58,7 +59,7 @@ function CalendarView({
   const [selectedDay, setSelectedDay] = useState(new Date().toLocaleDateString("zh-CN", {weekday: "long"}));
   const [selectedEvent, setSelectedEvent] = useState<any>(null);
   const [open, setOpen] = useState(false);
-  const {openEditSchedule, setOpenEditSchedule, openEditMeeting, setOpenEditMeeting, openPrivateFiles, openRecordingFiles, openDeleteEvent, setOpenDeleteEvent} = useModal();
+  const {openEditSchedule, setOpenEditSchedule, openEditMeeting, setOpenEditMeeting, openPrivateFiles, openRecordingFiles, openDeleteEvent, setOpenDeleteEvent, visibleContact} = useModal();
   console.log(!teamcal || isOwner);
 
   const calendarRef = useRef<any>(null);
@@ -185,7 +186,7 @@ function CalendarView({
   }, [allMeeting])
 
   return (
-    <div className={classNames(teamcal ? "" : "col-span-2", "flex flex-col row-span-2 overflow-hidden m-2 ml-0 th-bg-bg rounded-xl border th-border-for")}>
+    <div className={classNames((teamcal || (calendar && visibleContact)) ? "" : "col-span-2 ml-0", "flex flex-col row-span-2 overflow-hidden m-2 th-bg-bg rounded-xl border th-border-for")}>
       <Style css={`
         .fc .fc-view-harness {
           height: 360px !important;

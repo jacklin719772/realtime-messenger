@@ -46,7 +46,7 @@ import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import { useMessages } from "hooks/useMessages";
 import Preferences from "components/dashboard/navbar/Preferences";
-import Contact from "components/dashboard/SearchList";
+import Contact from "components/dashboard/Contact";
 
 interface ServerToClientEvents {
   noArg: () => void;
@@ -468,7 +468,7 @@ export default function Dashboard() {
       />
     );
 
-  if (workspaceId && !channelId && !dmId && !teamcal)
+  if (workspaceId && !channelId && !dmId && !teamcal && !calendar)
     return (
       <Navigate
         to={`/dashboard/workspaces/${workspaceId}/channels/${
@@ -489,9 +489,9 @@ export default function Dashboard() {
         )}
       >
         <Navbar />
-        {(!workspaceId && calendar) ? (
+        {calendar ? (
           <>
-          {visibleContact ? (
+          {!visibleContact ? (
             <>
               <Workspaces />
               <CalendarView isOwner={isOwner} ownerData={ownerData} />

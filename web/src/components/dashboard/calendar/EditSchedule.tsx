@@ -262,7 +262,9 @@ function EditSchedule({
       setSubmitting(true);
       try {
         let formData = new FormData();
-        formData.append("files", files[0], files[0].name);
+        if (files && files.length > 0) {
+          formData.append("files", files[0], files[0].name);
+        }
         const fileResponse = await axios.post("https://www.uteamwork.com/_api/uploadFile", formData, {
           onUploadProgress: (progressEvent) => {
             const { loaded, total } = progressEvent;

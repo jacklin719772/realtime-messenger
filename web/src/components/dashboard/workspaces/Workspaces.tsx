@@ -10,7 +10,7 @@ import { useUser } from "contexts/UserContext";
 import { Formik } from "formik";
 import { useMyWorkspaces, WorkspacesContext } from "hooks/useWorkspaces";
 import { TabLists } from "pages/dashboard/NewWorkspace";
-import React, { Fragment, useContext, useRef } from "react";
+import React, { Fragment, useContext, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { postData } from "utils/api-helpers";
@@ -18,6 +18,7 @@ import classNames from "utils/classNames";
 import { getHref } from "utils/get-file-url";
 import wait from "utils/wait";
 import * as Yup from "yup";
+import Bookmark from "../Bookmark";
 
 function CreateWorkspace() {
   const { user } = useUser();
@@ -250,9 +251,11 @@ function WorkspaceItem({
 }) {
   const { themeColors } = useTheme();
   const { workspaceId } = useParams();
-  const {openEtherpad, etherpadMinimized, openCreateMessage, openMailSender} = useModal();
+  const {openEtherpad, etherpadMinimized, openCreateMessage, openMailSender, visibleContact} = useModal();
   const navigate = useNavigate();
+  const location = useLocation();
   const selected = workspaceId && objectId === workspaceId;
+  const calendar = location.pathname.includes("calendar");
   const photoURL = src;
   return (
     <div
@@ -269,10 +272,10 @@ function WorkspaceItem({
         src={photoURL || `${process.env.PUBLIC_URL}/blank_workspace.png`}
         alt="workspace"
         className={classNames(
-          (selected && (!openEtherpad || etherpadMinimized) && !openCreateMessage && !openMailSender) ? "border-2" : "",
+          (selected && (!openEtherpad || etherpadMinimized) && !openCreateMessage && !openMailSender && !visibleContact && !calendar) ? "border-2" : "",
           "h-8 w-8 rounded-md p-px"
         )}
-        style={{ borderColor: (selected  && (!openEtherpad || etherpadMinimized) && !openCreateMessage && !openMailSender) ? themeColors?.cyan : "" }}
+        style={{ borderColor: (selected  && (!openEtherpad || etherpadMinimized) && !openCreateMessage && !openMailSender && !visibleContact && !calendar) ? themeColors?.cyan : "" }}
       />
     </div>
   );
@@ -304,8 +307,9 @@ export default function Workspaces() {
   const navigate = useNavigate();
   const { themeColors } = useTheme();
   const calendar = location.pathname.includes("calendar");
-  const {openEtherpad, setOpenEtherpad, etherpadMinimized, setEtherpadMinimized, openCreateMessage, setOpenCreateMessage, createMessageSection, setCreateMessageSection, openMeetingModal, openMailSender, setOpenMailSender} = useModal();
-  
+  const {openEtherpad, setOpenEtherpad, etherpadMinimized, setEtherpadMinimized, openCreateMessage, setOpenCreateMessage, createMessageSection, setCreateMessageSection, visibleContact, setVisibleContact, openMailSender, setOpenMailSender} = useModal();
+  const [openBookmark, setOpenBookmark] = useState(false);
+
   const handleOpenRecord = () => {
     // window.parent.postMessage({
     //   recording: true,
@@ -322,6 +326,25 @@ export default function Workspaces() {
           src={getHref(doc.thumbnailURL) || getHref(doc.photoURL)}
         />
       ))}
+      <div
+        role="button"
+        tabIndex={0}
+        className={classNames(
+          (visibleContact) ? "border-2" : "",
+          "h-8 w-8 rounded-md p-px"
+        )}
+        title="Contact"
+        onClick={() => setVisibleContact(true)}
+      >
+        <img
+          src={`${process.env.PUBLIC_URL}/contact.png`}
+          alt="contact"
+          className={classNames(
+            "h-8 w-8 rounded-md p-px"
+          )}
+          style={{ borderColor: visibleContact ? themeColors?.cyan : "" }}
+        />
+      </div>
       <div
         role="button"
         tabIndex={0}
@@ -374,17 +397,17 @@ export default function Workspaces() {
         )}
         title="My Schedule"
         onClick={() =>
-          navigate(`/dashboard/calendar`)
+          navigate(`/dashboard/workspaces/${value[0]?.objectId}/calendar`)
         }
       >
         <img
           src={`${process.env.PUBLIC_URL}/calendar.png`}
           alt="workspace"
           className={classNames(
-            (calendar && (!openEtherpad || etherpadMinimized) && !openCreateMessage && !openMailSender) ? "border-2" : "",
+            (calendar && (!openEtherpad || etherpadMinimized) && !openCreateMessage && !openMailSender && !visibleContact) ? "border-2" : "",
             "h-8 w-8 rounded-md p-px"
           )}
-          style={{ borderColor: (calendar && (!openEtherpad || etherpadMinimized) && !openCreateMessage && !openMailSender) ? themeColors?.cyan : "" }}
+          style={{ borderColor: (calendar && (!openEtherpad || etherpadMinimized) && !openCreateMessage && !openMailSender && !visibleContact) ? themeColors?.cyan : "" }}
         />
       </div>
       <div
@@ -435,24 +458,6 @@ export default function Workspaces() {
         className={classNames(
           "flex items-center justify-center cursor-pointer focus:outline-none"
         )}
-        title="Contact"
-        onClick={() => {}}
-      >
-        <img
-          src={`${process.env.PUBLIC_URL}/contact.png`}
-          alt="contact"
-          className={classNames(
-            "h-8 w-8 rounded-md p-px"
-          )}
-          style={{ borderColor: "" }}
-        />
-      </div>
-      <div
-        role="button"
-        tabIndex={0}
-        className={classNames(
-          "flex items-center justify-center cursor-pointer focus:outline-none"
-        )}
         title="Email"
         onClick={() => setOpenMailSender(true)}
       >
@@ -472,11 +477,12 @@ export default function Workspaces() {
         className={classNames(
           "flex items-center justify-center cursor-pointer focus:outline-none"
         )}
-        title="Email"
-        onClick={() => setOpenMailSender(true)}
+        title="Bookmark"
+        onClick={() => setOpenBookmark(true)}
       >
         <PlusIcon className="h-8 w-8 rounded-md p-px th-color-brblue" />
       </div>
+      {openBookmark && <Bookmark open={openBookmark} setOpen={setOpenBookmark} />}
     </div>
   );
 }
