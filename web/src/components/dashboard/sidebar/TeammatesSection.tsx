@@ -160,7 +160,7 @@ export default function TeammatesSection() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder={t("Find_members")}
-            className="block text-sm border-0 w-full focus:outline-none focus:ring-0 th-bg-bg"
+            className="block text-sm border-0 w-full focus:outline-none focus:ring-0 th-bg-bg autofill:th-bg-bg"
           />
         </div>
       </div>

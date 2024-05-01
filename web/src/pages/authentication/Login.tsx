@@ -169,7 +169,7 @@ export default function Login() {
                       autoComplete="email"
                       value={values.email}
                       onChange={handleChange}
-                      className="bg-[#495057] text-[#adb5bd] border-0 outline-0 mt-[0.5vw] px-4 h-[4vw] block w-full shadow-sm text-lg disabled:opacity-50 placeholder:text-[#adb5bd]"
+                      className="bg-[#495057] autofill:bg-[#495057] text-[#adb5bd] border-0 outline-0 mt-[0.5vw] px-4 h-[4vw] block w-full shadow-sm text-lg disabled:opacity-50 placeholder:text-[#adb5bd]"
                     />
                   </div>
                   <div className="p-[0.25vw]">
@@ -181,7 +181,7 @@ export default function Login() {
                       autoComplete="current-password"
                       value={values.password}
                       onChange={handleChange}
-                      className="bg-[#495057] text-[#adb5bd] border-0 outline-0 my-[0.5vw] px-4 h-[4vw] block w-full shadow-sm text-lg disabled:opacity-50 placeholder:text-[#adb5bd]"
+                      className="bg-[#495057] autofill:bg-[#495057] text-[#adb5bd] border-0 outline-0 my-[0.5vw] px-4 h-[4vw] block w-full shadow-sm text-lg disabled:opacity-50 placeholder:text-[#adb5bd]"
                     />
                   </div>
                   <div className="p-[0.25vw] flex items-center">

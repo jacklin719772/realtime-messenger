@@ -312,7 +312,7 @@ export default function SearchDialog() {
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
                       placeholder="Search Message..."
-                      className="block text-base border-0 w-full focus:outline-none focus:ring-0 th-bg-bg"
+                      className="block text-base border-0 w-full focus:outline-none focus:ring-0 th-bg-bg autofill:th-bg-bg"
                     />
                   </div>
                 </div>

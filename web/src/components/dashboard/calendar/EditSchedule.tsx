@@ -710,7 +710,7 @@ function EditSchedule({
                           setFieldValue("start_time", new Date(values.start_time.toISOString().split("T")[0] + " 00:00:00"));
                           setFieldValue("end_time", new Date(values.end_time.toISOString().split("T")[0] + " 23:59:00"));
                         }}
-                        className="th-bg-blue text-2xl w-6 h-6 border-0 outline-0 rounded"
+                        className="th-bg-blue text-2xl w-6 h-6 border-0 outline-0 rounded autofill:th-bg-blue"
                       />
                     </div>
                   </div>
@@ -759,7 +759,7 @@ function EditSchedule({
                         name="is_mail_remind"
                         id="is_mail_remind"
                         onChange={handleChange}
-                        className="th-bg-blue text-2xl w-6 h-6 border-0 outline-0 mr-2 rounded"
+                        className="th-bg-blue text-2xl w-6 h-6 border-0 outline-0 mr-2 rounded autofill:th-bg-blue"
                       />
                     </div>
                   </div>
