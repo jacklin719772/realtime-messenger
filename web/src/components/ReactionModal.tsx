@@ -40,7 +40,7 @@ export function ReactionModal({
         <>
           <Listbox.Label className="sr-only">Reaction</Listbox.Label>
           <div className="relative flex flex-1">
-            <Listbox.Button className="th-bg-bg th-border-for th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none">
+            <Listbox.Button title="Reaction" className="th-bg-bg th-border-for th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none">
               <span className="sr-only">Reaction</span>
               <EmojiHappyIcon className="h-4 w-4" />
             </Listbox.Button>

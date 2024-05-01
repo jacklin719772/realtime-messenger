@@ -929,6 +929,7 @@ export default function Message({
             {message?.fileURL && (
               <button
                 type="button"
+                title="Download"
                 className="th-bg-bg th-border-for th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none"
                 onClick={() => downloadRef?.current?.click()}
               >
@@ -954,6 +955,7 @@ export default function Message({
                   message?.fileType?.includes("image/")) && (
               <button
                 type="button"
+                title="Preview"
                 className="th-bg-bg th-border-for th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none"
                 onClick={() => previewRef?.current?.click()}
               >
@@ -966,7 +968,7 @@ export default function Message({
                   title={getHref(message?.fileURL.replace(/%2F/g, "%252F"))}
                   href={`https://im.flybird360.com:8013/onlinePreview?url=${encodeURIComponent(Base64.encode(`https://im.flybird360.com:3003${message?.fileURL.replace(/%2F/g, "%252F")}`))}`}
                 >
-                  Download
+                  Preview
                 </a>
                 <EyeIcon className="h-4 w-4" />
               </button>
@@ -979,6 +981,7 @@ export default function Message({
                   !message?.fileType?.includes("image/")) && (
               <button
                 type="button"
+                title="Preview"
                 className="th-bg-bg th-border-for th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none"
                 onClick={() => previewRef?.current?.click()}
               >
@@ -991,7 +994,7 @@ export default function Message({
                   title={getHref(message?.fileURL.replace(/%2F/g, "%252F"))}
                   href={`https://im.flybird360.com:8013/onlinePreview?url=${encodeURIComponent(Base64.encode(`http://117.21.178.59:4000${message?.fileURL.replace(/%2F/g, "%252F")}`))}`}
                 >
-                  Download
+                  Preview
                 </a>
                 <EyeIcon className="h-4 w-4" />
               </button>
@@ -1001,6 +1004,7 @@ export default function Message({
             {(message?.text && message?.senderId === user?.uid && !message?.forwardId) && (
               <button
                 type="button"
+                title="Edit"
                 className="th-bg-bg th-border-for th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none"
                 onClick={() => setEditMessage(message?.objectId)}
               >
@@ -1012,6 +1016,7 @@ export default function Message({
             {message?.senderId === user?.uid && (
               <button
                 type="button"
+                title="Delete"
                 className="th-bg-bg th-border-for th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none"
                 onClick={() => setOpen(true)}
               >
@@ -1026,6 +1031,7 @@ export default function Message({
 
             <button
               type="button"
+              title="Select"
               className="th-bg-bg th-border-for th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none"
               onClick={initializeSelect}
             >
@@ -1035,6 +1041,7 @@ export default function Message({
 
             <button
               type="button"
+              title="Reply"
               className="th-bg-bg th-border-for th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none"
               onClick={showReply}
             >
@@ -1046,6 +1053,7 @@ export default function Message({
 
             <button
               type="button"
+              title="Forward"
               className="th-bg-bg th-border-for th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none"
               onClick={showForward}
             >
@@ -1057,6 +1065,7 @@ export default function Message({
             
             <button
               type="button"
+              title="Send email"
               className="th-bg-bg th-border-for th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none"
               onClick={() => initializeEmail(message)}
             >
@@ -1074,6 +1083,7 @@ export default function Message({
               {(message?.fileURL && message?.favorites.includes(user?.uid)) ? (
                 <button
                   type="button"
+                  title="Remove favorite"
                   className="th-bg-bg th-border-for th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none"
                   onClick={removeFavorite}
                 >
@@ -1084,6 +1094,7 @@ export default function Message({
               ) : (
                 <button
                   type="button"
+                  title="Add favorite"
                   className="th-bg-bg th-border-for th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none"
                   onClick={() => initializeFavorite(message)}
                 >

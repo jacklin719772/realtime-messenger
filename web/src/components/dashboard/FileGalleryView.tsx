@@ -30,6 +30,7 @@ function MessageItem({
 }: {
     message: any;
 }) {
+    console.log(message);
     const {value} = useUserById(message?.senderId);
     const {user} = useUser();
     const fileURL = getHref(message?.thumbnailURL) || getHref(message?.fileURL);
@@ -274,6 +275,7 @@ function MessageItem({
             {message?.favorites.includes(user?.uid) ? (
               <button
                 type="button"
+                title="Remove favorite"
                 className="th-bg-bg th-color-for relative inline-flex items-center px-3 py-1 h-8 text-sm font-medium focus:z-10 focus:outline-none"
                 onClick={removeFavorite}
               >
@@ -284,6 +286,7 @@ function MessageItem({
             ) : (
               <button
                 type="button"
+                title="Add favorite"
                 className="th-bg-bg th-color-for relative inline-flex items-center px-3 py-1 h-8 text-sm font-medium focus:z-10 focus:outline-none"
                 onClick={() => initializeFavorite(message)}
               >
