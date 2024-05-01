@@ -240,7 +240,7 @@ function SearchList() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search for Workspace..."
-          className="bg-white block text-sm border-0 w-full focus:outline-none focus:ring-0"
+          className="bg-white block text-sm border-0 w-full focus:outline-none focus:ring-0 autofill:bg-white"
         />
         <XIcon className="h-4 w-4 text-gray-500" style={{cursor: 'pointer'}} onClick={() => setSearch("")} />
       </div>
