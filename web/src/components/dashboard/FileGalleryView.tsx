@@ -24,6 +24,7 @@ import toast from "react-hot-toast";
 import { useModal } from "contexts/ModalContext";
 import { toast as toastr } from "react-toastify";
 import { PlusIcon } from "@heroicons/react/outline";
+import hexToRgbA from "utils/hexToRgbA";
 
 function MessageItem({
     message,
@@ -31,6 +32,7 @@ function MessageItem({
     message: any;
 }) {
     console.log(message);
+    const { themeColors } = useTheme();
     const {value} = useUserById(message?.senderId);
     const {user} = useUser();
     const fileURL = getHref(message?.thumbnailURL) || getHref(message?.fileURL);
@@ -100,6 +102,29 @@ function MessageItem({
       }
     }
 
+    const getFileSize = (byte: number) => {
+      if (byte < 1024) {
+        return byte + ' B';
+      } else if ((byte / 1024) < 1024) {
+        return (byte / 1024).toFixed(2) + ' KB';
+      } else if ((byte / 1024 / 1024) < 1024) {
+        return (byte / 1024 / 1024).toFixed(2) + ' MB';
+      } else {
+        return (byte / 1024 / 1024 / 1024).toFixed(2) + ' GB';
+      }
+    }
+
+    const formatTime = (totalSecond: number) => {
+      const hours = Math.floor(totalSecond / 3600);
+      const minutes = Math.floor((totalSecond - hours * 3600) / 60);
+      const seconds = totalSecond - (hours * 3600 + minutes * 60);
+      return `${padToTwoDigits(hours)}:${padToTwoDigits(minutes)}:${padToTwoDigits(seconds)}`;
+    }
+
+    const padToTwoDigits = (num: number) => {
+      return num.toString().padStart(2, '0');
+    }
+
     return (
       <div className="flex flex-col group py-1">
         <div className="flex flex-col flex-1 px-3">
@@ -152,11 +177,17 @@ function MessageItem({
                   )}
                 >
                   <img
-                    className="bg-cover w-full rounded relative focus:outline-none cursor-pointer"
+                    className="bg-cover w-full rounded relative focus:outline-none cursor-pointer hover:opacity-50"
                     onLoad={() => setImageLoaded(true)}
                     alt={message?.fileName}
                     src={fileURL}
                   />
+                  <div className="w-full h-full flex flex-col justify-center items-center th-color-for absolute top-0 left-0 opacity-0 hover:opacity-100" style={{backgroundColor: hexToRgbA(themeColors?.background, "0.5")}}>
+                    <div className="text-sm font-bold">{message?.fileName}</div>
+                    <div className="text-xs font-medium">
+                      {message?.mediaWidth}&times;{message?.mediaHeight} {getFileSize(message?.fileSize)} {formatTime(message?.mediaDuration)}
+                    </div>
+                  </div>
                 </div>
                 {!imageLoaded && (
                   <div
