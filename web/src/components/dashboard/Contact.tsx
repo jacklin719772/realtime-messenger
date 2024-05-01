@@ -18,6 +18,7 @@ import { postData } from 'utils/api-helpers'
 import { getHref } from 'utils/get-file-url'
 import AddMemberConfirm from './chat/AddMemberConfirm'
 import classNames from 'utils/classNames'
+import Style from 'components/Style';
 
 function UserItem({
   data,
@@ -123,8 +124,8 @@ function Contact() {
         {visibleContact && <XIcon className="h-4 w-4 button" style={{cursor: "pointer"}} onClick={() => setVisibleContact(false)} />}
       </div>
       <div className="px-2">
-        <div className="flex items-center border-y w-full pl-2 pr-4 text-gray-500 bg-white th-border-selbg mt-2 rounded-full">
-          <SearchIcon className="h-4 w-4 text-gray-500" />
+        <div className="flex items-center border w-full pl-2 pr-4 th-color-for bg-white th-border-for mt-2 rounded-full">
+          <SearchIcon className="h-4 w-4 th-color-for" />
           <input
             type="text"
             name="searchFiles"
@@ -132,14 +133,14 @@ function Contact() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search for users..."
-            className="bg-white block text-sm border-0 w-full focus:outline-none focus:ring-0"
+            className="bg-white block text-sm th-color-for border-0 w-full focus:outline-none focus:ring-0"
           />
-          <XIcon className="h-4 w-4 text-gray-500" style={{cursor: 'pointer'}} onClick={() => setSearch("")} />
+          <XIcon className="h-4 w-4 th-color-for" style={{cursor: 'pointer'}} onClick={() => setSearch("")} />
         </div>
       </div>
       <div className="pt-2 px-2">
         <select
-          className="block appearance-none w-2/3 th-bg-bg th-color-brblue border th-border-for bg-color-for py-2 px-4 pr-8 mr-2 text-sm rounded leading-tight"
+          className="block appearance-none w-2/3 th-bg-bg th-color-for border th-border-for bg-color-for py-2 px-4 pr-8 mr-2 text-sm rounded leading-tight"
           onChange={(e) => setSection(e.target.value)}
         >
           <option value="mine">My Contacts</option>
@@ -148,12 +149,20 @@ function Contact() {
         </select>
       </div>
       <div className="border-r th-color-brblue th-border-selbg overflow-y-auto mt-1">
+        <Style css={`
+          .th-color-for.relative > div > div > div {
+            color: ${themeColors?.brightBlue} !important;
+          }
+        `} />
         {(section === "mine") && (<div>
           {mineUsers.length > 0 ? 
           <AlphabetList
             className="th-color-for text-sm font-bold relative pl-2"
             data={mineUsers}
             nameKey="displayName"
+            alphabetItemStyle={{
+              color: themeColors?.brightBlue,
+            }}
             generateFn={(item: any, index: number) => (
               <UserItem data={item} type={section} key={index} />
             )}

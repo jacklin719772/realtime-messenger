@@ -303,9 +303,9 @@ function CalendarView({
                   dateEvents.length > 0 ? (
                     <>
                     {dateEvents.map((de: any, index: number) => (
-                      <div className="border-b px-2 py-1 cursor-pointer" onClick={() => handleEventClick(de.meetingId ? de.meetingId : de.id)}>
+                      <div className="border-b th-border-for px-2 py-1 cursor-pointer" onClick={() => handleEventClick(de.meetingId ? de.meetingId : de.id)}>
                         <div className="border-l-4 th-border-blue flex items-center">
-                          <div className="px-2 w-20 text-sm">
+                          <div className="px-2 w-20 text-sm th-color-for">
                             <div>
                               {new Date(de?.start_time).toLocaleTimeString([], {
                                 hour: '2-digit',
@@ -321,7 +321,7 @@ function CalendarView({
                               })}
                             </div>
                           </div>
-                          <div className="px-2 w-auto text-sm">{de?.title}</div>
+                          <div className="px-2 w-auto text-sm th-color-for">{de?.title}</div>
                         </div>
                       </div>
                     ))}
