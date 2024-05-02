@@ -217,15 +217,15 @@ export default function DirectMessages() {
   }, [value]);
 
   useEffect(() => {
-    if (dmList.length > 0 && type === "Unread") {
+    if (type === "Unread") {
       console.log("Sort By Unread");
       sortByUnread();
     }
-    if (dmList.length > 0 && type === "Time") {
+    if (type === "Time") {
       console.log("Sort by Time");
       sortByTime();
     }
-  }, [dmList, type]);
+  }, [type]);
 
   return (
     <div>

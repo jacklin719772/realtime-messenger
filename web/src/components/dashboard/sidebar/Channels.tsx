@@ -322,11 +322,11 @@ export default function Channels({
   }, [value]);
 
   useEffect(() => {
-    if (channelList.length > 0 && type === "Unread") {
+    if (type === "Unread") {
       console.log("Sort By Unread");
       sortByUnread();
     }
-    if (channelList.length > 0 &&type === "Time") {
+    if (type === "Time") {
       console.log("Sort By Time");
       sortByTime();
     }
