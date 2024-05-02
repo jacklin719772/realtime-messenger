@@ -288,7 +288,7 @@ function MessageItem({
           )}
           <button
             type="button"
-            title="Download"
+            title="Send email"
             className="th-bg-bg th-color-for relative inline-flex items-center px-3 py-1 h-8 text-sm font-medium focus:z-10 focus:outline-none"
             onClick={() => initializeEmail(message)}
           >

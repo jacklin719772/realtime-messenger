@@ -1,7 +1,7 @@
 import { Dialog, Transition } from '@headlessui/react';
 import { StopIcon, XIcon } from '@heroicons/react/outline';
 import { useTheme } from 'contexts/ThemeContext';
-import { Fragment, useContext, useEffect, useRef } from 'react'
+import { Fragment, useContext, useEffect, useRef, useState } from 'react'
 import { ReactionsContext } from 'contexts/ReactionsContext';
 import { useReactMediaRecorder } from 'react-media-recorder';
 import classNames from 'utils/classNames';
@@ -10,17 +10,8 @@ export default function VoiceMessage() {
   const { themeColors } = useTheme();
   const {visibleAudioRecorder, setVisibleAudioRecorder, voiceBlob, setVoiceBlob} = useContext(ReactionsContext);
   const cancelButtonRef = useRef(null);
-
-  // const {
-  //   audioResult,
-  //   timer,
-  //   startRecording,
-  //   stopRecording,
-  //   pauseRecording,
-  //   resumeRecording,
-  //   status,
-  //   errorMessage,
-  // } = useAudioRecorder();
+  const [time, setTime] = useState(0);
+  
   const {
     status,
     startRecording,
@@ -55,11 +46,31 @@ export default function VoiceMessage() {
     clearBlobUrl();
   }
 
+  const formatTime = (totalSecond: number) => {
+    const hours = Math.floor(totalSecond / 3600);
+    const minutes = Math.floor((totalSecond - hours * 3600) / 60);
+    const seconds = totalSecond - (hours * 3600 + minutes * 60);
+    return `${padToTwoDigits(hours)}:${padToTwoDigits(minutes)}:${padToTwoDigits(seconds)}`;
+  }
+
+  const padToTwoDigits = (num: number) => {
+    return num.toString().padStart(2, '0');
+  }
+
   useEffect(() => {
     if (!visibleAudioRecorder) {
       clearBlobUrl();
+      setTime(0);
     }
   }, [visibleAudioRecorder]);
+
+  useEffect(() => {
+    let intervalId: NodeJS.Timer | undefined;
+    if (status === "recording") {
+      intervalId = setInterval(() => setTime(time + 1), 1000);
+    }
+    return () => clearInterval(intervalId);
+  }, [status, time]);
   
   return (
     <Transition.Root show={visibleAudioRecorder} as={Fragment}>
@@ -179,6 +190,7 @@ export default function VoiceMessage() {
                           <path className="cls-1" d="M1.5,5.3v9.54a3.82,3.82,0,0,0,3.82,3.82H7.23v2.86L13,18.66h5.73a3.82,3.82,0,0,0,3.82-3.82V5.3a3.82,3.82,0,0,0-3.82-3.82H5.32A3.82,3.82,0,0,0,1.5,5.3Z"/>
                         </svg>
                       </button>
+                      <div className="ml-5 th-color-for font-medium text-base">{formatTime(time)}</div>
                     </div>
                   </div>
                   <div className="w-full flex flex-1 flex-col px-5">

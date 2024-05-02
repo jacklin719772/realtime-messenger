@@ -1,5 +1,5 @@
-import { Disclosure } from "@headlessui/react";
-import { DotsHorizontalIcon, PlusIcon, XIcon } from "@heroicons/react/outline";
+import { Disclosure, Menu, Transition } from "@headlessui/react";
+import { CheckIcon, ChevronDownIcon, DotsHorizontalIcon, PlusIcon, XIcon } from "@heroicons/react/outline";
 import AddTeammatesModal from "components/dashboard/workspaces/AddTeammatesModal";
 import Spinner from "components/Spinner";
 import { DirectMessagesContext } from "contexts/DirectMessagesContext";
@@ -10,13 +10,14 @@ import { useDetailByChat } from "hooks/useDetails";
 import { usePresenceByUserId } from "hooks/usePresence";
 import { useUserById } from "hooks/useUsers";
 import { ReactComponent as ArrowIcon } from "icons/arrow.svg";
-import { useContext, useState } from "react";
+import { Fragment, useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import { postData } from "utils/api-helpers";
 import classNames from "utils/classNames";
 import { getHref } from "utils/get-file-url";
 import { useTranslation } from "react-i18next";
+import { DetailsContext } from "contexts/DetailsContext";
 
 function DirectMessage({ dm }: { dm: any }) {
   const { themeColors } = useTheme();
@@ -186,30 +187,125 @@ export default function DirectMessages() {
   const { t } = useTranslation();
   const { themeColors } = useTheme();
   const { value } = useContext(DirectMessagesContext);
+  const { value: details } = useContext(DetailsContext);
+  const [dmList, setDmList] = useState<any[]>(value);
+  const [type, setType] = useState("Unread");
+
+  const sortByTime = () => {
+    const sorted = [...dmList].sort((a: any, b: any) => new Date(b?.updatedAt).getTime() - new Date(a?.updatedAt).getTime());
+    console.log(sorted);
+    setType("Time");
+    setDmList(sorted);
+  }
+
+  const sortByUnread = () => {
+    const sorted = [...dmList].sort((a: any, b: any) => (
+      b?.lastMessageCounter - details?.find((p: any) => p.chatId === b?.objectId)?.lastRead
+    ) - (
+      a?.lastMessageCounter - details?.find((p: any) => p.chatId === a?.objectId)?.lastRead
+    ));
+    console.log(sorted);
+    setType("Unread");
+    setDmList(sorted);
+  }
+
+  useEffect(() => {
+    sortByUnread();
+  }, []);
+
   return (
     <div>
       <Disclosure defaultOpen>
         {({ open }) => (
           <>
-            <Disclosure.Button className="flex justify-between items-center px-4 cursor-pointer">
-              <div className="flex items-center">
-                <ArrowIcon
-                  className={classNames(
-                    open ? "transform rotate-90" : "",
-                    "h-4 w-4 mr-2"
-                  )}
-                  style={{
-                    color: themeColors?.brightBlue,
-                  }}
-                />
-                <h5 className="th-color-brblue">{t("Direct_messages")}</h5>
-              </div>
-            </Disclosure.Button>
+            <div className="flex items-center">
+              <Disclosure.Button className="flex justify-between items-center px-4 cursor-pointer">
+                <div className="flex items-center">
+                  <ArrowIcon
+                    className={classNames(
+                      open ? "transform rotate-90" : "",
+                      "h-4 w-4 mr-2"
+                    )}
+                    style={{
+                      color: themeColors?.brightBlue,
+                    }}
+                  />
+                  <h5 className="th-color-brblue">{t("Direct_messages")}</h5>
+                </div>
+              </Disclosure.Button>
+              <Menu as="div" className="relative">
+                {({ open }) => (
+                  <>
+                    <div>
+                      <Menu.Button
+                        as="div"
+                        className="relative mr-2 cursor-pointer appearance-none"
+                      >
+                        <button className="th-color-for w-6 h-6 flex justify-center items-center p-1">
+                          <ChevronDownIcon className="w-full h-full th-color-for" />
+                        </button>
+                      </Menu.Button>
+                    </div>
+                    <Transition
+                      show={open}
+                      as={Fragment}
+                      enter="transition ease-out duration-100"
+                      enterFrom="transform opacity-0 scale-95"
+                      enterTo="transform opacity-100 scale-100"
+                      leave="transition ease-in duration-75"
+                      leaveFrom="transform opacity-100 scale-100"
+                      leaveTo="transform opacity-0 scale-95"
+                    >
+                      <Menu.Items
+                        static
+                        className="left-0 th-bg-bg border th-border-for origin-top-right z-20 absolute mt-1 w-32 rounded-md shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none py-2"
+                      >
+                        <div className="th-color-for font-bold text-sm px-2 pb-1">Sort by</div>
+                        <div className="w-full h-px th-bg-forbr" />
+                        <Menu.Item>
+                          {({ active }) => (
+                            <div
+                              role="button"
+                              tabIndex={0}
+                              className={classNames(
+                                active ? "th-bg-blue th-color-brwhite" : "th-bg-bg th-color-for", 
+                                "px-4 py-1 text-sm cursor-pointer focus:outline-none flex items-center space-x-2"
+                              )}
+                              onClick={sortByTime}
+                            >
+                              {type === "Time" ? <CheckIcon className="w-4 h-4 th-color-for" /> : <div className="w-4 h-4 th-color-for" />}
+                              <div className="th-color-for text-sm">Time</div>
+                            </div>
+                          )}
+                        </Menu.Item>
+                        <Menu.Item>
+                          {({ active }) => (
+                            <div
+                              role="button"
+                              tabIndex={0}
+                              className={classNames(
+                                active ? "th-bg-blue th-color-brwhite" : "th-bg-bg th-color-for", 
+                                "px-4 py-1 text-sm cursor-pointer focus:outline-none flex items-center space-x-2"
+                              )}
+                              onClick={sortByUnread}
+                            >
+                              {type === "Unread" ? <CheckIcon className="w-4 h-4 th-color-for" /> : <div className="w-4 h-4 th-color-for" />}
+                              <div className="th-color-for text-sm">Unread</div>
+                            </div>
+                          )}
+                        </Menu.Item>
+                        <div className="w-full h-px th-bg-forbr" />
+                      </Menu.Items>
+                    </Transition>
+                  </>
+                )}
+              </Menu>
+            </div>
             <Disclosure.Panel
               style={{ color: themeColors?.foreground }}
               className="pt-3 pb-2 text-sm space-y-1"
             >
-              {value?.map((doc: any) => (
+              {dmList?.map((doc: any) => (
                 <DirectMessage key={doc.objectId} dm={doc} />
               ))}
               <AddTeammates />
