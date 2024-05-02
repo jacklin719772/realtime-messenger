@@ -316,15 +316,18 @@ export default function Channels({
 
   useEffect(() => {
     if (value && value.length > 0) {
+      console.log("Value loaded...");
       setChannelList(value);
     }
   }, [value]);
 
   useEffect(() => {
     if (channelList.length > 0 && type === "Unread") {
+      console.log("Sort By Unread");
       sortByUnread();
     }
     if (channelList.length > 0 &&type === "Time") {
+      console.log("Sort By Time");
       sortByTime();
     }
   }, [channelList, type]);

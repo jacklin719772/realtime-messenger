@@ -211,15 +211,18 @@ export default function DirectMessages() {
 
   useEffect(() => {
     if (value && value.length > 0) {
+      console.log("Value loaded...");
       setDmList(value);
     }
   }, [value]);
 
   useEffect(() => {
     if (dmList.length > 0 && type === "Unread") {
+      console.log("Sort By Unread");
       sortByUnread();
     }
-    if (dmList.length > 0 &&type === "Time") {
+    if (dmList.length > 0 && type === "Time") {
+      console.log("Sort by Time");
       sortByTime();
     }
   }, [dmList, type]);
