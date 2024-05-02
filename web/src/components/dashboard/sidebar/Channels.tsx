@@ -299,7 +299,7 @@ export default function Channels({
 
   const sortChannel = (value: any[], type: string) => {
     const channels = value;
-    if (type === "Time") {
+    if (type === "Unread") {
       const sorted = channels.sort((a: any, b: any) => (
         b?.lastMessageCounter - details?.find((p: any) => p.chatId === b?.objectId)?.lastRead
       ) - (

@@ -18,6 +18,7 @@ import classNames from "utils/classNames";
 import { getHref } from "utils/get-file-url";
 import { useTranslation } from "react-i18next";
 import { DetailsContext } from "contexts/DetailsContext";
+import RemoveMemberConfirm from "../chat/RemoveMemberConfirm";
 
 function DirectMessage({ dm }: { dm: any }) {
   const { themeColors } = useTheme();
@@ -40,6 +41,7 @@ function DirectMessage({ dm }: { dm: any }) {
     : 0;
 
   const [loading, setLoading] = useState(false);
+  const [openRemove, setOpenRemove] = useState(false);
 
   const selected = dmId === dm?.objectId;
 
@@ -152,11 +154,12 @@ function DirectMessage({ dm }: { dm: any }) {
         )}
         {!isMe && !notifications && !loading && !typingArray?.length && (
           <XIcon
-            onClick={closeConversation}
+            onClick={() => setOpenRemove(true)}
             className="flex-shrink-0 h-6 w-6 p-1 opacity-0 group-hover:opacity-100"
           />
         )}
       </div>
+      <RemoveMemberConfirm open={openRemove} setOpen={setOpenRemove} removeMember={closeConversation} loading={loading} />
     </div>
   );
 }
@@ -192,7 +195,7 @@ export default function DirectMessages() {
 
   const sortDm = (value: any[], type: string) => {
     const dms = value;
-    if (type === "Time") {
+    if (type === "Unread") {
       const sorted = dms.sort((a: any, b: any) => (
         b?.lastMessageCounter - details?.find((p: any) => p.chatId === b?.objectId)?.lastRead
       ) - (
