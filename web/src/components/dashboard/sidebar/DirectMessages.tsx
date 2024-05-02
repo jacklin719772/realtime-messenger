@@ -150,7 +150,7 @@ function DirectMessage({ dm }: { dm: any }) {
         {!notifications && !typingArray?.length && loading && (
           <Spinner className="h-4 w-4 flex-shrink-0 m-1" />
         )}
-        {!notifications && !loading && !typingArray?.length && (
+        {!isMe && !notifications && !loading && !typingArray?.length && (
           <XIcon
             onClick={closeConversation}
             className="flex-shrink-0 h-6 w-6 p-1 opacity-0 group-hover:opacity-100"
@@ -188,44 +188,22 @@ export default function DirectMessages() {
   const { themeColors } = useTheme();
   const { value } = useContext(DirectMessagesContext);
   const { value: details } = useContext(DetailsContext);
-  const [dmList, setDmList] = useState<any[]>([]);
   const [type, setType] = useState("Unread");
 
-  const sortByTime = () => {
-    const sorted = [...dmList].sort((a: any, b: any) => new Date(b?.updatedAt).getTime() - new Date(a?.updatedAt).getTime());
-    console.log(sorted);
-    setType("Time");
-    setDmList(sorted);
-  }
-
-  const sortByUnread = () => {
-    const sorted = [...dmList].sort((a: any, b: any) => (
-      b?.lastMessageCounter - details?.find((p: any) => p.chatId === b?.objectId)?.lastRead
-    ) - (
-      a?.lastMessageCounter - details?.find((p: any) => p.chatId === a?.objectId)?.lastRead
-    ));
-    console.log(sorted);
-    setType("Unread");
-    setDmList(sorted);
-  }
-
-  useEffect(() => {
-    if (value && value.length > 0) {
-      console.log("Value loaded...");
-      setDmList(value);
-    }
-  }, [value]);
-
-  useEffect(() => {
-    if (type === "Unread") {
-      console.log("Sort By Unread");
-      sortByUnread();
-    }
+  const sortDm = (value: any[], type: string) => {
+    const dms = value;
     if (type === "Time") {
-      console.log("Sort by Time");
-      sortByTime();
+      const sorted = dms.sort((a: any, b: any) => (
+        b?.lastMessageCounter - details?.find((p: any) => p.chatId === b?.objectId)?.lastRead
+      ) - (
+        a?.lastMessageCounter - details?.find((p: any) => p.chatId === a?.objectId)?.lastRead
+      ));
+      return sorted;
+    } else {
+      const sorted = dms.sort((a: any, b: any) => new Date(b?.updatedAt).getTime() - new Date(a?.updatedAt).getTime());
+      return sorted;
     }
-  }, [type]);
+  }
 
   return (
     <div>
@@ -319,7 +297,7 @@ export default function DirectMessages() {
               style={{ color: themeColors?.foreground }}
               className="pt-3 pb-2 text-sm space-y-1"
             >
-              {dmList?.map((doc: any) => (
+              {sortDm(value, type)?.map((doc: any) => (
                 <DirectMessage key={doc.objectId} dm={doc} />
               ))}
               <AddTeammates />

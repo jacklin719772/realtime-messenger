@@ -295,42 +295,22 @@ export default function Channels({
   const { themeColors } = useTheme();
   const { value } = useChannels();
   const { value: details } = useContext(DetailsContext);
-  const [channelList, setChannelList] = useState<any[]>([]);
   const [type, setType] = useState("Unread");
 
-  const sortByTime = () => {
-    const sorted = [...channelList].sort((a: any, b: any) => new Date(b?.updatedAt).getTime() - new Date(a?.updatedAt).getTime());
-    console.log(sorted);
-    setChannelList(sorted);
-  }
-
-  const sortByUnread = () => {
-    const sorted = [...channelList].sort((a: any, b: any) => (
-      b?.lastMessageCounter - details?.find((p: any) => p.chatId === b?.objectId)?.lastRead
-    ) - (
-      a?.lastMessageCounter - details?.find((p: any) => p.chatId === a?.objectId)?.lastRead
-    ));
-    console.log(sorted);
-    setChannelList(sorted);
-  }
-
-  useEffect(() => {
-    if (value && value.length > 0) {
-      console.log("Value loaded...");
-      setChannelList(value);
-    }
-  }, [value]);
-
-  useEffect(() => {
-    if (type === "Unread") {
-      console.log("Sort By Unread");
-      sortByUnread();
-    }
+  const sortChannel = (value: any[], type: string) => {
+    const channels = value;
     if (type === "Time") {
-      console.log("Sort By Time");
-      sortByTime();
+      const sorted = channels.sort((a: any, b: any) => (
+        b?.lastMessageCounter - details?.find((p: any) => p.chatId === b?.objectId)?.lastRead
+      ) - (
+        a?.lastMessageCounter - details?.find((p: any) => p.chatId === a?.objectId)?.lastRead
+      ));
+      return sorted;
+    } else {
+      const sorted = channels.sort((a: any, b: any) => new Date(b?.updatedAt).getTime() - new Date(a?.updatedAt).getTime());
+      return sorted;
     }
-  }, [channelList, type]);
+  }
 
   return (
     <div>
@@ -429,7 +409,7 @@ export default function Channels({
               style={{ color: themeColors?.foreground }}
               className="pt-3 pb-2 text-sm space-y-1"
             >
-              {channelList?.map((doc: any) => (
+              {sortChannel(value, type)?.map((doc: any) => (
                 <Channel
                   key={doc.objectId}
                   objectId={doc.objectId}
