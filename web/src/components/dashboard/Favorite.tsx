@@ -451,10 +451,10 @@ function Favorite() {
                                           getNodeProps: any;
                                           level: number;
                                         }) => (
-                                          <div {...getNodeProps()} className="flex items-center cursor-pointer hover:th-bg-selbg" style={{ paddingLeft: 20 * (level - 1) }}>
+                                          <div {...getNodeProps()} className="flex items-center th-color-for cursor-pointer hover:th-bg-selbg" style={{ paddingLeft: 20 * (level - 1) }}>
                                             {isExpanded ?
-                                            <FolderOpenIcon className="w-4 h-4" /> :
-                                            <FolderIcon className="w-4 h-4" />}
+                                            <FolderOpenIcon className="w-4 h-4 th-color-for" /> :
+                                            <FolderIcon className="w-4 h-4 th-color-for" />}
                                             {element.name}
                                           </div>
                                         )}
