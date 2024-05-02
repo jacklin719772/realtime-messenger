@@ -188,7 +188,7 @@ export default function DirectMessages() {
   const { themeColors } = useTheme();
   const { value } = useContext(DirectMessagesContext);
   const { value: details } = useContext(DetailsContext);
-  const [dmList, setDmList] = useState<any[]>(value);
+  const [dmList, setDmList] = useState<any[]>([]);
   const [type, setType] = useState("Unread");
 
   const sortByTime = () => {
@@ -210,8 +210,19 @@ export default function DirectMessages() {
   }
 
   useEffect(() => {
-    sortByUnread();
-  }, []);
+    if (value && value.length > 0) {
+      setDmList(value);
+    }
+  }, [value]);
+
+  useEffect(() => {
+    if (dmList.length > 0 && type === "Unread") {
+      sortByUnread();
+    }
+    if (dmList.length > 0 &&type === "Time") {
+      sortByTime();
+    }
+  }, [dmList, type]);
 
   return (
     <div>
@@ -271,7 +282,7 @@ export default function DirectMessages() {
                                 active ? "th-bg-blue th-color-brwhite" : "th-bg-bg th-color-for", 
                                 "px-4 py-1 text-sm cursor-pointer focus:outline-none flex items-center space-x-2"
                               )}
-                              onClick={sortByTime}
+                              onClick={() => setType("Time")}
                             >
                               {type === "Time" ? <CheckIcon className="w-4 h-4 th-color-for" /> : <div className="w-4 h-4 th-color-for" />}
                               <div className="th-color-for text-sm">Time</div>
@@ -287,7 +298,7 @@ export default function DirectMessages() {
                                 active ? "th-bg-blue th-color-brwhite" : "th-bg-bg th-color-for", 
                                 "px-4 py-1 text-sm cursor-pointer focus:outline-none flex items-center space-x-2"
                               )}
-                              onClick={sortByUnread}
+                              onClick={() => setType("Unread")}
                             >
                               {type === "Unread" ? <CheckIcon className="w-4 h-4 th-color-for" /> : <div className="w-4 h-4 th-color-for" />}
                               <div className="th-color-for text-sm">Unread</div>

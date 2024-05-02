@@ -295,13 +295,12 @@ export default function Channels({
   const { themeColors } = useTheme();
   const { value } = useChannels();
   const { value: details } = useContext(DetailsContext);
-  const [channelList, setChannelList] = useState<any[]>(value);
+  const [channelList, setChannelList] = useState<any[]>([]);
   const [type, setType] = useState("Unread");
 
   const sortByTime = () => {
     const sorted = [...channelList].sort((a: any, b: any) => new Date(b?.updatedAt).getTime() - new Date(a?.updatedAt).getTime());
     console.log(sorted);
-    setType("Time");
     setChannelList(sorted);
   }
 
@@ -312,13 +311,23 @@ export default function Channels({
       a?.lastMessageCounter - details?.find((p: any) => p.chatId === a?.objectId)?.lastRead
     ));
     console.log(sorted);
-    setType("Unread");
     setChannelList(sorted);
   }
 
   useEffect(() => {
-    sortByUnread();
-  }, []);
+    if (value && value.length > 0) {
+      setChannelList(value);
+    }
+  }, [value]);
+
+  useEffect(() => {
+    if (channelList.length > 0 && type === "Unread") {
+      sortByUnread();
+    }
+    if (channelList.length > 0 &&type === "Time") {
+      sortByTime();
+    }
+  }, [channelList, type]);
 
   return (
     <div>
@@ -383,7 +392,7 @@ export default function Channels({
                                 active ? "th-bg-blue th-color-brwhite" : "th-bg-bg th-color-for", 
                                 "px-4 py-1 text-sm cursor-pointer focus:outline-none flex items-center space-x-2"
                               )}
-                              onClick={sortByTime}
+                              onClick={() => setType("Time")}
                             >
                               {type === "Time" ? <CheckIcon className="w-4 h-4 th-color-for" /> : <div className="w-4 h-4 th-color-for" />}
                               <div className="th-color-for text-sm">Time</div>
@@ -399,7 +408,7 @@ export default function Channels({
                                 active ? "th-bg-blue th-color-brwhite" : "th-bg-bg th-color-for", 
                                 "px-4 py-1 text-sm cursor-pointer focus:outline-none flex items-center space-x-2"
                               )}
-                              onClick={sortByUnread}
+                              onClick={() => setType("Unread")}
                             >
                               {type === "Unread" ? <CheckIcon className="w-4 h-4 th-color-for" /> : <div className="w-4 h-4 th-color-for" />}
                               <div className="th-color-for text-sm">Unread</div>
