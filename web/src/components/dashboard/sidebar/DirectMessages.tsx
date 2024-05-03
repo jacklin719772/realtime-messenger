@@ -54,7 +54,7 @@ function DirectMessage({ dm }: { dm: any }) {
       await postData(`/directs/${dm?.objectId}/close`);
       if (dmId === id) navigate(`/dashboard/workspaces/${workspaceId}`);
     } catch (err: any) {
-      toast.error(err.message);
+      toast.error("Close conversation failed.");
     }
     setLoading(false);
   };
@@ -193,19 +193,22 @@ export default function DirectMessages() {
   const { value: details } = useContext(DetailsContext);
   const [type, setType] = useState("Unread");
 
-  const sortDm = (value: any[], type: string) => {
-    const dms = value;
-    if (type === "Unread") {
-      const sorted = dms.sort((a: any, b: any) => (
-        b?.lastMessageCounter - details?.find((p: any) => p.chatId === b?.objectId)?.lastRead
-      ) - (
-        a?.lastMessageCounter - details?.find((p: any) => p.chatId === a?.objectId)?.lastRead
-      ));
-      return sorted;
-    } else {
-      const sorted = dms.sort((a: any, b: any) => new Date(b?.updatedAt).getTime() - new Date(a?.updatedAt).getTime());
-      return sorted;
+  const sortDm = (value: any, type: string) => {
+    if (value) {
+      const dms = value;
+      if (type === "Unread") {
+        const sorted = dms.sort((a: any, b: any) => (
+          b?.lastMessageCounter - details?.find((p: any) => p.chatId === b?.objectId)?.lastRead
+        ) - (
+          a?.lastMessageCounter - details?.find((p: any) => p.chatId === a?.objectId)?.lastRead
+        ));
+        return sorted;
+      } else {
+        const sorted = dms.sort((a: any, b: any) => new Date(b?.updatedAt).getTime() - new Date(a?.updatedAt).getTime());
+        return sorted;
+      }
     }
+    return null;
   }
 
   return (
@@ -237,7 +240,7 @@ export default function DirectMessages() {
                         className="relative mr-2 cursor-pointer appearance-none"
                       >
                         <button className="th-color-for w-6 h-6 flex justify-center items-center p-1">
-                          <ChevronDownIcon className="w-full h-full th-color-for" />
+                          <ChevronDownIcon className="w-full h-full th-color-brblue" />
                         </button>
                       </Menu.Button>
                     </div>

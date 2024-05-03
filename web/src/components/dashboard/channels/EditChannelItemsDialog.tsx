@@ -116,7 +116,7 @@ export default function EditChannelItemsDialog({
                     toast.success("Updated.");
                     setOpen(false);
                   } catch (err: any) {
-                    toast.error(err.message);
+                    toast.error("Updating failed.");
                   }
                   setSubmitting(false);
                 }}

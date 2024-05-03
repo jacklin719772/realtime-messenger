@@ -134,7 +134,7 @@ export default function EditProfile({
                     });
                     setOpen(false);
                   } catch (err: any) {
-                    toast.error(err.message);
+                    toast.error("Updating profile failed.");
                   }
                   setSubmitting(false);
                 }}

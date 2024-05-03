@@ -103,7 +103,7 @@ export default function EditMessage({
           });
           setEdit("");
         } catch (err: any) {
-          toast.error(err.message);
+          toast.error("Editing message failed.");
         }
         setSubmitting(false);
       }}

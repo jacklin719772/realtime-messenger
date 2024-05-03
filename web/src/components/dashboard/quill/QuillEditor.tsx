@@ -210,7 +210,7 @@ function StickersDropdown() {
       });
       setMessageSent(true);
     } catch (err: any) {
-      toast.error(err.message);
+      toast.error("Sending sticker failed.");
     }
     setLoading("");
   };

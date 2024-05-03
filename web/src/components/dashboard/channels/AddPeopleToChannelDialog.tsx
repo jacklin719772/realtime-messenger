@@ -41,14 +41,14 @@ export default function AddPeopleToChannelDialog({
     [members, search, channel?.members]
   );
 
-  const addMember = async (email) => {
+  const addMember = async (email: string) => {
     try {
       await postData(`/channels/${channelId}/members`, {
         email,
       });
       toast.success("Member added.");
     } catch (err: any) {
-      toast.error(err.message);
+      toast.error("Adding member failed.");
     }
   }
 
@@ -110,48 +110,6 @@ export default function AddPeopleToChannelDialog({
                   <XIcon className="h-5 w-5 th-color-for" />
                 </div>
               </div>
-              {/* <Formik
-                initialValues={{
-                  email: "",
-                }}
-                enableReinitialize
-                validationSchema={Yup.object().shape({
-                  email: Yup.string().email().max(255).required(),
-                })}
-                onSubmit={async ({ email }, { setSubmitting }) => {
-                  setSubmitting(true);
-                  try {
-                    await postData(`/channels/${channelId}/members`, {
-                      email,
-                    });
-                    toast.success("Member added.");
-                    setOpen(false);
-                  } catch (err: any) {
-                    toast.error(err.message);
-                  }
-                  setSubmitting(false);
-                }}
-              >
-                {({ values, handleChange, isSubmitting, handleSubmit }) => (
-                  <form noValidate onSubmit={handleSubmit}>
-                    <div className="bg-white p-6 pt-0 pb-6 th-bg-bg">
-                      <div className="space-y-6">
-                        <TextField
-                          name="email"
-                          type="email"
-                          focus
-                          value={values.email}
-                          handleChange={handleChange}
-                          placeholder="name@email.com"
-                        />
-                      </div>
-                    </div>
-                    <div className="px-4 pb-5 pt-1 sm:px-6 sm:flex sm:flex-row-reverse">
-                      <ModalButton isSubmitting={isSubmitting} text="Done" />
-                    </div>
-                  </form>
-                )}
-              </Formik> */}
               <div className="p-6 pt-0 pb-6 th-bg-bg border-t th-border-for">
                 <div className="space-y-6">
                   <TextField

@@ -179,7 +179,7 @@ export default function Reply() {
           resetForm();
           setIsTyping(false);
         } catch (err: any) {
-          toast.error(err.message);
+          toast.error("Replying to message failed.");
         }
         setSubmitting(false);
         setForwardMessage(null);

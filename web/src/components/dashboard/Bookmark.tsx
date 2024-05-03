@@ -62,7 +62,7 @@ function BookmarkItem({
         });
       }
     } catch (error: any) {
-      toast.error(error.message, {
+      toast.error('Removing the bookmark has been failed.', {
         position: "top-right",
         autoClose: 2000,
         hideProgressBar: false,

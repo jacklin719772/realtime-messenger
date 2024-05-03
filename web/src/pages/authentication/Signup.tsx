@@ -71,7 +71,7 @@ export default function Signup() {
               await login(emailPayload, passwordPayload);
               navigate("/dashboard");
             } catch (err: any) {
-              toast.error(err.message);
+              toast.error("Signing up failed.");
             }
             setSubmitting(false);
           }}

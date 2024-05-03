@@ -121,7 +121,7 @@ function CreateChannel() {
                     toast.success("Channel created.");
                     setOpen(false);
                   } catch (err: any) {
-                    toast.error(err.message);
+                    toast.error("Creating channel failed.");
                   }
                   setSubmitting(false);
                 }}
@@ -297,19 +297,22 @@ export default function Channels({
   const { value: details } = useContext(DetailsContext);
   const [type, setType] = useState("Unread");
 
-  const sortChannel = (value: any[], type: string) => {
-    const channels = value;
-    if (type === "Unread") {
-      const sorted = channels.sort((a: any, b: any) => (
-        b?.lastMessageCounter - details?.find((p: any) => p.chatId === b?.objectId)?.lastRead
-      ) - (
-        a?.lastMessageCounter - details?.find((p: any) => p.chatId === a?.objectId)?.lastRead
-      ));
-      return sorted;
-    } else {
-      const sorted = channels.sort((a: any, b: any) => new Date(b?.updatedAt).getTime() - new Date(a?.updatedAt).getTime());
-      return sorted;
+  const sortChannel = (value: any, type: string) => {
+    if (value) {
+      const channels = value;
+      if (type === "Unread") {
+        const sorted = channels.sort((a: any, b: any) => (
+          b?.lastMessageCounter - details?.find((p: any) => p.chatId === b?.objectId)?.lastRead
+        ) - (
+          a?.lastMessageCounter - details?.find((p: any) => p.chatId === a?.objectId)?.lastRead
+        ));
+        return sorted;
+      } else {
+        const sorted = channels.sort((a: any, b: any) => new Date(b?.updatedAt).getTime() - new Date(a?.updatedAt).getTime());
+        return sorted;
+      }
     }
+    return null;
   }
 
   return (
@@ -346,7 +349,7 @@ export default function Channels({
                         className="relative mr-2 cursor-pointer appearance-none"
                       >
                         <button className="th-color-for w-6 h-6 flex justify-center items-center p-1">
-                          <ChevronDownIcon className="w-full h-full th-color-for" />
+                          <ChevronDownIcon className="w-full h-full th-color-brblue" />
                         </button>
                       </Menu.Button>
                     </div>

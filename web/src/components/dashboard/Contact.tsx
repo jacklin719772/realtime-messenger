@@ -46,7 +46,7 @@ function UserItem({
       navigate(`/dashboard/workspaces/${workspaceId}/dm/${directId}`);
       setOpenAdd(false);
     } catch (err: any) {
-      toast.error(err.message, {
+      toast.error("Creating direct message has been failed.", {
         position: "top-right",
         autoClose: 2000,
         hideProgressBar: false,

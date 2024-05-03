@@ -206,7 +206,7 @@ export default function Forward() {
             navigate(`/dashboard/workspaces/${workspaceId}/dm/${chatId}#${messageId}`);
           }
         } catch (err: any) {
-          toast.error(err.message);
+          toast.error("Forward message failed.");
         }
         setSubmitting(false);
         setVisibleForward(false);

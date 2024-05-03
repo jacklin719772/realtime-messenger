@@ -218,7 +218,7 @@ export default function Editor() {
               setIsTyping(false);
               setFiles([]);
             } catch (err: any) {
-              toast.error(err.message);
+              toast.error("Sending message failed.");
             }
             setSubmitting(false);
           }}

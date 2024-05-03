@@ -29,10 +29,12 @@ import { useModal } from "contexts/ModalContext";
 import axios from "axios";
 import { randomRoomName } from "utils/jitsiGenerator";
 import { v4 as uuidv4 } from "uuid";
+import hexToRgbA from "utils/hexToRgbA";
 
 const SelectChannel = styled.button`
   :hover {
-    background-color: ${(props) => props.theme.selectionBackground};
+    background-color: ${(props) =>
+      hexToRgbA(props.theme.selectionBackground, "0.4")};
   }
 `;
 
@@ -403,7 +405,7 @@ function HeaderDirectMessage() {
       );
       toast.success("Channel created and member added.");
     } catch (err: any) {
-      toast.error(err.message);
+      toast.error("Creating channel has been failed.");
     }
     setOpen(false);
     setLoading(false);

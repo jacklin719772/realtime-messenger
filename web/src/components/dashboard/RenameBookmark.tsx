@@ -77,7 +77,7 @@ export default function RenameBookmark({
             <div className="inline-block align-bottom rounded-xl border th-border-for text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full th-bg-bg">
               <div className=" p-6 pb-4 flex justify-between items-center th-bg-bg border-b th-border-for">
                 <h5 className="font-bold th-color-for">
-                  Add Bookmark
+                  Rename Bookmark
                 </h5>
                 <div
                   role="button"
@@ -155,7 +155,7 @@ export default function RenameBookmark({
                     }
                     setOpen(false);
                   } catch (err: any) {
-                    toast.error(err.message, {
+                    toast.error('Renaming the bookmark has been failed.', {
                       position: "top-right",
                       autoClose: 2000,
                       hideProgressBar: false,

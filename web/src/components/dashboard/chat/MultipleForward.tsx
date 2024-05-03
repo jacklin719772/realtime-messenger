@@ -188,7 +188,7 @@ export default function MultipleForward() {
             navigate(`/dashboard/workspaces/${workspaceId}/dm/${chatId}`);
           }
         } catch (err: any) {
-          toast.error(err.message);
+          toast.error("Forward message failed.");
         }
         setSubmitting(false);
         setVisibleForwardMultiple(false);

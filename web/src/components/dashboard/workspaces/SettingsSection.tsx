@@ -78,7 +78,7 @@ export default function SettingsSection({ workspace }: { workspace: any }) {
       toast.success("Workspace deleted.");
       setOpen(false);
     } catch (err: any) {
-      toast.error(err.message);
+      toast.error("Deleting workspace failed.");
     }
   };
 
@@ -104,7 +104,7 @@ export default function SettingsSection({ workspace }: { workspace: any }) {
             });
             setOpen(false);
           } catch (err: any) {
-            toast.error(err.message);
+            toast.error("Updating workspace failed.");
           }
           setSubmitting(false);
         }}

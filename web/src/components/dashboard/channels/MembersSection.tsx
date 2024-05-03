@@ -42,7 +42,7 @@ function MemberItem({
         navigate(`/dashboard/workspaces/${workspaceId}`);
       }
     } catch (err: any) {
-      toast.error(err.message);
+      toast.error("Deleting member failed.");
     }
     setLoading(false);
   };

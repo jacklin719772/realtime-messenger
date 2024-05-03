@@ -142,7 +142,7 @@ export default function Login() {
                     theme: "dark",
                   });
                 } else {
-                  toast.error(err.message, {
+                  toast.error("Singing in failed.", {
                     position: "top-right",
                     autoClose: 2000,
                     hideProgressBar: false,

@@ -142,7 +142,7 @@ export default function AddPadModal({
                       handleOpen(padName);
                     }
                   } catch (err: any) {
-                    toast.error(err.message, {
+                    toast.error('Creating the pad has been failed.', {
                       position: "top-right",
                       autoClose: 2000,
                       hideProgressBar: false,

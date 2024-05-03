@@ -80,11 +80,11 @@ export default function EditPasswordModal() {
                   setSubmitting(true);
                   try {
                     if (newPassword !== newPasswordConfirm)
-                      throw new Error("Passwords do not match");
+                      throw new Error("Passwords do not match.");
                     await updateUser(user.uid, { password: newPassword });
                     setOpen(false);
                   } catch (err: any) {
-                    toast.error(err.message);
+                    toast.error("Changing password has been failed.");
                   }
                   setSubmitting(false);
                 }}

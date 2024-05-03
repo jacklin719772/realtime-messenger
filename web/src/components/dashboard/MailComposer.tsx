@@ -321,7 +321,7 @@ function MailComposer() {
                     setEmailBody("");
                     setTempAddress("");
                   } catch (err: any) {
-                    toast.error(err.message);
+                    toast.error("Sending e-mail failed.");
                   }
                   setSubmitting(false);
                 }}

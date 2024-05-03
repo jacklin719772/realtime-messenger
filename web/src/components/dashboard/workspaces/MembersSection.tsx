@@ -43,7 +43,7 @@ function MemberItem({
         await deleteData(`/workspaces/${workspaceId}/members/${id}`);
       }
     } catch (err: any) {
-      toast.error(err.message);
+      toast.error("Deleting member failed.");
     }
     setLoading(false);
   };

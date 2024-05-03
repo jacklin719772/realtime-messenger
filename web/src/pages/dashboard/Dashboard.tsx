@@ -119,7 +119,7 @@ function ProfileView() {
       navigate(`/dashboard/workspaces/${workspaceId}/dm/${directId}`);
       setOpenAdd(false);
     } catch (err: any) {
-      toast.error(err.message, {
+      toast.error("Adding member failed.", {
         position: "top-right",
         autoClose: 2000,
         hideProgressBar: false,
@@ -141,7 +141,7 @@ function ProfileView() {
       await postData(`/directs/${dm?.objectId}/close`);
       if (dmId === id) navigate(`/dashboard/workspaces/${workspaceId}`);
     } catch (err: any) {
-      toast.error(err.message, {
+      toast.error("Close conversation failed.", {
         position: "top-right",
         autoClose: 2000,
         hideProgressBar: false,

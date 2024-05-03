@@ -102,7 +102,7 @@ export default function AddTeammatesModal() {
                     toast.success("Member added.");
                     setOpen(false);
                   } catch (err: any) {
-                    toast.error(err.message);
+                    toast.error("Adding member failed.");
                   }
                   setSubmitting(false);
                 }}

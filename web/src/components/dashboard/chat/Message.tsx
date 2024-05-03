@@ -205,7 +205,7 @@ export default function Message({
     try {
       await deleteData(`/messages/${message?.objectId}`);
     } catch (err: any) {
-      toast.error(err.message);
+      toast.error("Deleting message failed.");
     }
     setLoadingDelete(false);
     setOpen(false);
@@ -395,8 +395,8 @@ export default function Message({
       <div className="flex flex-1 group w-full pl-12 items-center">
         <div className="w-96 px-4 py-2 m-2 rounded-lg th-bg-selbg flex justify-between items-center border th-border-for">
           <div className="flex items-center space-x-2">
-            <div className="text-sm th-color-for">{JSON.parse(message?.text.substr(19, message?.text.length)).type}</div>
-            <div className="text-sm th-color-for">
+            <div className="text-sm th-color-brblue">{JSON.parse(message?.text.substr(19, message?.text.length)).type}</div>
+            <div className="text-sm th-color-brblue">
               {String(Math.floor(parseInt(JSON.parse(message?.text.substr(19, message?.text.length)).duration) / 1000 / 60)).padStart(2, "0")}:
               {String(Math.floor(parseInt(JSON.parse(message?.text.substr(19, message?.text.length)).duration) / 1000) - Math.floor(parseInt(JSON.parse(message?.text.substr(19, message?.text.length)).duration) / 1000 / 60) * 60).padStart(2, "0")}
             </div>
@@ -420,8 +420,8 @@ export default function Message({
       <div className="flex flex-1 group w-full pl-12 items-center">
         <div className="w-96 px-4 py-2 m-2 rounded-lg th-bg-selbg flex justify-between items-center border th-border-for">
           <div className="flex items-center space-x-2">
-            <div className="text-sm th-color-for">{JSON.parse(message?.text.substr(19, message?.text.length)).type}</div>
-            <div className="text-sm th-color-for">
+            <div className="text-sm th-color-brblue">{JSON.parse(message?.text.substr(19, message?.text.length)).type}</div>
+            <div className="text-sm th-color-brblue">
               {new Date(JSON.parse(message?.text.substr(19, message?.text.length)).duration).toLocaleTimeString([], {
                 hour: '2-digit',
                 minute: '2-digit',
@@ -449,8 +449,8 @@ export default function Message({
         <div className="flex flex-1 group w-full pl-12 items-center">
           <div className="w-96 px-4 py-2 m-2 rounded-lg th-bg-selbg flex justify-between items-center border th-border-for">
             <div className="flex items-center space-x-2">
-              <div className="text-sm th-color-for">{JSON.parse(message?.text.substr(19, message?.text.length)).type}</div>
-              <div className="text-sm th-color-for">
+              <div className="text-sm th-color-brblue">{JSON.parse(message?.text.substr(19, message?.text.length)).type}</div>
+              <div className="text-sm th-color-brblue">
                 {new Date(JSON.parse(message?.text.substr(19, message?.text.length)).duration).toLocaleTimeString([], {
                   hour: '2-digit',
                   minute: '2-digit',
@@ -478,8 +478,8 @@ export default function Message({
         <div className="flex flex-1 group w-full pl-12 items-center">
           <div className="w-96 px-4 py-2 m-2 rounded-lg th-bg-selbg flex justify-between items-center border th-border-for">
             <div className="flex items-center space-x-2">
-              <div className="text-sm th-color-for">{JSON.parse(message?.text.substr(19, message?.text.length)).type}</div>
-              <div className="text-sm th-color-for">
+              <div className="text-sm th-color-brblue">{JSON.parse(message?.text.substr(19, message?.text.length)).type}</div>
+              <div className="text-sm th-color-brblue">
                 {new Date(JSON.parse(message?.text.substr(19, message?.text.length)).duration).toLocaleTimeString([], {
                   hour: '2-digit',
                   minute: '2-digit',

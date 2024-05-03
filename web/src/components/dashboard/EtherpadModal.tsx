@@ -148,7 +148,7 @@ export default function EtherpadModal() {
         });
       }
     } catch (error: any) {
-      toast.error(error.message, {
+      toast.error('Deleting the pad has been failed.', {
         position: "top-right",
         autoClose: 2000,
         hideProgressBar: false,

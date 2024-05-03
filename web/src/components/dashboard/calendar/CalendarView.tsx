@@ -145,7 +145,7 @@ function CalendarView({
       }
       setOpenDeleteEvent(false);
     } catch (error: any) {
-      toast.error(error.message, {
+      toast.error('Deleting the event has been failed.', {
         position: "top-right",
         autoClose: 2000,
         hideProgressBar: false,

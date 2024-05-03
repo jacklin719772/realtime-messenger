@@ -548,7 +548,7 @@ function FileGalleryView() {
       </RadioGroup>
       <Dropzone onDrop={acceptedFiles => onDrop(acceptedFiles)}>
         {({getRootProps, getInputProps}) => (
-          <section className="p-4 w-full cursor-pointer th-color-for">
+          <section className="p-4 w-full cursor-pointer th-color-brblue">
             <div className="rounded-xl border-2 th-border-for w-full h-16 th-bg-selbg flex justify-between items-center px-8" {...getRootProps()}>
               <input {...getInputProps()} />
               <p>Drop here to share</p>

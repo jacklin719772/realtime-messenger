@@ -183,8 +183,8 @@ function EditSchedule({
     enableReinitialize: false,
     initialValues: !event ? {
       title: "",
-      start_time: new Date(),
-      end_time: new Date((new Date().getTime() + 3600 * 1000)),
+      start_time: new Date((new Date().getTime() + 600 * 1000)),
+      end_time: new Date((new Date().getTime() + 4200 * 1000)),
       timezone: 8,
       is_all_day: false,
       repeat: 0,
@@ -639,7 +639,10 @@ function EditSchedule({
                         selected={values.start_time}
                         name="start_time"
                         placeholderText="2024-04-02"
-                        onChange={(date: any) => setFieldValue("start_time", date)} //only when value has changed
+                        onChange={(date: any) => {
+                          setFieldValue("start_time", date);
+                          setFieldValue("end_time", new Date(date.getTime() + 3600 * 1000))
+                        }} //only when value has changed
                         dateFormat="yyyy-MM-dd HH:mm"
                         showTimeSelect
                         timeIntervals={15}

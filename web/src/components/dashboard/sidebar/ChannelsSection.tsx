@@ -35,7 +35,7 @@ function ChannelItem({ channel }: { channel: any }) {
       );
       setOpenCreateMessage(false);
     } catch (err: any) {
-      toast.error(err.message);
+      toast.error("Joining to channel failed.");
     }
     setLoading(false);
   };
@@ -49,7 +49,7 @@ function ChannelItem({ channel }: { channel: any }) {
       );
       setOpenCreateMessage(false);
     } catch (err: any) {
-      toast.error(err.message);
+      toast.error("Joining to channel failed.");
     }
     setLoading(false);
   };

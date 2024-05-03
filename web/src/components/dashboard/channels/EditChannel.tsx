@@ -55,7 +55,7 @@ export default function EditChannel({
       setOpen(false);
       navigate(`/dashboard/workspaces/${workspaceId}`);
     } catch (err: any) {
-      toast.error(err.message);
+      toast.error("Deleting channel failed.");
     }
   };
 
@@ -66,7 +66,7 @@ export default function EditChannel({
       setOpen(false);
       navigate(`/dashboard/workspaces/${workspaceId}`);
     } catch (err: any) {
-      toast.error(err.message);
+      toast.error("Archiving channel failed.");
     }
   };
 
@@ -77,7 +77,7 @@ export default function EditChannel({
       setOpen(false);
       navigate(`/dashboard/workspaces/${workspaceId}`);
     } catch (err: any) {
-      toast.error(err.message);
+      toast.error("Leaving channel failed.");
     }
   };
 

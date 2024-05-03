@@ -140,7 +140,7 @@ export default function AddBookmark({
                     }
                     setOpen(false);
                   } catch (err: any) {
-                    toast.error(err.message, {
+                    toast.error('Creating the bookmark has been failed.', {
                       position: "top-right",
                       autoClose: 2000,
                       hideProgressBar: false,
