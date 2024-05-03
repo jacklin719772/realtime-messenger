@@ -184,7 +184,7 @@ function EditSchedule({
     initialValues: !event ? {
       title: "",
       start_time: new Date(),
-      end_time: new Date(),
+      end_time: new Date((new Date().getTime() + 3600 * 1000)),
       timezone: 8,
       is_all_day: false,
       repeat: 0,
@@ -642,12 +642,12 @@ function EditSchedule({
                         onChange={(date: any) => setFieldValue("start_time", date)} //only when value has changed
                         dateFormat="yyyy-MM-dd HH:mm"
                         showTimeSelect
-                        timeIntervals={30}
+                        timeIntervals={15}
                         timeCaption="Time"
                         disabled={values.is_all_day}
                       />
                     </div>
-                    <div className="text-sm pr-1">
+                    <div className="text-sm pr-1 th-color-for">
                       ~
                     </div>
                     <div className="w-auto pr-1">
@@ -659,7 +659,7 @@ function EditSchedule({
                         onChange={(date: any) => setFieldValue("end_time", date)} //only when value has changed
                         dateFormat="yyyy-MM-dd HH:mm"
                         showTimeSelect
-                        timeIntervals={30}
+                        timeIntervals={15}
                         timeCaption="Time"
                         disabled={values.is_all_day}
                       />
@@ -701,7 +701,7 @@ function EditSchedule({
                       </select>
                     </div>
                     <div className="w-[10%] flex items-center justify-end">
-                      <span className="text-sm mr-2 th-color-for">All Day</span>
+                      <label className="text-sm mr-2 th-color-for" htmlFor="#is_all_day">All Day</label>
                       <input
                         value={values.is_all_day}
                         type="checkbox"
