@@ -224,12 +224,9 @@ function ProfileView() {
 export default function Dashboard() {
   const { workspaceId, channelId, dmId } = useParams();
   const { value, loading } = useMyWorkspaces();
-  console.log(value);
   const { user, userdata } = useUser();
   const { value: channel } = useChannelById(channelId || value[0]?.channelId);
-  console.log(channel);
   const { value: owner } = useUserById(channel?.createdBy);
-  console.log(owner);
   const location = useLocation();
   const profile = location.pathname?.includes("user_profile");
   const calendar = location.pathname?.includes("calendar");
@@ -258,8 +255,6 @@ export default function Dashboard() {
 
   useEffect(() => {
     let timer: any;
-    console.log('Message Arrived: ', messageArrived);
-    console.log('Message Sent: ', messageSent);
     if (soundActivated) {
       if (messageSent) {
         console.log('Message Sent');

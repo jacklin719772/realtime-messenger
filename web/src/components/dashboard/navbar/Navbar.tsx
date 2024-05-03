@@ -5,7 +5,7 @@ import EditProfile from "components/dashboard/navbar/EditProfile";
 import { useModal } from "contexts/ModalContext";
 import { useTheme } from "contexts/ThemeContext";
 import { useUser } from "contexts/UserContext";
-import { Fragment, useContext, useMemo, useState } from "react";
+import { Fragment, useContext, useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import classNames from "utils/classNames";
@@ -18,6 +18,11 @@ import Spinner from "components/Spinner";
 import { UsersContext } from "contexts/UsersContext";
 import { deleteData, postData } from "utils/api-helpers";
 import { forIn } from "lodash";
+import { useNavigatorOnline } from "hooks/useNavigatorOnline";
+import { getIdToken } from "gqlite-lib/dist/client/auth";
+import { clearInterval } from "timers";
+import { getAPIUrl } from "config";
+import { ExclamationIcon } from "@heroicons/react/solid";
 
 function NavbarItem({ onClick, text }: { onClick: any; text: string }) {
   return (
@@ -61,6 +66,57 @@ export default function Navbar() {
   const { setOriginId } = useContext(ReactionsContext);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const { roomName, meetingMinimized, setMeetingMinimized, isVideoDisabled } = useModal();
+  
+  const isOnline = useNavigatorOnline();
+  const [connected, setConnected] = useState(true);
+  const [authenticated, setAuthenticated] = useState(true);
+  const [uteamwork, setUteamwork] = useState(false);
+
+  useEffect(() => {
+    const intervalId1 = setInterval(async () => {
+      try {
+        const response = await fetch(`${getAPIUrl()}/warm`);
+        if (response.ok) {
+          setConnected(true);
+        } else {
+          setConnected(false);
+        }
+      } catch (error) {
+        setConnected(false);
+      }
+    }, 15000);
+    return () =>  clearInterval(intervalId1);
+  }, []);
+
+  useEffect(() => {
+    const intervalId2 = setInterval(async () => {
+      try {
+        const idToken = await getIdToken();
+        if (idToken) {
+          setAuthenticated(true);
+        } else {
+          setAuthenticated(false);
+        }
+      } catch (error) {
+        setAuthenticated(false);
+      }
+    }, 15000);
+    return () => clearInterval(intervalId2);
+  }, []);
+
+  useEffect(() => {
+    if (localStorage.getItem("t") && String(localStorage.getItem("t")).length > 30) {
+      setUteamwork(true);
+    }
+    const intervalId3 = setInterval(() => {
+      if (localStorage.getItem("t") && String(localStorage.getItem("t")).length > 30) {
+        setUteamwork(true);
+      } else {
+        setUteamwork(false);
+      }
+    }, 15000);
+    return () => clearInterval(intervalId3);
+  }, []);
 
   const { userdata } = useUser();
   const photoURL =
@@ -244,7 +300,7 @@ export default function Navbar() {
             )}
           </Menu>
         </div>
-        <div className="font-bold text-base th-color-brblue w-20 truncate">{userdata?.displayName}</div>
+        <div className="text-sm th-color-brblue w-20 truncate">{userdata?.displayName}</div>
         <div className="flex items-center justify-end">
           <Menu as="div" className="relative">
             {({ open }) => (
@@ -311,7 +367,24 @@ export default function Navbar() {
           </div>
         )}
       </div>
-      <div className="col-span-2 flex items-center justify-center">
+      <div className="col-span-2 flex items-center">
+        {!isOnline ?
+        <div className="text-xs rounded-lg px-2 py-1 focus:outline-none th-color-brwhite th-bg-red font-medium flex items-center justify-center">
+          <ExclamationIcon className="w-5 h-5 th-color-brwhite" />
+          <div className="text-sm">Please check your network connection status.</div>
+        </div> : !connected ?
+        <div className="text-xs rounded-lg px-2 py-1 focus:outline-none th-color-brwhite th-bg-red font-medium flex items-center justify-center">
+          <ExclamationIcon className="w-5 h-5 th-color-brwhite" />
+          <div className="text-sm">Connection to the server is failed. Please refresh the page.</div>
+        </div> : !authenticated ? 
+        <div className="text-xs rounded-lg px-2 py-1 focus:outline-none th-color-brwhite th-bg-red font-medium flex items-center justify-center">
+          <ExclamationIcon className="w-5 h-5 th-color-brwhite" />
+          <div className="text-sm">You authentication is expired. Please re-sign in.</div>
+        </div> : !uteamwork ? 
+        <div className="text-xs rounded-lg px-2 py-1 focus:outline-none th-color-brwhite th-bg-red font-medium flex items-center justify-center">
+          <ExclamationIcon className="w-5 h-5 th-color-brwhite" />
+          <div className="text-sm">Please sign out and re-sign in from uteamwork.</div>
+        </div> : ""}
         {/* <div
           style={{
             paddingTop: "1px",
