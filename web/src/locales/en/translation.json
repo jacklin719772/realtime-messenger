@@ -253,5 +253,9 @@
     "Workspace name": "Workspace name",
     "Create workspace": "Create workspace",
     "No workspaces available.": "No workspaces available.",
-    "Join workspace": "Join workspace"
+    "Join workspace": "Join workspace",
+    "Sign In": "Sign In",
+    "Your password": "Your password",
+    "I agree to the Term of User": "I agree to the Term of User",
+    "Sign Me In": "Sign Me In"
 }
