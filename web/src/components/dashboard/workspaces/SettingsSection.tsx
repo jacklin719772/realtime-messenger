@@ -132,24 +132,6 @@ export default function SettingsSection({ workspace }: { workspace: any }) {
                   handleChange={handleChange}
                   placeholder="Description"
                 />
-                {owner && (
-                  <>
-                    <ModalButton
-                      text="Delete workspace"
-                      type="button"
-                      className="w-full inline-flex justify-center items-center py-2 px-4 border border-transparent text-base font-bold rounded focus:outline-none focus:ring-4 focus:ring-blue-200 sm:w-auto sm:text-sm disabled:opacity-50"
-                      isDelete
-                      onClick={() => setOpenDeleteWorkspaceModal(true)}
-                    />
-                    <ConfirmationModal
-                      text=""
-                      title="Are you want to delete this workspace?"
-                      onConfirm={handleDeleteWorkspace}
-                      open={openDeleteWorkspaceModal}
-                      setOpen={setOpenDeleteWorkspaceModal}
-                    />
-                  </>
-                )}
               </div>
               <div className="col-span-1 flex flex-col items-center pl-7">
                 <h4 className="block text-sm font-bold th-color-for">

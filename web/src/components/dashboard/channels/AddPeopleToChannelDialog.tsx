@@ -122,6 +122,7 @@ export default function AddPeopleToChannelDialog({
                   />
                 </div>
               </div>
+              <div className="max-h-96 overflow-y-auto">
               {waitingMembers.map((member: any) => (
                 <li className="px-8 py-2 flex justify-between items-center cursor-pointer group">
                   <div
@@ -144,6 +145,7 @@ export default function AddPeopleToChannelDialog({
                   </div>
                 </li>
               ))}
+              </div>
               <div className="px-4 pb-3 pt-2 sm:px-6 sm:flex sm:flex-row-reverse border-t th-border-for">
                 <ModalButton onClick={() => setOpen(false)} text="Done" />
               </div>

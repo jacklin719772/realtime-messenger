@@ -105,10 +105,10 @@ function WorkspaceDropdown({
                   </div>
                 </div>
                 <div className="w-full h-px my-2 th-bg-forbr" />
-                <WorkspaceDropdownItem
+                {/* <WorkspaceDropdownItem
                   setOpen={setOpenInviteTeammates}
                   text={t("Invite_member")}
-                />
+                /> */}
                 <WorkspaceDropdownItem
                   setOpen={setOpenCreateChannel}
                   text={t("Create_a_channel")}
