@@ -20,6 +20,7 @@ import classNames from 'utils/classNames';
 import DeleteConfirm from './DeleteConfirm';
 import { toast } from 'react-toastify';
 import { useTheme } from 'contexts/ThemeContext';
+import { useTranslation } from 'react-i18next';
 
 const renderEventContent = (eventInfo: any) => {
   return (
@@ -46,6 +47,7 @@ function CalendarView({
   isOwner: boolean;
   ownerData?: any;
 }) {
+  const { t } = useTranslation();
   const location = useLocation();
   const teamcal = location.pathname?.includes("teamcal");
   const calendar = location.pathname?.includes("calendar");
@@ -120,7 +122,7 @@ function CalendarView({
         },
       });
       if (response.statusText !== "OK") {
-        toast.error('Deleting the event has been failed.', {
+        toast.error(t('Deleting the event has been failed.'), {
           position: "top-right",
           autoClose: 2000,
           hideProgressBar: false,
@@ -132,7 +134,7 @@ function CalendarView({
         });
       }
       if (response.statusText === "OK") {
-        toast.success('The event has been successfully deleted.', {
+        toast.success(t('The event has been successfully deleted.'), {
           position: "top-right",
           autoClose: 2000,
           hideProgressBar: false,
@@ -145,7 +147,7 @@ function CalendarView({
       }
       setOpenDeleteEvent(false);
     } catch (error: any) {
-      toast.error('Deleting the event has been failed.', {
+      toast.error(t('Deleting the event has been failed.'), {
         position: "top-right",
         autoClose: 2000,
         hideProgressBar: false,
@@ -256,7 +258,7 @@ function CalendarView({
               eventDisplay=''
               customButtons={{
                 myCustomButton: {
-                  text: '+ Event',
+                  text: `+ ${t('Event')}`,
                   click: () => {
                     setSelectedEvent(null);
                     setOpenEditSchedule(true);
@@ -270,7 +272,7 @@ function CalendarView({
                   }
                 },
                 todayButton: {
-                  text: 'Today',
+                  text: t("Today"),
                   click: () => {
                     if (calendarRef.current) {
                       console.log(calendarRef.current.getApi().view);
@@ -329,7 +331,7 @@ function CalendarView({
                   ) : (
                     <div className="w-full flex flex-col items-center justify-center pt-10">
                       <img src={`${process.env.PUBLIC_URL}/no_event.png`} alt="no events" className="w-[40%] h-auto" />
-                      <div className="text-sm th-color-for">No events for today</div>
+                      <div className="text-sm th-color-for">{t("No_events_for_today")}</div>
                     </div>
                   )
                 }

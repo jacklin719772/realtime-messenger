@@ -9,6 +9,7 @@ import { Formik } from "formik";
 import { useChannelById } from "hooks/useChannels";
 import React, { Fragment, useRef } from "react";
 import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { postData } from "utils/api-helpers";
 
@@ -29,6 +30,7 @@ export default function EditChannelItemsDialog({
   textArea?: boolean;
   field?: string;
 }) {
+  const { t } = useTranslation();
   const { themeColors } = useTheme();
   const cancelButtonRef = useRef(null);
   const { channelId } = useParams();
@@ -113,10 +115,10 @@ export default function EditChannelItemsDialog({
                           ? `${values.detail.replace("#", "").trim()}`
                           : values.detail,
                     });
-                    toast.success("Updated.");
+                    toast.success(t("Updated."));
                     setOpen(false);
                   } catch (err: any) {
-                    toast.error("Updating failed.");
+                    toast.error(t("Updating failed."));
                   }
                   setSubmitting(false);
                 }}
@@ -146,7 +148,7 @@ export default function EditChannelItemsDialog({
                         )}
                         {!textArea && (
                           <TextField
-                            label="Name"
+                            label={t("Name")}
                             name="detail"
                             focus
                             placeholder={placeholder}
@@ -166,7 +168,7 @@ export default function EditChannelItemsDialog({
                       </div>
                     </div>
                     <div className="px-4 pb-3 pt-2 sm:px-6 sm:flex sm:flex-row-reverse border-t th-border-for">
-                      <ModalButton text="Save" isSubmitting={isSubmitting} />
+                      <ModalButton text={t("Save")} isSubmitting={isSubmitting} />
                       <CancelButton setOpen={setOpen} />
                     </div>
                   </form>

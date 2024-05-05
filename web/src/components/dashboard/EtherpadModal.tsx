@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 import DeleteConfirm from "./DeleteConfirm";
 import { useUser } from "contexts/UserContext";
 import AddPadModal from "./AddPadModal";
+import { useTranslation } from "react-i18next";
 
 function CheckItem ({
   data, 
@@ -49,6 +50,7 @@ function CheckItem ({
 }
 
 export default function EtherpadModal() {
+  const { t } = useTranslation();
   const { userdata } = useUser();
   const {openEtherpad, setOpenEtherpad, etherpadMinimized, setEtherpadMinimized, openDeletePad, setOpenDeletePad, checkedPads, setCheckedPads, currentPadName, setCurrentPadName} = useModal();
   const cancelButtonRef = useRef(null);
@@ -95,7 +97,7 @@ export default function EtherpadModal() {
 
   const handleOpenDelete = () => {
     if (checkedPads.length === 0) {
-      toast.error("Select more than 1 pad at least.", {
+      toast.error(t("Select more than 1 pad at least."), {
         position: "top-right",
         autoClose: 2000,
         hideProgressBar: false,
@@ -121,7 +123,7 @@ export default function EtherpadModal() {
         }
       });
       if (response.statusText !== "OK") {
-        toast.error('Deleting the pad has been failed.', {
+        toast.error(t('Deleting the pad has been failed.'), {
           position: "top-right",
           autoClose: 2000,
           hideProgressBar: false,
@@ -136,7 +138,7 @@ export default function EtherpadModal() {
         setCheckedPads([]);
         getEtherpadList("");
         setOpenDeletePad(false);
-        toast.success('The pad has been successfully deleted.', {
+        toast.success(t('The pad has been successfully deleted.'), {
           position: "top-right",
           autoClose: 2000,
           hideProgressBar: false,
@@ -148,7 +150,7 @@ export default function EtherpadModal() {
         });
       }
     } catch (error: any) {
-      toast.error('Deleting the pad has been failed.', {
+      toast.error(t('Deleting the pad has been failed.'), {
         position: "top-right",
         autoClose: 2000,
         hideProgressBar: false,
@@ -246,7 +248,7 @@ export default function EtherpadModal() {
                     <img src={`${process.env.PUBLIC_URL}/etherpad.png`} className="w-6 h-6" /> 
                   </div>
                   <h5 className="font-bold th-color-for pl-2">
-                    {iframeHidden ? "E-Pad" : currentPadName}
+                    {iframeHidden ? t("E-Pad") : currentPadName}
                   </h5>
                 </div>
                 <div className="flex items-center">
@@ -281,7 +283,7 @@ export default function EtherpadModal() {
                       label=""
                       name="key"
                       autoComplete="key"
-                      placeholder="Please input the epad name"
+                      placeholder={t("Please_input_the_epad_name")}
                     />
                     <div className="w-auto flex items-center space-x-2">
                       <button className="rounded w-10 h-10 th-color-for text-sm flex items-center justify-center border-2 th-border-for" onClick={() => getEtherpadList(key)}>
@@ -302,12 +304,12 @@ export default function EtherpadModal() {
                   </div>
                   <div className="w-full p-2 flex flex-col items-center text-sm border-b th-border-for">
                     <div className="w-full p-2 flex items-center justify-between text-sm th-color-for border-b th-border-for">
-                      <div className="font-bold w-[20%]">Operation</div>
-                      <div className="font-bold w-[20%]">Name</div>
-                      <div className="font-bold w-[30%]">Updated At</div>
-                      <div className="font-bold w-[10%]">User Count</div>
-                      <div className="font-bold w-[10%]">Revisions</div>
-                      <div className="font-bold w-[10%]">Size</div>
+                      <div className="font-bold w-[20%]">{t("Operation")}</div>
+                      <div className="font-bold w-[20%]">{t("Name")}</div>
+                      <div className="font-bold w-[30%]">{t("Updated_At")}</div>
+                      <div className="font-bold w-[10%]">{t("User_Count")}</div>
+                      <div className="font-bold w-[10%]">{t("Revisions")}</div>
+                      <div className="font-bold w-[10%]">{t("Size")}</div>
                     </div>
                     <div className="w-full flex flex-col items-center h-72 overflow-y-auto">
                       {epads.length === 0 && <div className="flex w-full h-full justify-center items-center text-center text-sm th-color-for">No Epad Files</div>}

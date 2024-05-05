@@ -10,6 +10,7 @@ import { useModal } from "contexts/ModalContext";
 import { IColor, useTheme } from "contexts/ThemeContext";
 import { useUser } from "contexts/UserContext";
 import { Fragment, useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { postData } from "utils/api-helpers";
 import classNames from "utils/classNames";
 import hexToRgbA from "utils/hexToRgbA";
@@ -158,6 +159,7 @@ function Themes() {
 }
 
 export default function Preferences() {
+  const { t } = useTranslation();
   const { themeColors, theme } = useTheme();
   const { userdata } = useUser();
   const { openPreferences: open, setOpenPreferences: setOpen } = useModal();
@@ -218,9 +220,9 @@ export default function Preferences() {
                 className="border-b th-border-for p-6 pb-2 flex justify-between items-center"
               >
                 <div>
-                  <h5 className="font-bold th-color-for">Preferences</h5>
+                  <h5 className="font-bold th-color-for">{t("Preferences")}</h5>
                   <span style={{ color: themeColors?.foreground }} className="text-sm">
-                    {`Change the appearance of ${APP_NAME} across all of your workspaces.`}
+                    {t("Preferences_Detail")}
                   </span>
                 </div>
                 <div

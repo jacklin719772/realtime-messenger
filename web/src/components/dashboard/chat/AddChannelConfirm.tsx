@@ -2,6 +2,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
 import Spinner from "components/Spinner";
 import React, { Fragment,  useRef } from "react";
+import { useTranslation } from "react-i18next";
 
 export default function AddChannelConfirm({
   open,
@@ -14,6 +15,7 @@ export default function AddChannelConfirm({
   addChannel: any;
   loading: boolean;
 }) {
+  const { t } = useTranslation();
   const cancelButtonRef = useRef(null);
 
   return (
@@ -65,10 +67,10 @@ export default function AddChannelConfirm({
               </div>
               <div className="px-4 pb-3 pt-2 border-t th-border-for sm:px-6 sm:flex sm:flex-row-reverse sm:justify-start">
                 <button onClick={() => setOpen(false)} className="th-bg-bg th-color-for th-border-for border-2 text-sm w-20 h-10 rounded font-bold focus:z-10 focus:outline-none ml-2">
-                  Cancel
+                  {t("Cancel")}
                 </button>
                 <button onClick={addChannel} className="th-bg-bg th-color-cyan th-border-cyan border-2 text-sm w-20 h-10 rounded font-bold focus:z-10 focus:outline-none flex items-center justify-center">
-                  {loading ? <Spinner className="w-4 h-4" /> : "Add"}
+                  {loading ? <Spinner className="w-4 h-4" /> : t("Add")}
                 </button>
                 {/* <ModalButton onClick={deleteMessage} text="Delete" />
                 <ModalButton onClick={() => setOpen(false)} text="Cancel" /> */}

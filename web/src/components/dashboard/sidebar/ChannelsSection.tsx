@@ -35,7 +35,7 @@ function ChannelItem({ channel }: { channel: any }) {
       );
       setOpenCreateMessage(false);
     } catch (err: any) {
-      toast.error("Joining to channel failed.");
+      toast.error(t("Joining to channel failed."));
     }
     setLoading(false);
   };
@@ -49,7 +49,7 @@ function ChannelItem({ channel }: { channel: any }) {
       );
       setOpenCreateMessage(false);
     } catch (err: any) {
-      toast.error("Joining to channel failed.");
+      toast.error(t("Joining to channel failed."));
     }
     setLoading(false);
   };
@@ -68,7 +68,7 @@ function ChannelItem({ channel }: { channel: any }) {
             <span className="text-xs opacity-70"> (archived)</span>
           )}
           {workspace?.channelId === channel?.objectId && (
-            <span className="text-xs opacity-70"> (default)</span>
+            <span className="text-xs opacity-70"> ({t("default")})</span>
           )}
         </span>
       </div>
@@ -139,7 +139,7 @@ export default function ChannelsSection() {
             id="findMembers"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Find channels"
+            placeholder={t("Find_channels")}
             className="block text-sm border-0 w-full focus:outline-none focus:ring-0 th-bg-bg autofill:th-bg-bg"
           />
         </div>

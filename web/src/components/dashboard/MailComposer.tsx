@@ -23,6 +23,7 @@ import classNames from 'utils/classNames';
 import { getHref } from 'utils/get-file-url';
 import { TagsInput } from "react-tag-input-component";
 import { useTheme } from 'contexts/ThemeContext';
+import { useTranslation } from 'react-i18next';
 
 function FileViewer({
   setFiles,
@@ -107,6 +108,7 @@ function FileThumbnail({
 }
 
 function MailComposer() {
+  const { t } = useTranslation();
   const forceUpdate = useForceUpdate();
   const cancelButtonRef = useRef(null);
   const {openMailSender, setOpenMailSender, emailRecipient, setEmailRecipient, emailBody, setEmailBody} = useContext(ModalContext);
@@ -262,7 +264,7 @@ function MailComposer() {
               <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4 flex justify-between items-center">
                 <div>
                   <h5 className="font-bold th-color-for">
-                    Send E-mail
+                    {t("Send_E-mail")}
                   </h5>
                 </div>
                 <div
@@ -315,13 +317,13 @@ function MailComposer() {
                       html: body,
                       attachments
                     });
-                    toast.success("E-mail sent.");
+                    toast.success(t("E-mail sent."));
                     setOpenMailSender(false);
                     setEmailRecipient("");
                     setEmailBody("");
                     setTempAddress("");
                   } catch (err: any) {
-                    toast.error("Sending e-mail failed.");
+                    toast.error(t("Sending e-mail failed."));
                   }
                   setSubmitting(false);
                 }}
@@ -336,19 +338,19 @@ function MailComposer() {
                   <form noValidate onSubmit={handleSubmit}>
                     <div className="px-5 border-t th-border-for w-full h-auto">
                       <div className="mt-2 w-full flex border th-border-for rounded th-color-for">
-                        <span className="flex select-none items-center w-24 px-3 sm:text-sm border-r th-border-for rounded-l">Recipient</span>
+                        <span className="flex select-none items-center w-24 px-3 sm:text-sm border-r th-border-for rounded-l">{t("Recipient")}</span>
                         <TagsInput value={recipients} onChange={handleRecipients} onKeyUp={handleTempAddress} name="to" placeHolder="mail@example.com" />
                       </div>
                       <div className="mt-2 w-full flex border th-border-for rounded th-color-for">
-                        <span className="flex select-none items-center w-24 px-3 sm:text-sm border-r th-border-for rounded-l">Subject</span>
-                        <input type="text" name="subject" id="subject" onChange={handleChange} autoComplete="subject" className="rounded block flex-1 border-0 bg-transparent py-1.5 pl-2 th-color-for placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6" placeholder="Please input the subject" />
+                        <span className="flex select-none items-center w-24 px-3 sm:text-sm border-r th-border-for rounded-l">{t("Subject")}</span>
+                        <input type="text" name="subject" id="subject" onChange={handleChange} autoComplete="subject" className="rounded block flex-1 border-0 bg-transparent py-1.5 pl-2 th-color-for placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6" placeholder={t("Please_input_the_subject")} />
                       </div>
                       
                       <div className="mt-2 w-full rounded border th-border-for bg-white text-black quill-form">
                         <SummernoteLite
                           name="text"
                           defaultCodeValue={values.text}
-                          placeholder={"Write something here..."}
+                          placeholder={t("Write_something_here")}
                           tabsize={2}
                           lang="zh-CN" // only if you want to change the default language
                           height={150}
@@ -383,7 +385,7 @@ function MailComposer() {
                             <section className="py-2 pr-4 w-1/5" style={{cursor: 'pointer'}}>
                               <div className="rounded w-full h-12 th-bg-bg flex justify-between border th-border-for th-color-for items-center px-4" {...getRootProps()}>
                                 <input {...getInputProps()} />
-                                <p>Files</p>
+                                <p>{t("Files")}</p>
                                 <AttachFileIcon className="h-5 w-5 cursor-pointer th-color-for" />
                               </div>
                             </section>
@@ -394,7 +396,7 @@ function MailComposer() {
                     </div>
                     <div className="px-4 pb-4 pt-2 border-t th-border-for sm:px-6 sm:flex sm:flex-row-reverse sm:justify-start">
                       <button onClick={() => setOpenMailSender(false)} className="th-bg-bg th-color-for th-border-for border-2 text-sm w-20 h-10 rounded font-bold focus:z-10 focus:outline-none ml-2">
-                        Cancel
+                        {t("Cancel")}
                       </button>
                       <button type="submit" className="th-bg-bg th-color-cyan th-border-cyan border-2 text-sm w-20 h-10 rounded font-bold focus:z-10 focus:outline-none ml-2 flex items-center justify-center">
                         {isSubmitting &&
@@ -418,7 +420,7 @@ function MailComposer() {
                             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                           />
                         </svg>}
-                        Send
+                        {t("Send")}
                       </button>
                     </div>
                   </form>

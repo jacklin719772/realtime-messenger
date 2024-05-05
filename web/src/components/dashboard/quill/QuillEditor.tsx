@@ -40,6 +40,7 @@ import { UsersContext } from "contexts/UsersContext";
 import { useUser } from "contexts/UserContext";
 import { getHref } from "utils/get-file-url";
 import { useModal } from "contexts/ModalContext";
+import { useTranslation } from "react-i18next";
 
 // #2 register module
 // Quill.register("modules/imageUploader", ImageUploader);
@@ -111,6 +112,7 @@ function EmojiDropdown({
   onEmojiClick: any;
   editor: any;
 }) {
+  const { t } = useTranslation();
   const { themeColors } = useTheme();
   return (
     <>
@@ -149,7 +151,7 @@ function EmojiDropdown({
           <>
             <Popover.Button
               as="button"
-              title="Emoticon"
+              title={t("Emoticon")}
               className="flex items-center focus:outline-none"
               onClick={() => editor?.blur()}
             >
@@ -187,6 +189,7 @@ function EmojiDropdown({
 }
 
 function StickersDropdown() {
+  const { t } = useTranslation();
   const stickers = useMemo(() => {
     return Array.from(
       Array(STICKERS_COUNT),
@@ -210,7 +213,7 @@ function StickersDropdown() {
       });
       setMessageSent(true);
     } catch (err: any) {
-      toast.error("Sending sticker failed.");
+      toast.error(t("Sending sticker failed."));
     }
     setLoading("");
   };
@@ -221,7 +224,7 @@ function StickersDropdown() {
         <>
           <Popover.Button
             as="button"
-            title="Sticker"
+            title={t("Sticker")}
             className="flex items-center focus:outline-none"
           >
             <PhotographIcon className="h-5 w-5 th-color-for" />
@@ -281,6 +284,7 @@ function CustomToolbar({
   openDropzone: any;
   text: string;
 }) {
+  const { t } = useTranslation();
   const { themeColors } = useTheme();
   const realText = editor?.getText() as string | null | undefined;
   const isText = realText?.trim();
@@ -328,7 +332,7 @@ function CustomToolbar({
       <div className="ml-auto flex items-center space-x-2">
         <button
           className="mx-1 h-5 w-5 th-color-for p-0"
-          title="Video message"
+          title={t("Video_message")}
           onClick={handleOnVideoClick}
         >
           <svg className="h-auto w-full th-color-for" xmlns="http://www.w3.org/2000/svg" version="1.0" width="512" height="452" stroke-width="50" viewBox="0 0 512.000000 452.000000" preserveAspectRatio="xMidYMid meet">
@@ -340,7 +344,7 @@ function CustomToolbar({
         </button>
         <button
           className="h-5 w-5 th-color-for p-0"
-          title="Voice message"
+          title={t("Voice_message")}
           onClick={handleOnVoiceClick}
         >
           <MicrophoneIcon className="h-full w-full th-color-for" />
@@ -349,7 +353,7 @@ function CustomToolbar({
         <EmojiDropdown onEmojiClick={onEmojiClick} editor={editor} />
         <button
           className="h-5 w-5 th-color-for p-0"
-          title="Attach file"
+          title={t("Attach_file")}
           onClick={() => {
             openDropzone();
           }}
@@ -360,7 +364,7 @@ function CustomToolbar({
         </button>
         <button
           id="sendButton"
-          title="Send"
+          title={t("Send")}
           type="submit"
           disabled={sendDisabled}
           className={classNames(isSubmitting ? "opacity-50" : "")}
@@ -542,6 +546,7 @@ function Editor({
     isDragActive,
     open: openDropzone,
   } = dropzone;
+  const { t } = useTranslation();
   const { themeColors } = useTheme();
 
   const { channelId, dmId } = useParams();
@@ -599,8 +604,8 @@ function Editor({
           }));
           filteredMembers.unshift({
             id: 0,
-            value: "All",
-            fullName: "All",
+            value: t("All"),
+            fullName: t("All"),
             photoURL: `${process.env.PUBLIC_URL}/blank_user.png`,
           });
 

@@ -8,6 +8,7 @@ import { Formik } from "formik";
 import { updateUser } from "gqlite-lib/dist/client/auth";
 import useAuth from "hooks/useAuth";
 import { Fragment, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 
 export default function AddBookmark({
@@ -19,6 +20,7 @@ export default function AddBookmark({
   setOpen: any;
   getData: any;
 }) {
+  const { t } = useTranslation();
   const cancelButtonRef = useRef(null);
 
   return (
@@ -63,7 +65,7 @@ export default function AddBookmark({
             <div className="inline-block align-bottom rounded-xl border th-border-for text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full th-bg-bg">
               <div className=" p-6 pb-4 flex justify-between items-center th-bg-bg border-b th-border-for">
                 <h5 className="font-bold th-color-for">
-                  Add Bookmark
+                  {t("Add_Bookmark")}
                 </h5>
                 <div
                   role="button"
@@ -86,7 +88,7 @@ export default function AddBookmark({
                   setSubmitting(true);
                   try {
                     if (name === "" || url === "") {
-                      toast.error("Please enter all fields.", {
+                      toast.error(t("Please enter all fields."), {
                         position: "top-right",
                         autoClose: 2000,
                         hideProgressBar: false,
@@ -114,7 +116,7 @@ export default function AddBookmark({
                       const data = await response.json();
                       console.log(data);
                       if (data.result === "success") {
-                        toast.success('New bookmark has been successfully created.', {
+                        toast.success(t('New bookmark has been successfully created.'), {
                           position: "top-right",
                           autoClose: 2000,
                           hideProgressBar: false,
@@ -127,7 +129,7 @@ export default function AddBookmark({
                         getData();
                       }
                     } else {
-                      toast.error('Creating the bookmark has been failed.', {
+                      toast.error(t('Creating the bookmark has been failed.'), {
                         position: "top-right",
                         autoClose: 2000,
                         hideProgressBar: false,
@@ -140,7 +142,7 @@ export default function AddBookmark({
                     }
                     setOpen(false);
                   } catch (err: any) {
-                    toast.error('Creating the bookmark has been failed.', {
+                    toast.error(t('Creating the bookmark has been failed.'), {
                       position: "top-right",
                       autoClose: 2000,
                       hideProgressBar: false,
@@ -168,7 +170,7 @@ export default function AddBookmark({
                           placeholder=""
                         />
                         <TextField
-                          label="URL"
+                          label={t("URL")}
                           name="url"
                           type="text"
                           value={values.url}
@@ -179,7 +181,7 @@ export default function AddBookmark({
                     </div>
                     <div className="px-4 pb-2 pt-2 sm:px-6 sm:flex sm:flex-row-reverse border-t th-border-for">
                       <CancelButton setOpen={setOpen} />
-                      <ModalButton isSubmitting={isSubmitting} text="Save" />
+                      <ModalButton isSubmitting={isSubmitting} text={t("Save")} />
                     </div>
                   </form>
                 )}

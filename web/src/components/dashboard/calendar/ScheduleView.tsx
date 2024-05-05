@@ -2,6 +2,7 @@ import { Dialog, Transition } from '@headlessui/react'
 import { XIcon } from '@heroicons/react/outline';
 import { useModal } from 'contexts/ModalContext';
 import React, { Fragment, useRef } from 'react'
+import { useTranslation } from 'react-i18next';
 
 function ScheduleView({
   open,
@@ -14,6 +15,7 @@ function ScheduleView({
   event: any;
   deleteEvent: any;
 }) {
+  const { t } = useTranslation();
   const cancelButtonRef = useRef(null);
   const {openEditSchedule, setOpenEditSchedule, setOpenEditMeeting, setOpenDeleteEvent} = useModal();
   console.log(event);
@@ -64,7 +66,7 @@ function ScheduleView({
               <div className="th-bg-bg px-4 pt-5 pb-4 sm:p-6 sm:pb-4 flex justify-between items-center border-b th-border-for">
                 <div>
                   <h5 className="font-bold th-color-for">
-                    {event.meetingId ? "Meeting" : "Event"}
+                    {event.meetingId ? "Meeting" : t("Event")}
                   </h5>
                 </div>
                 <div
@@ -77,8 +79,8 @@ function ScheduleView({
                 </div>
               </div>
               <div className="w-full py-4 px-6 th-color-for">
-                <div className="text-sm">Title: {event.title}</div>
-                <div className="text-sm">Time: {new Date(event.start_time).toLocaleString('zh-CN', {
+                <div className="text-sm">{t("Title")}: {event.title}</div>
+                <div className="text-sm">{t("Time")}: {new Date(event.start_time).toLocaleString('zh-CN', {
                   year: "numeric",
                   day: "numeric", 
                   month: "long",
@@ -96,10 +98,10 @@ function ScheduleView({
               </div>
               <div className="px-4 pb-5 pt-1 border-t th-border-for sm:px-6 sm:flex sm:flex-row-reverse sm:justify-start">
                 {event.id && <button onClick={handleDeleteClick} className="th-bg-bg th-color-brred th-border-brred border-2 text-sm w-20 h-10 rounded font-bold focus:z-10 focus:outline-none ml-2">
-                  Delete
+                  {t("Delete")}
                 </button>}
                 <button onClick={() => event.meetingId ? {} : setOpenEditSchedule(true)} className="th-bg-bg th-color-cyan th-border-cyan border-2 text-sm w-20 h-10 rounded font-bold focus:z-10 focus:outline-none">
-                  Detail
+                  {t("Detail")}
                 </button>
                 {/* <ModalButton onClick={deleteMessage} text="Delete" />
                 <ModalButton onClick={() => setOpen(false)} text="Cancel" /> */}

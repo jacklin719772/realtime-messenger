@@ -19,8 +19,10 @@ import { getHref } from "utils/get-file-url";
 import wait from "utils/wait";
 import * as Yup from "yup";
 import Bookmark from "../Bookmark";
+import { useTranslation } from "react-i18next";
 
 function CreateWorkspace() {
+  const { t } = useTranslation();
   const { user } = useUser();
   const { value: allWorkspaces, loading } = useContext(WorkspacesContext);
   const cancelButtonRef = useRef(null);
@@ -143,18 +145,18 @@ function CreateWorkspace() {
                           <form noValidate onSubmit={handleSubmit}>
                             <div className="space-y-6 pt-5">
                               <TextField
-                                label="Name"
+                                label={t("Name")}
                                 name="name"
                                 focus
                                 required
                                 value={values.name}
                                 handleChange={handleChange}
-                                placeholder="Workspace name"
+                                placeholder={t("Workspace_name")}
                               />
                             </div>
                             <div className="pt-3 sm:flex sm:flex-row-reverse">
                               <ModalButton
-                                text="Create"
+                                text={t("Create")}
                                 isSubmitting={isSubmitting}
                               />
                             </div>
@@ -302,6 +304,7 @@ function AddWorkspaces() {
 }
 
 export default function Workspaces() {
+  const { t } = useTranslation();
   const { value } = useMyWorkspaces();
   const location = useLocation();
   const navigate = useNavigate();
@@ -333,7 +336,7 @@ export default function Workspaces() {
           (visibleContact) ? "border-2" : "",
           "h-8 w-8 rounded-md p-px"
         )}
-        title="Contact"
+        title={t("Contact")}
         onClick={() => setVisibleContact(true)}
       >
         <img
@@ -351,7 +354,7 @@ export default function Workspaces() {
         className={classNames(
           "flex items-center justify-center cursor-pointer focus:outline-none"
         )}
-        title="Add channel"
+        title={t("Add_channel")}
         onClick={() => {
           setOpenCreateMessage(true);
           setCreateMessageSection("channels");
@@ -373,7 +376,7 @@ export default function Workspaces() {
         className={classNames(
           "flex items-center justify-center cursor-pointer focus:outline-none"
         )}
-        title="Add member"
+        title={t("Add_member")}
         onClick={() => {
           setOpenCreateMessage(true);
           setCreateMessageSection("members");
@@ -395,7 +398,7 @@ export default function Workspaces() {
         className={classNames(
           "flex items-center justify-center cursor-pointer focus:outline-none"
         )}
-        title="My Schedule"
+        title={t("My_schedule")}
         onClick={() =>
           navigate(`/dashboard/workspaces/${value[0]?.objectId}/calendar`)
         }
@@ -416,7 +419,7 @@ export default function Workspaces() {
         className={classNames(
           "flex items-center justify-center cursor-pointer focus:outline-none"
         )}
-        title="Collaedit"
+        title={t("Collaedit")}
         onClick={() => {
             if (!openEtherpad) {
               setOpenEtherpad(true)
@@ -442,7 +445,7 @@ export default function Workspaces() {
         className={classNames(
           "flex items-center justify-center cursor-pointer focus:outline-none"
         )}
-        title="Web record"
+        title={t("Web_record")}
         onClick={handleOpenRecord}
       >
         <img
@@ -458,7 +461,7 @@ export default function Workspaces() {
         className={classNames(
           "flex items-center justify-center cursor-pointer focus:outline-none"
         )}
-        title="Email"
+        title={t("Email")}
         onClick={() => setOpenMailSender(true)}
       >
         <img
@@ -477,7 +480,7 @@ export default function Workspaces() {
         className={classNames(
           "flex items-center justify-center cursor-pointer focus:outline-none"
         )}
-        title="Bookmark"
+        title={t("Bookmark")}
         onClick={() => setOpenBookmark(true)}
       >
         <PlusIcon className="h-8 w-8 rounded-md p-px th-color-brblue" />

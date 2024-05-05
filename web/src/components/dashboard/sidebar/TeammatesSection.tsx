@@ -66,7 +66,7 @@ function MemberItem({
       setOpenCreateMessage(false);
       setSection("members");
     } catch (err: any) {
-      toast.error("Creating direct message has been failed.");
+      toast.error(t("Creating direct message has been failed."));
     }
     setLoading(false);
   };

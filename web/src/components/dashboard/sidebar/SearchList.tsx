@@ -12,11 +12,13 @@ import { useMessages } from 'hooks/useMessages'
 import { useWorkspaceById } from 'hooks/useWorkspaces'
 import React, { useContext, useEffect, useMemo, useState } from 'react'
 import Scrollbars from 'react-custom-scrollbars-2'
+import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router-dom'
 import classNames from 'utils/classNames'
 import { getHref } from 'utils/get-file-url'
 
 function SearchList() {
+  const { t } = useTranslation();
   const { themeColors } = useTheme()
   const navigate = useNavigate()
   const { workspaceId } = useParams()
@@ -36,10 +38,10 @@ function SearchList() {
     const today = new Date(new Date().toDateString());
     const dDate = new Date(d.toDateString());
     if (Math.floor((today - dDate) / 86400000) === 0) {
-      return 'Today at ' + d.toLocaleTimeString("zh-CN", { hour:"2-digit", minute:"2-digit"});
+      return t('Today') + ' at ' + d.toLocaleTimeString("zh-CN", { hour:"2-digit", minute:"2-digit"});
     }
     if (Math.floor((today - dDate) / 86400000) === 1) {
-      return 'Yesterday at ' + d.toLocaleTimeString("zh-CN", { hour:"2-digit", minute:"2-digit"});
+      return t('Yesterday') + ' at ' + d.toLocaleTimeString("zh-CN", { hour:"2-digit", minute:"2-digit"});
     }
     return d?.toLocaleString("zh-CN", { day:"numeric", month:"short"});
   }
@@ -239,7 +241,7 @@ function SearchList() {
           id="searchFiles"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search for Workspace..."
+          placeholder={t("Search_for_Workspace")}
           className="bg-white block text-sm border-0 w-full focus:outline-none focus:ring-0 autofill:bg-white"
         />
         <XIcon className="h-4 w-4 text-gray-500" style={{cursor: 'pointer'}} onClick={() => setSearch("")} />
@@ -266,7 +268,7 @@ function SearchList() {
                   borderColor: checked ? themeColors?.cyan : "",
                 }}
               >
-                <span>All</span>
+                <span>{t("All")}</span>
               </div>
             )}
           </RadioGroup.Option>
@@ -284,7 +286,7 @@ function SearchList() {
                   borderColor: checked ? themeColors?.cyan : "",
                 }}
               >
-                <span>Contact</span>
+                <span>{t("Contact")}</span>
               </div>
             )}
           </RadioGroup.Option>
@@ -302,7 +304,7 @@ function SearchList() {
                   borderColor: checked ? themeColors?.cyan : "",
                 }}
               >
-                <span>Channel</span>
+                <span>{t("Channel")}</span>
               </div>
             )}
           </RadioGroup.Option>
@@ -320,7 +322,7 @@ function SearchList() {
                   borderColor: checked ? themeColors?.cyan : "",
                 }}
               >
-                <span>Message</span>
+                <span>{t("Message")}</span>
               </div>
             )}
           </RadioGroup.Option>
@@ -338,7 +340,7 @@ function SearchList() {
                   borderColor: checked ? themeColors?.cyan : "",
                 }}
               >
-                <span>File</span>
+                <span>{t("File")}</span>
               </div>
             )}
           </RadioGroup.Option>
@@ -347,27 +349,27 @@ function SearchList() {
       <div className="border-r th-border-selbg overflow-y-auto mt-1">
         {(section === "all" || section === "dm") && (<div>
           <div className="px-4 py-2 th-color-brblue th-bg-bgdark text-xs border-b th-border-for">
-            Contacts
+            {t("Contacts")}
           </div>
-          {dmList.length > 0 ? dmList : <div className="p-2 text-center text-sm th-color-brblue">No Results</div>}
+          {dmList.length > 0 ? dmList : <div className="p-2 text-center text-sm th-color-brblue">{t("No_Results")}</div>}
         </div>)}
         {(section === "all" || section === "channel") && (<div>
           <div className="px-4 py-2 th-color-brblue th-bg-bgdark text-xs border-b th-border-for">
-            Channels
+            {t("Channels")}
           </div>
-          {channelList.length > 0 ? channelList : <div className="p-2 text-center text-sm th-color-brblue">No Results</div>}
+          {channelList.length > 0 ? channelList : <div className="p-2 text-center text-sm th-color-brblue">{t("No_Results")}</div>}
         </div>)}
         {(section === "all" || section === "message") && (<div>
           <div className="px-4 py-2 th-color-brblue th-bg-bgdark text-xs border-b th-border-for">
-            Messages
+            {t("Messages")}
           </div>
-          {messageList.length > 0 ? messageList : loading? <div className="flex justify-center items-center th-bg-bg h-16"><Spinner className="h-4 w-4 th-color-brblue" /></div> : <div className="p-2 text-center text-sm th-color-brblue">No Results</div>}
+          {messageList.length > 0 ? messageList : loading? <div className="flex justify-center items-center th-bg-bg h-16"><Spinner className="h-4 w-4 th-color-brblue" /></div> : <div className="p-2 text-center text-sm th-color-brblue">{t("No_Results")}</div>}
         </div>)}
         {(section === "all" || section === "file") && (<div>
           <div className="px-4 py-2 th-color-brblue th-bg-bgdark text-xs border-b th-border-for">
-            Files
+            {t("Files")}
           </div>
-          {fileList.length > 0 ? fileList : loading? <div className="flex justify-center items-center th-bg-bg h-16"><Spinner className="h-4 w-4 th-color-brblue" /></div> : <div className="p-2 text-center text-sm th-color-brblue">No Results</div>}
+          {fileList.length > 0 ? fileList : loading? <div className="flex justify-center items-center th-bg-bg h-16"><Spinner className="h-4 w-4 th-color-brblue" /></div> : <div className="p-2 text-center text-sm th-color-brblue">{t("No_Results")}</div>}
         </div>)}
       </div>
     </div>

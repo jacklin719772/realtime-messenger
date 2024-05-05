@@ -10,6 +10,7 @@ import { useMyWorkspaces, WorkspacesContext } from "hooks/useWorkspaces";
 import { Fragment, useContext, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 import { Navigate, useNavigate } from "react-router-dom";
 import { postData } from "utils/api-helpers";
 import classNames from "utils/classNames";
@@ -83,6 +84,7 @@ function HeaderDefaultWorkspace() {
 }
 
 export default function NewWorkspace() {
+  const { t } = useTranslation();
   const { user } = useUser();
   const { value: allWorkspaces, loading: loadingAllWorkspaces } =
     useContext(WorkspacesContext);
@@ -106,7 +108,7 @@ export default function NewWorkspace() {
       <HeaderDefaultWorkspace />
       <div className="max-w-2xl flex flex-col items-center mx-auto">
         <h1 className="font-extrabold text-5xl mb-2 th-color-for">
-          Add workspaces
+          {t("Add workspaces")}
         </h1>
         <div className="max-w-md w-full mt-10">
           <Tab.Group>
@@ -142,14 +144,14 @@ export default function NewWorkspace() {
                         <TextField
                           value={values.workspaceName}
                           handleChange={handleChange}
-                          label="Workspace name"
+                          label={t("Workspace name")}
                           name="workspaceName"
                           focus
-                          placeholder="Workspace name"
+                          placeholder={t("Workspace name")}
                         />
                         <div className="pt-4">
                           <AuthButton
-                            text="Create workspace"
+                            text={t("Create workspace")}
                             isSubmitting={createWorkspaceLoading}
                           />
                         </div>
@@ -195,14 +197,14 @@ export default function NewWorkspace() {
                             />
                             <div className="pt-4">
                               <AuthButton
-                                text="Join workspace"
+                                text={t("Join workspace")}
                                 isSubmitting={createWorkspaceLoading}
                               />
                             </div>
                           </>
                         ) : (
                           <div className="th-color-for text-base font-medium w-full text-center">
-                            No workspaces available.
+                            {t("No workspaces available.")}
                           </div>
                         )}
                       </div>

@@ -9,6 +9,7 @@ import { useChannelById } from "hooks/useChannels";
 import { useWorkspaceById } from "hooks/useWorkspaces";
 import React, { Fragment, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import { deleteData, postData } from "utils/api-helpers";
 import classNames from "utils/classNames";
@@ -28,6 +29,7 @@ export default function EditChannel({
   details: string;
   createdAt: any;
 }) {
+  const { t } = useTranslation();
   const { themeColors } = useTheme();
   const cancelButtonRef = useRef(null);
   const [section, setSection] = useState("about");
@@ -55,7 +57,7 @@ export default function EditChannel({
       setOpen(false);
       navigate(`/dashboard/workspaces/${workspaceId}`);
     } catch (err: any) {
-      toast.error("Deleting channel failed.");
+      toast.error(t("Deleting channel failed."));
     }
   };
 
@@ -66,7 +68,7 @@ export default function EditChannel({
       setOpen(false);
       navigate(`/dashboard/workspaces/${workspaceId}`);
     } catch (err: any) {
-      toast.error("Archiving channel failed.");
+      toast.error(t("Archiving channel failed."));
     }
   };
 
@@ -77,7 +79,7 @@ export default function EditChannel({
       setOpen(false);
       navigate(`/dashboard/workspaces/${workspaceId}`);
     } catch (err: any) {
-      toast.error("Leaving channel failed.");
+      toast.error(t("Leaving channel failed."));
     }
   };
 
@@ -138,7 +140,7 @@ export default function EditChannel({
                       style={{ color: themeColors?.foreground }}
                       className="text-base opacity-70 px-2"
                     >
-                      (default)
+                      ({t("default")})
                     </span>
                   ) : null}
                 </h5>
@@ -176,7 +178,7 @@ export default function EditChannel({
                           borderColor: checked ? themeColors?.foreground : "",
                         }}
                       >
-                        <span>About</span>
+                        <span>{t("About")}</span>
                       </div>
                     )}
                   </RadioGroup.Option>
@@ -194,7 +196,7 @@ export default function EditChannel({
                           borderColor: checked ? themeColors?.foreground : "",
                         }}
                       >
-                        <span>Members</span>
+                        <span>{t("Members")}</span>
                       </div>
                     )}
                   </RadioGroup.Option>
@@ -213,7 +215,7 @@ export default function EditChannel({
                             borderColor: checked ? themeColors?.foreground : "",
                           }}
                         >
-                          <span>Settings</span>
+                          <span>{t("Settings")}</span>
                         </div>
                       )}
                     </RadioGroup.Option>
@@ -230,23 +232,23 @@ export default function EditChannel({
                     <>
                       <div className="border rounded-xl th-bg-bg th-border-for">
                         <EditChannelItems
-                          name="Topic"
+                          name={t("Topic")}
                           field="topic"
                           value={topic}
-                          editable="Let people know what this channel is focused on right now (ex. a project milestone). Topics are always visible in the header."
+                          editable={t("Edit_Topic_Detail")}
                           isOwner={isOwner}
                         />
                         <EditChannelItems
-                          name="Description"
+                          name={t("Description")}
                           field="details"
                           value={details}
-                          editable="Let people know what this channel is for."
+                          editable={t("Edit_Description_Detail")}
                           isOwner={isOwner}
                         />
-                        <EditChannelItems name="Created at" value={createdAt} isOwner={isOwner} />
+                        <EditChannelItems name={t("Created_at")} value={createdAt} isOwner={isOwner} />
                         {!isOwner && !defaultChannel && (
                           <EditChannelItems
-                            name="Leave channel"
+                            name={t("Leave_channel")}
                             color={themeColors?.red}
                             displayDetails={false}
                             onClick={() => setOpenLeaveChannel(true)} isOwner={isOwner}                          />
@@ -254,7 +256,7 @@ export default function EditChannel({
                       </div>
                       <ConfirmationModal
                         text="You can rejoin at any time."
-                        title="Leave channel"
+                        title={t("Leave_channel")}
                         onConfirm={leaveChannel}
                         open={openLeaveChannel}
                         setOpen={setOpenLeaveChannel}
@@ -271,13 +273,13 @@ export default function EditChannel({
                         className="border rounded-xl th-border-for"
                       >
                         <EditChannelItems
-                          name="Name"
+                          name={t("Name")}
                           field="name"
-                          title="Rename this channel"
+                          title={t("Rename_this_channel")}
                           placeholder="e.g. marketing"
                           value={`#${name}`}
                           textArea={false}
-                          editable="Names must be lowercase, without spaces or periods, or Chinese character, and can’t be longer than 80 characters."
+                          editable={t("Rename_Detail")}
                           isOwner={isOwner}
                         />
                       </div>
@@ -295,7 +297,7 @@ export default function EditChannel({
                               }}
                               className="focus-within:h-5 w-5 mr-2" />}
                             color={themeColors?.red}
-                            name="Archive channel"
+                            name={t("Archive_channel")}
                             displayDetails={false}
                             onClick={() => setOpenArchiveChannel(true)} isOwner={false}                          />
                           <EditChannelItems
@@ -305,21 +307,21 @@ export default function EditChannel({
                               }}
                               className="focus-within:h-5 w-5 mr-2" />}
                             color={themeColors?.red}
-                            name="Delete channel"
+                            name={t("Delete_channel")}
                             displayDetails={false}
                             onClick={() => setOpenDeleteChannel(true)} isOwner={false}                          />
                         </div>
                       )}
                       <ConfirmationModal
-                        text="This action is irreversible."
-                        title="Delete channel"
+                        text={t("Delete_channel_Detail")}
+                        title={t("Delete_channel")}
                         onConfirm={deleteChannel}
                         open={openDeleteChannel}
                         setOpen={setOpenDeleteChannel}
                       />
                       <ConfirmationModal
-                        text="You can unarchive this channel at any time."
-                        title="Archive channel"
+                        text={t("Archive_channel_Detail")}
+                        title={t("Archive_channel")}
                         onConfirm={archiveChannel}
                         open={openArchiveChannel}
                         setOpen={setOpenArchiveChannel}

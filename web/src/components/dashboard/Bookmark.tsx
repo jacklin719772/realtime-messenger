@@ -7,6 +7,7 @@ import classNames from "utils/classNames";
 import AddBookmark from "./AddBookmark";
 import RenameBookmark from "./RenameBookmark";
 import RemoveBookmark from "./RemoveBookmark";
+import { useTranslation } from "react-i18next";
 
 function BookmarkItem({
   item,
@@ -17,6 +18,7 @@ function BookmarkItem({
   getData: any;
   index: number;
 }) {
+  const { t } = useTranslation();
   const [openRename, setOpenRename] = useState(false);
   const [openRemove, setOpenRemove] = useState(false);
 
@@ -37,7 +39,7 @@ function BookmarkItem({
         const data = await response.json();
         console.log(data);
         if (data.result === "success") {
-          toast.success('The bookmark has been successfully removed.', {
+          toast.success(t('The bookmark has been successfully removed.'), {
             position: "top-right",
             autoClose: 2000,
             hideProgressBar: false,
@@ -50,7 +52,7 @@ function BookmarkItem({
           getData();
         }
       } else {
-        toast.error('Removing the bookmark has been failed.', {
+        toast.error(t('Removing the bookmark has been failed.'), {
           position: "top-right",
           autoClose: 2000,
           hideProgressBar: false,
@@ -62,7 +64,7 @@ function BookmarkItem({
         });
       }
     } catch (error: any) {
-      toast.error('Removing the bookmark has been failed.', {
+      toast.error(t('Removing the bookmark has been failed.'), {
         position: "top-right",
         autoClose: 2000,
         hideProgressBar: false,
@@ -126,7 +128,7 @@ function BookmarkItem({
                         onClick={() => setOpenRename(true)}
                       >
                         <PencilIcon className="w-4 h-4 th-color-for" />
-                        <div className="th-color-for text-sm">Rename</div>
+                        <div className="th-color-for text-sm">{t("Rename")}</div>
                       </div>
                     )}
                   </Menu.Item>
@@ -142,7 +144,7 @@ function BookmarkItem({
                         onClick={() => setOpenRemove(true)}
                       >
                         <TrashIcon className="w-4 h-4 th-color-for" />
-                        <div className="th-color-for text-sm">Remove</div>
+                        <div className="th-color-for text-sm">{t("Remove")}</div>
                       </div>
                     )}
                   </Menu.Item>
@@ -166,6 +168,7 @@ export default function Bookmark({
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
+  const { t } = useTranslation();
   const cancelButtonRef = useRef(null);
   const [data, setData] = useState<any[]>([]);
   const [openAdd, setOpenAdd] = useState(false);
@@ -238,7 +241,7 @@ export default function Bookmark({
             >
               <div className="th-bg-bg inline-block align-bottom rounded-xl border th-border-for text-left overflow-hidden shadow-xl transform transition-all sm:my-2 sm:align-middle sm:max-w-3xl sm:w-full">
                 <div className="th-bg-bg border-b th-border-for p-6 flex justify-between items-center">
-                  <h5 className="font-bold th-color-for">Bookmark</h5>
+                  <h5 className="font-bold th-color-for">{t("Bookmark")}</h5>
                   <div
                     role="button"
                     tabIndex={0}

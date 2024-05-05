@@ -1,6 +1,7 @@
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, SelectorIcon } from "@heroicons/react/solid";
 import { Fragment } from "react";
+import { useTranslation } from "react-i18next";
 import classNames from "utils/classNames";
 import { getHref } from "utils/get-file-url";
 
@@ -13,13 +14,14 @@ export function WorkspacesSelectDropdown({
   select: any;
   setSelect: any;
 }) {
+  const { t } = useTranslation();
   return (
     <div>
       <label
         htmlFor="workspaces"
         className="block text-sm font-bold th-color-for"
       >
-        Join workspace
+        {t("Join workspace")}
       </label>
       <select
         id="workspaces"
@@ -45,6 +47,7 @@ export function WorkspacesDropdown({
   select: any;
   setSelect: any;
 }) {
+  const { t } = useTranslation();
   return (
     <Listbox
       value={select}
@@ -52,7 +55,7 @@ export function WorkspacesDropdown({
       as="div"
     >
       <Listbox.Label className="block text-sm font-bold th-color-for">
-        Join workspace
+        {t("Join workspace")}
       </Listbox.Label>
       <div className="mt-2 relative">
         <Listbox.Button className="relative w-full th-bg-bg border th-border-brblack rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:outline-none sm:text-sm">

@@ -7,6 +7,7 @@ import { useChannelById } from "hooks/useChannels";
 import { useWorkspaceById } from "hooks/useWorkspaces";
 import { useContext, useMemo, useState } from "react";
 import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import { deleteData } from "utils/api-helpers";
 import classNames from "utils/classNames";
@@ -23,6 +24,7 @@ function MemberItem({
   member: any;
   isOwner: boolean;
 }) {
+  const { t } = useTranslation();
   const { channelId, workspaceId } = useParams();
   const { value: workspace } = useWorkspaceById(workspaceId);
   const defaultChannel = channelId === workspace?.channelId;
@@ -42,7 +44,7 @@ function MemberItem({
         navigate(`/dashboard/workspaces/${workspaceId}`);
       }
     } catch (err: any) {
-      toast.error("Deleting member failed.");
+      toast.error(t("Deleting member failed."));
     }
     setLoading(false);
   };
@@ -66,13 +68,13 @@ function MemberItem({
           {member?.fullName}
           {isMe && (
             <span className="text-xs font-normal opacity-70 ml-1 th-color-for">
-              (me)
+              ({t("me")})
             </span>
           )}
           {owner && (
             <span className="text-xs font-normal opacity-70 ml-1 th-color-for">
               {" "}
-              - creator
+              - {t("creator")}
             </span>
           )}
         </div>
@@ -98,6 +100,7 @@ export default function MembersSection({
 }: {
   isOwner: boolean;
 }) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const { channelId } = useParams();
   const { value: channel } = useChannelById(channelId);
@@ -133,7 +136,7 @@ export default function MembersSection({
             id="findMembers"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Find members"
+            placeholder={t("Find_members")}
             className="block text-sm border-0 w-full focus:outline-none focus:ring-0 th-bg-bg autofill:th-bg-bg"
           />
         </div>
@@ -147,7 +150,7 @@ export default function MembersSection({
             <div className="rounded p-1 mr-3">
               <UserAddIcon className="h-5 w-5 th-color-for" />
             </div>
-            <span className="text-sm th-color-for">Add member</span>
+            <span className="text-sm th-color-for">{t("Add_member")}</span>
           </li>
         )}
         {displayMembers.map((member: any) => (

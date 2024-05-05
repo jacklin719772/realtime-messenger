@@ -15,6 +15,7 @@ import { getHref } from "utils/get-file-url";
 import QuillReader from "../quill/QuillReader";
 import { Base64 } from "js-base64";
 import { useDirectMessageById } from "hooks/useDirects";
+import { useTranslation } from "react-i18next";
 
 function MessageItem({
     message,
@@ -241,6 +242,7 @@ function MessageItem({
 }
 
 export default function FileSearchDialog() {
+  const { t } = useTranslation();
   const { themeColors } = useTheme();
   const cancelButtonRef = useRef(null);
   const { channelId, dmId, workspaceId } = useParams();
@@ -377,7 +379,7 @@ export default function FileSearchDialog() {
                           borderColor: checked ? themeColors?.brightBlue : "",
                         }}
                       >
-                        <span>Image</span>
+                        <span>{t("Image")}</span>
                       </div>
                     )}
                   </RadioGroup.Option>
@@ -395,7 +397,7 @@ export default function FileSearchDialog() {
                           borderColor: checked ? themeColors?.brightBlue : "",
                         }}
                       >
-                        <span>Audio</span>
+                        <span>{t("Audio")}</span>
                       </div>
                     )}
                   </RadioGroup.Option>
@@ -413,7 +415,7 @@ export default function FileSearchDialog() {
                           borderColor: checked ? themeColors?.brightBlue : "",
                         }}
                       >
-                        <span>Video</span>
+                        <span>{t("Video")}</span>
                       </div>
                     )}
                   </RadioGroup.Option>
@@ -431,7 +433,7 @@ export default function FileSearchDialog() {
                           borderColor: checked ? themeColors?.brightBlue : "",
                         }}
                       >
-                        <span>Others</span>
+                        <span>{t("Others")}</span>
                       </div>
                     )}
                   </RadioGroup.Option>

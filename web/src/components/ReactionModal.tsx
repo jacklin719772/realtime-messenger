@@ -3,6 +3,7 @@ import { EmojiHappyIcon } from "@heroicons/react/outline";
 import { reactions } from "lib/reactions";
 import { Fragment, useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 import { postData } from "utils/api-helpers";
 import classNames from "utils/classNames";
 
@@ -13,6 +14,7 @@ export function ReactionModal({
   messageId: string;
   myReaction: string;
 }) {
+  const { t } = useTranslation();
   const [selected, setSelected] = useState(reactions[reactions.length - 1]);
 
   useEffect(() => {
@@ -38,10 +40,10 @@ export function ReactionModal({
     >
       {({ open }) => (
         <>
-          <Listbox.Label className="sr-only">Reaction</Listbox.Label>
+          <Listbox.Label className="sr-only">{t("Reaction")}</Listbox.Label>
           <div className="relative flex flex-1">
-            <Listbox.Button title="Reaction" className="th-bg-bg th-border-for th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none">
-              <span className="sr-only">Reaction</span>
+            <Listbox.Button title={t("Reaction")} className="th-bg-bg th-border-for th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none">
+              <span className="sr-only">{t("Reaction")}</span>
               <EmojiHappyIcon className="h-4 w-4" />
             </Listbox.Button>
 

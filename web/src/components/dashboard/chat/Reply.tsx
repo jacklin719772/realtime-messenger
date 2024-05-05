@@ -22,6 +22,7 @@ import { useUserById } from "hooks/useUsers";
 import classNames from "utils/classNames";
 import Style from "components/Style";
 import { useModal } from "contexts/ModalContext";
+import { useTranslation } from "react-i18next";
 
 function ForwardFooter({
   setEdit,
@@ -34,6 +35,7 @@ function ForwardFooter({
   errors: any;
   editorRef: any;
 }) {
+  const { t } = useTranslation();
   const { themeColors } = useTheme();
   const editor = editorRef?.current?.getEditor();
   const realText = editor?.getText() as string | null | undefined;
@@ -47,7 +49,7 @@ function ForwardFooter({
         className="border-2 th-border-for th-color-for font-medium text-sm h-10 w-20 rounded"
         onClick={() => setEdit(false)}
       >
-        Cancel
+        {t("Cancel")}
       </button>
       <button
         className="border-2 th-border-cyan font-medium flex justify-center items-center text-sm th-color-cyan h-10 w-20 rounded disabled:opacity-50"
@@ -61,7 +63,7 @@ function ForwardFooter({
                 {MESSAGE_MAX_CHARACTERS - isText.length}
               </span>
             ) : (
-              "Reply"
+              t("Reply")
             )}
           </>
         )}
@@ -179,7 +181,7 @@ export default function Reply() {
           resetForm();
           setIsTyping(false);
         } catch (err: any) {
-          toast.error("Replying to message failed.");
+          toast.error(t("Replying to message failed."));
         }
         setSubmitting(false);
         setForwardMessage(null);

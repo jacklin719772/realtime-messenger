@@ -6,6 +6,7 @@ import { UsersContext } from "contexts/UsersContext";
 import { useWorkspaceById } from "hooks/useWorkspaces";
 import { useContext, useMemo, useState } from "react";
 import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import { deleteData } from "utils/api-helpers";
 import classNames from "utils/classNames";
@@ -20,6 +21,7 @@ function MemberItem({
   owner: boolean;
   member: any;
 }) {
+  const { t } = useTranslation();
   const { workspaceId } = useParams();
   const { user } = useUser();
   const navigate = useNavigate();
@@ -43,7 +45,7 @@ function MemberItem({
         await deleteData(`/workspaces/${workspaceId}/members/${id}`);
       }
     } catch (err: any) {
-      toast.error("Deleting member failed.");
+      toast.error(t("Deleting member failed."));
     }
     setLoading(false);
   };
@@ -86,6 +88,7 @@ function MemberItem({
 }
 
 export default function MembersSection() {
+  const { t } = useTranslation();
   const { setOpenInviteTeammates } = useModal();
   const { setOpenWorkspaceSettings } = useModal();
 
@@ -121,7 +124,7 @@ export default function MembersSection() {
             id="findMembers"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Find members"
+            placeholder={t("Find_members")}
             className="block text-sm border-0 w-full focus:outline-none focus:ring-0 th-bg-bg autofill:bg-transparent"
           />
         </div>

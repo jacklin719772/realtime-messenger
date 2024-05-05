@@ -5,6 +5,7 @@ import { Formik } from "formik";
 import useAuth from "hooks/useAuth";
 import { Helmet } from "react-helmet-async";
 import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import { postData } from "utils/api-helpers";
 
@@ -35,6 +36,7 @@ function Header() {
 }
 
 export default function Signup() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { login } = useAuth();
 
@@ -90,7 +92,7 @@ export default function Signup() {
                   handleChange={(e: any) =>
                     setFieldValue("name", capitalize(e.target.value))
                   }
-                  label="Full name"
+                  label={t("Full_name")}
                   name="name"
                   required
                   autoComplete="name"

@@ -26,8 +26,10 @@ import 'react-toastify/dist/ReactToastify.css';
 import classNames from 'utils/classNames';
 import axios from "axios";
 import ProgressBar from "@ramonak/react-progress-bar";
+import { useTranslation } from 'react-i18next';
 
 function Favorite() {
+  const { t } = useTranslation();
   const cancelButtonRef = useRef(null);
   const {openFavorite, setOpenFavorite, fileURL, setFileURL, fileMessage, setFileMessage} = useContext(ModalContext);
   const { user } = useUser();
@@ -221,7 +223,7 @@ function Favorite() {
                     <polygon points="13.53 16.5 16 14.7 18.47 16.5 17.53 13.59 20 11.79 16.94 11.79 16 8.89 15.06 11.79 12 11.79 14.47 13.59 13.53 16.5"/>
                   </svg>
                   <h5 className="font-bold th-color-for">
-                    File Collection
+                    {t("File_Collection")}
                   </h5>
                 </div>
                 <div
@@ -375,7 +377,7 @@ function Favorite() {
                             handleChange={handleChange}
                             type="text"
                             required
-                            label="File ID *"
+                            label={`${t("File_ID")} *`}
                             name="document_id"
                             autoComplete="document_id"
                             placeholder="12345678"
@@ -387,7 +389,7 @@ function Favorite() {
                             value={values.version}
                             handleChange={handleChange}
                             type="text"
-                            label="File Version"
+                            label={`${t("File_Version")} *`}
                             name="version"
                             autoComplete="version"
                             placeholder="v1.0"
@@ -407,7 +409,7 @@ function Favorite() {
                                       handleChange={() => {}}
                                       type="text"
                                       required
-                                      label="Directory *"
+                                      label={`${t("Directory")} *`}
                                       name="category_name"
                                       autoComplete="category_name"
                                       placeholder=""
@@ -485,7 +487,7 @@ function Favorite() {
                           handleChange={handleChange}
                           type="text"
                           required
-                          label="Title *"
+                          label={`${t("Title")} *`}
                           name="title"
                           autoComplete="title"
                           placeholder=""
@@ -498,7 +500,7 @@ function Favorite() {
                             handleChange={handleChange}
                             type="text"
                             required
-                            label="Keywords *"
+                            label={`${t("Keywords")} *`}
                             name="keyword1"
                             autoComplete="keyword1"
                             placeholder=""
@@ -546,7 +548,7 @@ function Favorite() {
                             handleChange={handleChange}
                             type="text"
                             required
-                            label="File *"
+                            label={`${t("File")} *`}
                             name="file_path"
                             autoComplete="file_path"
                             placeholder=""
@@ -559,7 +561,7 @@ function Favorite() {
                           value={values.abstract}
                           handleChange={handleChange}
                           infos=""
-                          label="Abstract"
+                          label={`${t("Abstract")} *`}
                           name="abstract"
                           autoComplete="abstract"
                           placeholder=""
@@ -573,7 +575,7 @@ function Favorite() {
                           required
                           label=""
                           name="completed"
-                          autoComplete="complted"
+                          autoComplete="completed"
                           placeholder=""
                           readOnly
                         />
@@ -584,7 +586,7 @@ function Favorite() {
                     </div>
                     <div className="px-4 pb-5 pt-1 border-t th-border-for sm:px-6 sm:flex sm:flex-row-reverse sm:justify-start">
                       <button onClick={() => setOpenFavorite(false)} className="th-bg-bg th-color-for th-border-for border-2 text-sm w-20 h-10 rounded font-bold focus:z-10 focus:outline-none ml-2">
-                        Cancel
+                        {t("Cancel")}
                       </button>
                       <button type="submit" className={classNames(isSubmitting ? "w-24" : "w-20", "th-bg-bg th-color-cyan th-border-cyan border-2 text-sm h-10 rounded font-bold focus:z-10 focus:outline-none ml-2 flex items-center justify-center")}>
                         {isSubmitting &&
@@ -608,7 +610,7 @@ function Favorite() {
                             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                           />
                         </svg>}
-                        Favorite
+                        {t("Favorite")}
                       </button>
                     </div>
                   </form>

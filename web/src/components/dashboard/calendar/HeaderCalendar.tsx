@@ -1,8 +1,10 @@
 import { XIcon } from '@heroicons/react/outline';
 import React from 'react'
+import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 function HeaderCalendar() {
+  const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
   const teamcal = location.pathname.includes("/teamcal");
@@ -13,7 +15,7 @@ function HeaderCalendar() {
         <div className="flex items-center focus:outline-none py-1 pr-2 rounded space-x-2">
           <img src={`${process.env.PUBLIC_URL}/calendar.png`} className="w-4 h-4" alt="calendar" />
           <h5 className="font-bold mr-1 th-color-for max-w-sm truncate">
-            {!teamcal ? "My Calendar" : "Channel Calendar"}
+            {!teamcal ? t("My_calendar") : t("Channel_Calendar")}
           </h5>
         </div>
       </div>

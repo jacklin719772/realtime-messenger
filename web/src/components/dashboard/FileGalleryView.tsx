@@ -25,13 +25,14 @@ import { useModal } from "contexts/ModalContext";
 import { toast as toastr } from "react-toastify";
 import { PlusIcon } from "@heroicons/react/outline";
 import hexToRgbA from "utils/hexToRgbA";
+import { useTranslation } from "react-i18next";
 
 function MessageItem({
     message,
 }: {
     message: any;
 }) {
-    console.log(message);
+    const { t } = useTranslation();
     const { themeColors } = useTheme();
     const {value} = useUserById(message?.senderId);
     const {user} = useUser();
@@ -219,11 +220,11 @@ function MessageItem({
         <div className="opacity-100 top-0 right-0 mx-5 flex items-center">
           <button
             type="button"
-            title="Download"
+            title={t("Download")}
             className="th-bg-bg th-color-for relative inline-flex items-center px-3 py-1 h-8 text-sm font-medium focus:z-10 focus:outline-none"
             onClick={() => downloadRef?.current?.click()}
           >
-            <span className="sr-only">Download</span>
+            <span className="sr-only">{t("Download")}</span>
             <a
               ref={downloadRef}
               className="hidden"
@@ -232,7 +233,7 @@ function MessageItem({
               rel="noreferrer"
               href={getHref(message?.fileURL + '&d=' + message?.fileName)}
             >
-              Download
+              {t("Download")}
             </a>
             <DownloadIcon className="h-4 w-4" />
           </button>
@@ -242,11 +243,11 @@ function MessageItem({
             message?.fileType?.includes("image/")) && (
             <button
               type="button"
-              title="Preview"
+              title={t("Preview")}
               className="th-bg-bg th-color-for relative inline-flex items-center px-3 py-1 h-8 text-sm font-medium focus:z-10 focus:outline-none"
               onClick={() => previewRef?.current?.click()}
             >
-              <span className="sr-only">Preview</span>
+              <span className="sr-only">{t("Preview")}</span>
               <a
                 ref={previewRef}
                 className="hidden"
@@ -255,7 +256,7 @@ function MessageItem({
                 title={getHref(message?.fileURL.replace(/%2F/g, "%252F"))}
                 href={`https://im.flybird360.com:8013/onlinePreview?url=${encodeURIComponent(Base64.encode(`https://im.flybird360.com:3003${message?.fileURL.replace(/%2F/g, "%252F")}`))}`}
               >
-                Preview
+                {t("Preview")}
               </a>
               <EyeIcon className="h-4 w-4" />
             </button>
@@ -267,11 +268,11 @@ function MessageItem({
             !message?.fileType?.includes("image/")) && (
             <button
               type="button"
-              title="Preview"
+              title={t("Preview")}
               className="th-bg-bg th-color-for relative inline-flex items-center px-3 py-1 h-8 text-sm font-medium focus:z-10 focus:outline-none"
               onClick={() => previewRef?.current?.click()}
             >
-              <span className="sr-only">Preview</span>
+              <span className="sr-only">{t("Preview")}</span>
               <a
                 ref={previewRef}
                 className="hidden"
@@ -280,7 +281,7 @@ function MessageItem({
                 title={getHref(message?.fileURL.replace(/%2F/g, "%252F"))}
                 href={`https://im.flybird360.com:8013/onlinePreview?url=${encodeURIComponent(Base64.encode(`http://117.21.178.59:4000${message?.fileURL.replace(/%2F/g, "%252F")}`))}`}
               >
-                Preview
+                {t("Preview")}
               </a>
               <EyeIcon className="h-4 w-4" />
             </button>
@@ -288,11 +289,11 @@ function MessageItem({
           )}
           <button
             type="button"
-            title="Send email"
+            title={t("Send_email")}
             className="th-bg-bg th-color-for relative inline-flex items-center px-3 py-1 h-8 text-sm font-medium focus:z-10 focus:outline-none"
             onClick={() => initializeEmail(message)}
           >
-            <span className="sr-only">Download</span>
+            <span className="sr-only">{t("Send_email")}</span>
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 th-color-for" fill="currentColor" height="512" viewBox="0 0 512 512" width="512">
               <path d="m222.287 278.4 116.154-116.155a8 8 0 0 1 11.313 11.315l-116.154 116.153 85.551 185.36 163.395-445.619-445.619 163.394z"/>
               <path d="m96 424a8 8 0 0 1 -5.657-13.657l96-96a8 8 0 1 1 11.314 11.314l-96 96a7.976 7.976 0 0 1 -5.657 2.343z"/>
@@ -306,22 +307,22 @@ function MessageItem({
             {message?.favorites.includes(user?.uid) ? (
               <button
                 type="button"
-                title="Remove favorite"
+                title={t("Remove_favorite")}
                 className="th-bg-bg th-color-for relative inline-flex items-center px-3 py-1 h-8 text-sm font-medium focus:z-10 focus:outline-none"
                 onClick={removeFavorite}
               >
-                <span className="sr-only">Favorite</span>
+                <span className="sr-only">{t("Favorite")}</span>
                 <img className="h-4 w-4" alt="forward" src={`${process.env.PUBLIC_URL}/favorite_remove.png`} />
               </button>
               
             ) : (
               <button
                 type="button"
-                title="Add favorite"
+                title={t("Add_favorite")}
                 className="th-bg-bg th-color-for relative inline-flex items-center px-3 py-1 h-8 text-sm font-medium focus:z-10 focus:outline-none"
                 onClick={() => initializeFavorite(message)}
               >
-                <span className="sr-only">Favorite</span>
+                <span className="sr-only">{t("Favorite")}</span>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" className="th-color-for w-4 h-4" fill="currentColor">
                   <path d="M29,13a.71.71,0,0,0,0-.21c0-.06,0-.12-.05-.17s-.07-.1-.1-.15a.7.7,0,0,0-.13-.16l0,0L24,8.36V6a1,1,0,0,0-1-1H20L16.64,2.23a1,1,0,0,0-1.28,0L12,5H9A1,1,0,0,0,8,6V8.36L3.36,12.23l0,0a.7.7,0,0,0-.13.16c0,.05-.07.09-.1.15s0,.11-.05.17A.71.71,0,0,0,3,13s0,0,0,0V29a1,1,0,0,0,1,1H28a1,1,0,0,0,1-1V13S29,13,29,13Zm-3.75-1H24V11ZM16,4.3l.84.7H15.16ZM22,7v8.88l-6,3-6-3V7ZM8,12H6.76L8,11ZM27,28H5V14H8v1a1,1,0,0,0-.89.54,1,1,0,0,0,.44,1.34l8,4a1,1,0,0,0,.9,0l8-4a1,1,0,0,0,.44-1.34A1,1,0,0,0,24,15V14h3Z"/>
                   <path d="M18,25H8a1,1,0,0,0,0,2H18a1,1,0,0,0,0-2Z"/>
@@ -341,6 +342,7 @@ function MessageItem({
 }
 
 function FileGalleryView() {
+  const { t } = useTranslation();
   const { themeColors } = useTheme();
   const { workspaceId, channelId, dmId } = useParams();
   const {setVisibleFileSearch} = useContext(ReactionsContext);
@@ -371,10 +373,10 @@ function FileGalleryView() {
     const dDate = new Date(d.toDateString());
     console.log(Math.floor((today - dDate) / 86400000));
     if (Math.floor((today - dDate) / 86400000) === 0) {
-      return 'Today';
+      return t('Today');
     }
     if (Math.floor((today - dDate) / 86400000) === 1) {
-      return 'Yesterday';
+      return t('Yesterday');
     }
     return d?.toLocaleDateString("zh-CN", { year:"numeric", day:"numeric", month:"long"});
   }
@@ -441,7 +443,7 @@ function FileGalleryView() {
   return (
     <div className="row-span-2 border rounded-xl flex flex-col overflow-hidden th-border-for my-2 mr-2 th-bg-bg">
       <div className="h-14 border-b flex items-center justify-between py-1 px-4 th-border-for">
-        <span className="text-base font-bold th-color-for">Gallery</span>
+        <span className="text-base font-bold th-color-for">{t("Gallery")}</span>
         <XIcon
           onClick={() => setVisibleFileSearch(false)}
           className="h-5 w-5 cursor-pointer th-color-for"
@@ -469,7 +471,7 @@ function FileGalleryView() {
                 borderColor: checked ? themeColors?.cyan : "",
               }}
             >
-              <span>All</span>
+              <span>{t("All")}</span>
             </div>
           )}
         </RadioGroup.Option>
@@ -487,7 +489,7 @@ function FileGalleryView() {
                 borderColor: checked ? themeColors?.cyan : "",
               }}
             >
-              <span>Image</span>
+              <span>{t("Image")}</span>
             </div>
           )}
         </RadioGroup.Option>
@@ -505,7 +507,7 @@ function FileGalleryView() {
                 borderColor: checked ? themeColors?.cyan : "",
               }}
             >
-              <span>Audio</span>
+              <span>{t("Audio")}</span>
             </div>
           )}
         </RadioGroup.Option>
@@ -523,7 +525,7 @@ function FileGalleryView() {
                 borderColor: checked ? themeColors?.cyan : "",
               }}
             >
-              <span>Video</span>
+              <span>{t("Video")}</span>
             </div>
           )}
         </RadioGroup.Option>
@@ -541,7 +543,7 @@ function FileGalleryView() {
                 borderColor: checked ? themeColors?.cyan : "",
               }}
             >
-              <span>Others</span>
+              <span>{t("Others")}</span>
             </div>
           )}
         </RadioGroup.Option>
@@ -551,7 +553,7 @@ function FileGalleryView() {
           <section className="p-4 w-full cursor-pointer th-color-brblue">
             <div className="rounded-xl border-2 th-border-for w-full h-16 th-bg-selbg flex justify-between items-center px-8" {...getRootProps()}>
               <input {...getInputProps()} />
-              <p>Drop here to share</p>
+              <p>{t("Drop_here_to_share")}</p>
               <PlusIcon className="w-8 h-8" />
             </div>
           </section>

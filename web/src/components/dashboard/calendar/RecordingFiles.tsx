@@ -5,6 +5,7 @@ import TextField from 'components/TextField';
 import { useModal } from 'contexts/ModalContext'
 import React, { Fragment, useEffect, useRef, useState } from 'react'
 import DatePicker from "react-datepicker";
+import { useTranslation } from 'react-i18next';
 
 function CheckItem ({
   data, 
@@ -42,6 +43,7 @@ function CheckItem ({
 }
 
 function RecordingFiles() {
+  const { t } = useTranslation();
   const {openRecordingFiles, setOpenRecordingFiles, checkedRecordingFiles, setCheckedRecordingFiles} = useModal();
   const cancelButtonRef = useRef(null);
   const [startDate, setStartDate] = useState(new Date());
@@ -207,10 +209,10 @@ function RecordingFiles() {
               </div>
               <div className="px-4 pb-3 pt-2 border-t th-border-for sm:px-6 sm:flex sm:flex-row-reverse sm:justify-start">
                 <button onClick={handleCancelClick} className="th-bg-bg th-color-for th-border-for border-2 text-sm w-20 h-10 rounded font-bold focus:z-10 focus:outline-none ml-2">
-                  Cancel
+                  {t("Cancel")}
                 </button>
                 <button onClick={() => setOpenRecordingFiles(false)} className="th-bg-bg th-color-cyan th-border-cyan border-2 text-sm w-20 h-10 rounded font-bold focus:z-10 focus:outline-none">
-                  Select
+                  {t("Select")}
                 </button>
                 {/* <ModalButton onClick={deleteMessage} text="Delete" />
                 <ModalButton onClick={() => setOpen(false)} text="Cancel" /> */}

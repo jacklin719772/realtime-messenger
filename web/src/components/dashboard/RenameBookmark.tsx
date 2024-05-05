@@ -8,6 +8,7 @@ import { Formik } from "formik";
 import { updateUser } from "gqlite-lib/dist/client/auth";
 import useAuth from "hooks/useAuth";
 import { Fragment, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 
 export default function RenameBookmark({
@@ -21,6 +22,7 @@ export default function RenameBookmark({
   item: any;
   getData: any;
 }) {
+  const { t } = useTranslation();
   const cancelButtonRef = useRef(null);
   const [id, setId] = useState(0);
   const [name, setName] = useState("");
@@ -77,7 +79,7 @@ export default function RenameBookmark({
             <div className="inline-block align-bottom rounded-xl border th-border-for text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full th-bg-bg">
               <div className=" p-6 pb-4 flex justify-between items-center th-bg-bg border-b th-border-for">
                 <h5 className="font-bold th-color-for">
-                  Rename Bookmark
+                  {t("Rename_Bookmark")}
                 </h5>
                 <div
                   role="button"
@@ -101,7 +103,7 @@ export default function RenameBookmark({
                   setSubmitting(true);
                   try {
                     if (id === 0 || name === "") {
-                      toast.error("Please enter the bookmark name.", {
+                      toast.error(t("Please enter the bookmark name."), {
                         position: "top-right",
                         autoClose: 2000,
                         hideProgressBar: false,
@@ -129,7 +131,7 @@ export default function RenameBookmark({
                       const data = await response.json();
                       console.log(data);
                       if (data.result === "success") {
-                        toast.success('The bookmark has been successfully renamed.', {
+                        toast.success(t('The bookmark has been successfully renamed.'), {
                           position: "top-right",
                           autoClose: 2000,
                           hideProgressBar: false,
@@ -142,7 +144,7 @@ export default function RenameBookmark({
                         getData();
                       }
                     } else {
-                      toast.error('Renaming the bookmark has been failed.', {
+                      toast.error(t('Renaming the bookmark has been failed.'), {
                         position: "top-right",
                         autoClose: 2000,
                         hideProgressBar: false,
@@ -155,7 +157,7 @@ export default function RenameBookmark({
                     }
                     setOpen(false);
                   } catch (err: any) {
-                    toast.error('Renaming the bookmark has been failed.', {
+                    toast.error(t('Renaming the bookmark has been failed.'), {
                       position: "top-right",
                       autoClose: 2000,
                       hideProgressBar: false,
@@ -174,7 +176,7 @@ export default function RenameBookmark({
                     <div className="p-6 pt-0 pb-4 th-bg-bg">
                       <div className="space-y-6 pt-2">
                         <TextField
-                          label="Name"
+                          label={t("Name")}
                           name="name"
                           focus
                           type="text"
@@ -186,7 +188,7 @@ export default function RenameBookmark({
                     </div>
                     <div className="px-4 pb-2 pt-2 sm:px-6 sm:flex sm:flex-row-reverse border-t th-border-for">
                       <CancelButton setOpen={setOpen} />
-                      <ModalButton isSubmitting={isSubmitting} text="Rename" />
+                      <ModalButton isSubmitting={isSubmitting} text={t("Rename")} />
                     </div>
                   </form>
                 )}

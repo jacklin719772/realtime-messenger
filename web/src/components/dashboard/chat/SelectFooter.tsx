@@ -10,8 +10,10 @@ import DeleteConfirm from './DeleteConfirm';
 import MultipleForwardMessage from './MultipleForwardMessage';
 import { useModal } from 'contexts/ModalContext';
 import { getHref } from 'utils/get-file-url';
+import { useTranslation } from 'react-i18next';
 
 export default function SelectFooter() {
+  const { t } = useTranslation();
   const { channelId, dmId } = useParams();
 
   const { value: messages, loading } = useMessagesByChat(
@@ -53,17 +55,17 @@ export default function SelectFooter() {
             <path d="m32 400a8 8 0 0 1 -5.657-13.657l96-96a8 8 0 0 1 11.314 11.314l-96 96a7.976 7.976 0 0 1 -5.657 2.343z"/>
             <path d="m120 488a8 8 0 0 1 -5.657-13.657l96-96a8 8 0 1 1 11.314 11.314l-96 96a7.976 7.976 0 0 1 -5.657 2.343z"/>
           </svg>
-          <div className="text-xs th-color-for">E-mail</div>
+          <div className="text-xs th-color-for">{t("E-mail")}</div>
         </button>
         <button className="flex flex-col items-center mr-4" onClick={() => setVisibleForwardMultiple(true)}>
           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 th-color-for" fill="currentColor" height="384pt" viewBox="0 0 384 384" width="384pt">
             <path d="m192 0c-105.863281 0-192 86.128906-192 192 0 105.863281 86.136719 192 192 192s192-86.136719 192-192c0-105.871094-86.136719-192-192-192zm0 352c-88.222656 0-160-71.777344-160-160s71.777344-160 160-160 160 71.777344 160 160-71.777344 160-160 160zm0 0"/><path d="m276.847656 141.089844-28.28125 28.285156-33.941406-33.941406 28.277344-28.28125-22.621094-22.632813-28.28125 28.28125-28.28125-28.28125-22.621094 22.632813 28.277344 28.28125-33.941406 33.941406-28.28125-28.285156-22.625 22.628906 28.28125 28.28125-28.28125 28.28125 22.625 22.621094 28.28125-28.277344 33.941406 33.941406-28.277344 28.28125 22.621094 22.625 28.28125-28.28125 28.28125 28.28125 22.621094-22.625-28.277344-28.28125 33.941406-33.941406 28.28125 28.277344 22.625-22.621094-28.28125-28.28125 28.28125-28.28125zm-84.847656 84.855468-33.945312-33.945312 33.945312-33.945312 33.945312 33.945312zm0 0"/>
           </svg>
-          <div className="text-xs th-color-for">Forward</div>
+          <div className="text-xs th-color-for">{t("Forward")}</div>
         </button>
         <button className="flex flex-col items-center disabled:opacity-50" disabled={isDisabled} onClick={() => setOpen(true)}>
         <TrashIcon className="h-6 w-6 th-color-for" />
-          <div className="text-xs th-color-for">Remove</div>
+          <div className="text-xs th-color-for">{t("Remove")}</div>
         </button>
       </div>
       <DeleteConfirm open={open} setOpen={setOpen} deleteMessage={handleMultipleDelete} />

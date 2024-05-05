@@ -7,6 +7,7 @@ import { Formik } from "formik";
 import useAuth from "hooks/useAuth";
 import React from "react";
 import { Helmet } from "react-helmet-async";
+import { useTranslation } from "react-i18next";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import {toast, ToastContainer} from "react-toastify"
 import 'react-toastify/dist/ReactToastify.css';
@@ -36,6 +37,7 @@ function Header() {
 }
 
 export default function Login() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { login } = useAuth();
   const [queryParameters] = useSearchParams();
@@ -75,7 +77,7 @@ export default function Login() {
               alt="logo"
               className="h-full w-auto rounded-md"
             />
-            <h1 className="font-bold text-[3vw] text-black">Sign In</h1>
+            <h1 className="font-bold text-[3vw] text-black">{t("Sign In")}</h1>
           </div>
           <Formik
             initialValues={{
@@ -89,7 +91,7 @@ export default function Login() {
                 let emailPayload = email;
                 let passwordPayload = password;
                 if (email === "" || password === "" || !agree) {
-                  toast.error("Please input all fields", {
+                  toast.error(t("Please input all fields"), {
                     position: "top-right",
                     autoClose: 2000,
                     hideProgressBar: false,
@@ -102,7 +104,7 @@ export default function Login() {
                   return;
                 }
                 if (FAKE_EMAIL && !email.includes("@")) {
-                  toast.error("Value is not valid", {
+                  toast.error(t("Value is not valid"), {
                     position: "top-right",
                     autoClose: 2000,
                     hideProgressBar: false,
@@ -131,7 +133,7 @@ export default function Login() {
                 navigate("/dashboard");
               } catch (err: any) {
                 if (err.message === "Cannot read properties of null (reading 'dataValues')") {
-                  toast.error("User does not exist", {
+                  toast.error(t("User does not exist"), {
                     position: "top-right",
                     autoClose: 2000,
                     hideProgressBar: false,
@@ -142,7 +144,7 @@ export default function Login() {
                     theme: "dark",
                   });
                 } else {
-                  toast.error("Singing in failed.", {
+                  toast.error(t("Singing in failed."), {
                     position: "top-right",
                     autoClose: 2000,
                     hideProgressBar: false,
@@ -177,7 +179,7 @@ export default function Login() {
                       type="password"
                       name="password"
                       id="password"
-                      placeholder="Your password"
+                      placeholder={t("Your password")}
                       autoComplete="current-password"
                       value={values.password}
                       onChange={handleChange}
@@ -197,7 +199,7 @@ export default function Login() {
                     <div className="text-lg text-[#adb5bd]">I agree to the <a href="#" className="font-bold">Term of User</a></div>
                   </div>
                   <div className="pt-[1vw]">
-                    <AuthButton text="Sign Me In" isSubmitting={isSubmitting} />
+                    <AuthButton text={t("Sign Me In")} isSubmitting={isSubmitting} />
                   </div>
                 </div>
               </form>

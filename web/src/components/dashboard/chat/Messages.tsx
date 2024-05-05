@@ -8,10 +8,12 @@ import { useChannelById } from "hooks/useChannels";
 import { useDirectMessageById } from "hooks/useDirects";
 import { useMessagesByChat } from "hooks/useMessages";
 import { useContext, useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useInView } from "react-intersection-observer";
 import { useParams } from "react-router-dom";
 
 export default function Messages({ lastRead, filter }: { lastRead: number | null, filter: string }) {
+  const { t } = useTranslation();
   const { channelId, dmId } = useParams();
 
   const [page, setPage] = useState(1);
@@ -59,10 +61,10 @@ export default function Messages({ lastRead, filter }: { lastRead: number | null
     const today = new Date(new Date().toDateString());
     const dDate = new Date(d.toDateString());
     if (Math.floor((today - dDate) / 86400000) === 0) {
-      return 'Today';
+      return t('Today');
     }
     if (Math.floor((today - dDate) / 86400000) === 1) {
-      return 'Yesterday';
+      return t('Yesterday');
     }
     return d?.toLocaleDateString("zh-CN", { year:"numeric", day:"numeric", month:"long"});
   }

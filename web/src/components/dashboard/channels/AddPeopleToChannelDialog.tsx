@@ -7,6 +7,7 @@ import { Formik } from "formik";
 import { useChannelById } from "hooks/useChannels";
 import React, { Fragment,  useContext, useMemo, useState, useRef } from "react";
 import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { postData } from "utils/api-helpers";
 import { getHref } from "utils/get-file-url";
@@ -19,6 +20,7 @@ export default function AddPeopleToChannelDialog({
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
+  const { i18n, t } = useTranslation();
   const cancelButtonRef = useRef(null);
   const { channelId } = useParams();
   const { value: channel } = useChannelById(channelId);
@@ -46,9 +48,9 @@ export default function AddPeopleToChannelDialog({
       await postData(`/channels/${channelId}/members`, {
         email,
       });
-      toast.success("Member added.");
+      toast.success(t("Member added."));
     } catch (err: any) {
-      toast.error("Adding member failed.");
+      toast.error(t("Adding member failed."));
     }
   }
 
@@ -97,7 +99,7 @@ export default function AddPeopleToChannelDialog({
               <div className="th-bg-bg px-4 py-3 sm:p-6 sm:py-3 flex justify-between items-center">
                 <div>
                   <h5 className="font-bold th-color-for">
-                    Add member
+                    {t("Add_member")}
                   </h5>
                   <span className="opacity-70 text-sm th-color-for">{`#${channel?.name}`}</span>
                 </div>
@@ -118,7 +120,7 @@ export default function AddPeopleToChannelDialog({
                     focus
                     value={search}
                     handleChange={(e: any) => setSearch(e.target.value)}
-                    placeholder="Search members"
+                    placeholder={t("Search_members")}
                   />
                 </div>
               </div>
@@ -147,7 +149,7 @@ export default function AddPeopleToChannelDialog({
               ))}
               </div>
               <div className="px-4 pb-3 pt-2 sm:px-6 sm:flex sm:flex-row-reverse border-t th-border-for">
-                <ModalButton onClick={() => setOpen(false)} text="Done" />
+                <ModalButton onClick={() => setOpen(false)} text={t("Done")} />
               </div>
             </div>
           </Transition.Child>

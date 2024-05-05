@@ -10,9 +10,11 @@ import { getHref } from "utils/get-file-url";
 import { v4 as uuidv4 } from "uuid";
 import axios from 'axios';
 import { useChannelById } from "hooks/useChannels";
+import { useTranslation } from "react-i18next";
 
 
 export default function MeetingModal() {
+  const { t } = useTranslation();
   const { userdata } = useUser();
   const { workspaceId, channelId, dmId } = useParams();
   const jitsiContainerId = "jitsi-container-id";
@@ -242,7 +244,7 @@ export default function MeetingModal() {
             <div className="th-bg-bg inline-block align-bottom rounded-xl border th-border-for text-left overflow-hidden shadow-xl transform transition-all sm:align-middle sm:max-w-6xl sm:w-full">
               <div className="th-bg-bg px-4 pt-2 pb-4 sm:p-2 sm:px-4 flex justify-between items-center">
                 <h5 className="font-bold th-color-for">
-                  {isVideoDisabled ? "Voice Call" : "Video Call"}
+                  {isVideoDisabled ? t("Voice_Call") : t("Video_Call")}
                 </h5>
                 <div className="flex items-center space-x-4">
                   {channelId && (

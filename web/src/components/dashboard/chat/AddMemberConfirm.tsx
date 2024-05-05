@@ -2,6 +2,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
 import Spinner from "components/Spinner";
 import React, { Fragment,  useRef } from "react";
+import { useTranslation } from "react-i18next";
 
 export default function AddMemberConfirm({
   open,
@@ -14,6 +15,7 @@ export default function AddMemberConfirm({
   addMember: any;
   loading: boolean;
 }) {
+  const { t } = useTranslation();
   const cancelButtonRef = useRef(null);
 
   return (
@@ -59,16 +61,16 @@ export default function AddMemberConfirm({
               <div className="th-bg-bg px-4 pt-5 pb-4 sm:p-6 sm:pb-4 flex justify-between items-center">
                 <div>
                   <h5 className="font-bold th-color-for">
-                    Are you want to add this to direct message?
+                    {t("Are_you_want_to_add_this_to_direct_message")}
                   </h5>
                 </div>
               </div>
               <div className="px-4 pb-5 pt-1 border-t th-border-for sm:px-6 sm:flex sm:flex-row-reverse sm:justify-start">
                 <button onClick={() => setOpen(false)} className="th-bg-bg th-color-for th-border-for border-2 text-sm w-20 h-10 rounded font-bold focus:z-10 focus:outline-none ml-2">
-                  Cancel
+                  {t("Cancel")}
                 </button>
                 <button onClick={addMember} className="th-bg-bg th-color-cyan th-border-cyan border-2 text-sm w-20 h-10 rounded font-bold focus:z-10 focus:outline-none flex items-center justify-center">
-                  {loading ? <Spinner className="w-4 h-4" /> : "Add"}
+                  {loading ? <Spinner className="w-4 h-4" /> : t("Add")}
                 </button>
                 {/* <ModalButton onClick={deleteMessage} text="Delete" />
                 <ModalButton onClick={() => setOpen(false)} text="Cancel" /> */}

@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useModal } from 'contexts/ModalContext'
 import { useUser } from 'contexts/UserContext';
 import React, { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { postData } from 'utils/api-helpers';
@@ -10,6 +11,7 @@ import { getHref } from 'utils/get-file-url';
 import { v4 as uuidv4 } from "uuid";
 
 function Receiving() {
+  const { t } = useTranslation();
   const { userdata } = useUser();
   const { workspaceId, dmId } = useParams();
   const { openReceiving, setOpenReceiving, senderInfo, recipientInfo, setRecipientInfo, setSenderInfo, roomName, setRoomName, isVideoDisabled, setIsVideoDisabled, setOpenMeetingModal, enableMic, setEnableMic, iframeLoaded, setIframeLoaded, meetingMinimized } = useModal();
@@ -74,7 +76,7 @@ function Receiving() {
             <img src={getHref(senderInfo?.photoURL) || `${process.env.PUBLIC_URL}/blank_user.png`} className="w-10 h-10" alt={senderInfo?.displayName} />
             <div className="flex flex-col">
               <div className="font-bold text-base th-color-for">{senderInfo?.displayName}</div>
-              <div className="w-full text-xs th-color-for">Inviting you to a  {isVideoDisabled ? "Voice" : "Video"}  call...</div>
+              <div className="w-full text-xs th-color-for">{isVideoDisabled ? t("Inviting_you_to_a_voice_call") : t("Inviting_you_to_a_video_call")}...</div>
             </div>
           </div>
           <div className="w-full flex justify-end space-x-4">

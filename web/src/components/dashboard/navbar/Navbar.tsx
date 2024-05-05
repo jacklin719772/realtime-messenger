@@ -333,15 +333,15 @@ export default function Navbar() {
                     className="th-bg-bg border th-border-for origin-top-right z-20 absolute left-0 mt-2 w-72 rounded-md shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none py-3"
                   >
                     <div className="px-5 flex items-center justify-between">
-                      <div className="text-base th-color-for">Notification</div>
-                      <button className="border-0 text-xs th-color-for" onClick={clearAllNotifications}>Clear All</button>
+                      <div className="text-base th-color-for">{t("Notification")}</div>
+                      <button className="border-0 text-xs th-color-for" onClick={clearAllNotifications}>{t("Clear_All")}</button>
                     </div>
                     <div className="w-full h-px my-2 th-bg-forbr" />
                     {(!loading && !deleteLoading) ? (
                       <>
                         {notifications.length === 0 ? (
                           <div className="flex items-center justify-center th-bg-bg th-color-for border-b th-border-for w-full h-10">
-                            No notifications
+                            {t("No_Notifications")}
                           </div>
                         ) : notifications}
                       </>
@@ -371,19 +371,19 @@ export default function Navbar() {
         {!isOnline ?
         <div className="text-xs rounded-lg px-2 py-1 focus:outline-none th-color-brwhite th-bg-red font-medium flex items-center justify-center">
           <ExclamationIcon className="w-5 h-5 th-color-brwhite" />
-          <div className="text-sm">Please check your network connection status.</div>
+          <div className="text-sm">{t("online_error")}</div>
         </div> : !connected ?
         <div className="text-xs rounded-lg px-2 py-1 focus:outline-none th-color-brwhite th-bg-red font-medium flex items-center justify-center">
           <ExclamationIcon className="w-5 h-5 th-color-brwhite" />
-          <div className="text-sm">Connection to the server is failed. Please refresh the page.</div>
+          <div className="text-sm">{t("connection_error")}</div>
         </div> : !authenticated ? 
         <div className="text-xs rounded-lg px-2 py-1 focus:outline-none th-color-brwhite th-bg-red font-medium flex items-center justify-center">
           <ExclamationIcon className="w-5 h-5 th-color-brwhite" />
-          <div className="text-sm">You authentication is expired. Please re-sign in.</div>
+          <div className="text-sm">{t("auth_error")}</div>
         </div> : !uteamwork ? 
         <div className="text-xs rounded-lg px-2 py-1 focus:outline-none th-color-brwhite th-bg-red font-medium flex items-center justify-center">
           <ExclamationIcon className="w-5 h-5 th-color-brwhite" />
-          <div className="text-sm">Please sign out and re-sign in from uteamwork.</div>
+          <div className="text-sm">{t("uteamwork_error")}</div>
         </div> : ""}
         {/* <div
           style={{

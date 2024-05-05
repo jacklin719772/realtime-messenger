@@ -30,6 +30,7 @@ import { ModalContext } from "contexts/ModalContext";
 import { toast as toastr } from "react-toastify";
 import { randomRoomName } from "utils/jitsiGenerator";
 import axios from "axios";
+import { useTranslation } from "react-i18next";
 
 const MessageDiv = styled.div`
   :hover {
@@ -110,6 +111,7 @@ export default function Message({
   setEditMessage: React.Dispatch<React.SetStateAction<string>>;
   handleSelect: (e: any, message: any) => void,
 }) {
+  const { t } = useTranslation();
   const messageReader = useMemo(
     () => <QuillReader text={message?.text} isEdited={message?.isEdited} />,
     [message]
@@ -205,7 +207,7 @@ export default function Message({
     try {
       await deleteData(`/messages/${message?.objectId}`);
     } catch (err: any) {
-      toast.error("Deleting message failed.");
+      toast.error(t("Deleting message failed."));
     }
     setLoadingDelete(false);
     setOpen(false);
@@ -333,10 +335,10 @@ export default function Message({
     const today = new Date(new Date().toDateString());
     const dDate = new Date(d.toDateString());
     if (Math.floor((today - dDate) / 86400000) === 0) {
-      return 'Today';
+      return t('Today');
     }
     if (Math.floor((today - dDate) / 86400000) === 1) {
-      return 'Yesterday';
+      return t('Yesterday');
     }
     return d?.toLocaleDateString("zh-CN", { day:"numeric", month:"short"});
   }
@@ -395,7 +397,7 @@ export default function Message({
       <div className="flex flex-1 group w-full pl-12 items-center">
         <div className="w-96 px-4 py-2 m-2 rounded-lg th-bg-selbg flex justify-between items-center border th-border-for">
           <div className="flex items-center space-x-2">
-            <div className="text-sm th-color-brblue">{JSON.parse(message?.text.substr(19, message?.text.length)).type}</div>
+            <div className="text-sm th-color-brblue">{t("Call_ended")}</div>
             <div className="text-sm th-color-brblue">
               {String(Math.floor(parseInt(JSON.parse(message?.text.substr(19, message?.text.length)).duration) / 1000 / 60)).padStart(2, "0")}:
               {String(Math.floor(parseInt(JSON.parse(message?.text.substr(19, message?.text.length)).duration) / 1000) - Math.floor(parseInt(JSON.parse(message?.text.substr(19, message?.text.length)).duration) / 1000 / 60) * 60).padStart(2, "0")}
@@ -420,7 +422,7 @@ export default function Message({
       <div className="flex flex-1 group w-full pl-12 items-center">
         <div className="w-96 px-4 py-2 m-2 rounded-lg th-bg-selbg flex justify-between items-center border th-border-for">
           <div className="flex items-center space-x-2">
-            <div className="text-sm th-color-brblue">{JSON.parse(message?.text.substr(19, message?.text.length)).type}</div>
+            <div className="text-sm th-color-brblue">{t("Missed_Call")}</div>
             <div className="text-sm th-color-brblue">
               {new Date(JSON.parse(message?.text.substr(19, message?.text.length)).duration).toLocaleTimeString([], {
                 hour: '2-digit',
@@ -449,7 +451,7 @@ export default function Message({
         <div className="flex flex-1 group w-full pl-12 items-center">
           <div className="w-96 px-4 py-2 m-2 rounded-lg th-bg-selbg flex justify-between items-center border th-border-for">
             <div className="flex items-center space-x-2">
-              <div className="text-sm th-color-brblue">{JSON.parse(message?.text.substr(19, message?.text.length)).type}</div>
+              <div className="text-sm th-color-brblue">{t("Stopped_Call")}</div>
               <div className="text-sm th-color-brblue">
                 {new Date(JSON.parse(message?.text.substr(19, message?.text.length)).duration).toLocaleTimeString([], {
                   hour: '2-digit',
@@ -478,7 +480,7 @@ export default function Message({
         <div className="flex flex-1 group w-full pl-12 items-center">
           <div className="w-96 px-4 py-2 m-2 rounded-lg th-bg-selbg flex justify-between items-center border th-border-for">
             <div className="flex items-center space-x-2">
-              <div className="text-sm th-color-brblue">{JSON.parse(message?.text.substr(19, message?.text.length)).type}</div>
+              <div className="text-sm th-color-brblue">{t("Refused_Call")}</div>
               <div className="text-sm th-color-brblue">
                 {new Date(JSON.parse(message?.text.substr(19, message?.text.length)).duration).toLocaleTimeString([], {
                   hour: '2-digit',
@@ -929,11 +931,11 @@ export default function Message({
             {message?.fileURL && (
               <button
                 type="button"
-                title="Download"
+                title={t("Download")}
                 className="th-bg-bg th-border-for th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none"
                 onClick={() => downloadRef?.current?.click()}
               >
-                <span className="sr-only">Download</span>
+                <span className="sr-only">{t("Download")}</span>
                 <a
                   ref={downloadRef}
                   className="hidden"
@@ -942,7 +944,7 @@ export default function Message({
                   rel="noreferrer"
                   href={getHref(message?.fileURL + '&d=' + message?.fileName)}
                 >
-                  Download
+                  {t("Download")}
                 </a>
                 <DownloadIcon className="h-4 w-4" />
               </button>
@@ -955,11 +957,11 @@ export default function Message({
                   message?.fileType?.includes("image/")) && (
               <button
                 type="button"
-                title="Preview"
+                title={t("Preview")}
                 className="th-bg-bg th-border-for th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none"
                 onClick={() => previewRef?.current?.click()}
               >
-                <span className="sr-only">Preview</span>
+                <span className="sr-only">{t("Preview")}</span>
                 <a
                   ref={previewRef}
                   className="hidden"
@@ -968,7 +970,7 @@ export default function Message({
                   title={getHref(message?.fileURL.replace(/%2F/g, "%252F"))}
                   href={`https://im.flybird360.com:8013/onlinePreview?url=${encodeURIComponent(Base64.encode(`https://im.flybird360.com:3003${message?.fileURL.replace(/%2F/g, "%252F")}`))}`}
                 >
-                  Preview
+                  {t("Preview")}
                 </a>
                 <EyeIcon className="h-4 w-4" />
               </button>
@@ -981,11 +983,11 @@ export default function Message({
                   !message?.fileType?.includes("image/")) && (
               <button
                 type="button"
-                title="Preview"
+                title={t("Preview")}
                 className="th-bg-bg th-border-for th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none"
                 onClick={() => previewRef?.current?.click()}
               >
-                <span className="sr-only">Preview</span>
+                <span className="sr-only">{t("Preview")}</span>
                 <a
                   ref={previewRef}
                   className="hidden"
@@ -994,7 +996,7 @@ export default function Message({
                   title={getHref(message?.fileURL.replace(/%2F/g, "%252F"))}
                   href={`https://im.flybird360.com:8013/onlinePreview?url=${encodeURIComponent(Base64.encode(`http://117.21.178.59:4000${message?.fileURL.replace(/%2F/g, "%252F")}`))}`}
                 >
-                  Preview
+                  {t("Preview")}
                 </a>
                 <EyeIcon className="h-4 w-4" />
               </button>
@@ -1004,11 +1006,11 @@ export default function Message({
             {(message?.text && message?.senderId === user?.uid && !message?.forwardId) && (
               <button
                 type="button"
-                title="Edit"
+                title={t("Edit")}
                 className="th-bg-bg th-border-for th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none"
                 onClick={() => setEditMessage(message?.objectId)}
               >
-                <span className="sr-only">Edit</span>
+                <span className="sr-only">{t("Edit")}</span>
                 <PencilIcon className="h-4 w-4" />
               </button>
             )}
@@ -1016,11 +1018,11 @@ export default function Message({
             {message?.senderId === user?.uid && (
               <button
                 type="button"
-                title="Delete"
+                title={t("Delete")}
                 className="th-bg-bg th-border-for th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none"
                 onClick={() => setOpen(true)}
               >
-                <span className="sr-only">Delete</span>
+                <span className="sr-only">{t("Delete")}</span>
                 {loadingDelete ? (
                   <Spinner className="h-4 w-4 th-color-for" />
                 ) : (
@@ -1031,21 +1033,21 @@ export default function Message({
 
             <button
               type="button"
-              title="Select"
+              title={t("Select")}
               className="th-bg-bg th-border-for th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none"
               onClick={initializeSelect}
             >
-              <span className="sr-only">Select</span>
+              <span className="sr-only">{t("Select")}</span>
               <CheckCircleIcon className="w-4 h-4" />
             </button>
 
             <button
               type="button"
-              title="Reply"
+              title={t("Reply")}
               className="th-bg-bg th-border-for th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none"
               onClick={showReply}
             >
-              <span className="sr-only">Reply</span>
+              <span className="sr-only">{t("Reply")}</span>
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
               </svg>
@@ -1053,11 +1055,11 @@ export default function Message({
 
             <button
               type="button"
-              title="Forward"
+              title={t("Forward")}
               className="th-bg-bg th-border-for th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none"
               onClick={showForward}
             >
-              <span className="sr-only">Forward</span>
+              <span className="sr-only">{t("Forward")}</span>
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 th-color-for" fill="currentColor" viewBox="0 0 323.125 323.125">
                 <path d="M319.516,145.044l-152.87-92.766c-2.315-1.407-5.21-1.453-7.569-0.124  c-2.361,1.329-3.821,3.827-3.821,6.536v43.082c-15.843,2.401-41.1,7.818-66.708,19.82C31.676,148.247,1.115,193.889,0.171,253.585  l-0.17,10.733c-0.033,2.081,0.8,4.082,2.301,5.525c1.401,1.347,3.265,2.094,5.198,2.094c0.137,0,0.275-0.004,0.413-0.011L24.723,271  c2.628-0.145,4.989-1.657,6.219-3.985l2.643-5.002c21.067-39.875,82.997-55.747,121.67-59.499v41.708  c0,2.709,1.46,5.207,3.821,6.536c2.359,1.328,5.253,1.281,7.569-0.124l152.87-92.766c2.241-1.359,3.609-3.79,3.609-6.412  C323.125,148.834,321.757,146.403,319.516,145.044z M182.868,166.778l-9.856-0.147c-0.513-0.007-1.047-0.012-1.611-0.012  c-25.95,0-79.28,7.039-121.178,31.644c11.29-18.526,28.926-33.521,52.695-44.752c34.699-16.395,70.419-18.619,70.746-18.638  l9.481-0.493c3.985-0.207,7.111-3.499,7.111-7.49v-19.346l72.361,43.911l-72.361,43.911v-21.088  C190.255,170.179,186.965,166.839,182.868,166.778z"/>
               </svg>
@@ -1065,11 +1067,11 @@ export default function Message({
             
             <button
               type="button"
-              title="Send email"
+              title={t("Send_email")}
               className="th-bg-bg th-border-for th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none"
               onClick={() => initializeEmail(message)}
             >
-              <span className="sr-only">Forward</span>
+              <span className="sr-only">{t("Send_email")}</span>
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 th-color-for" fill="currentColor" height="512" viewBox="0 0 512 512" width="512">
                 <path d="m222.287 278.4 116.154-116.155a8 8 0 0 1 11.313 11.315l-116.154 116.153 85.551 185.36 163.395-445.619-445.619 163.394z"/>
                 <path d="m96 424a8 8 0 0 1 -5.657-13.657l96-96a8 8 0 1 1 11.314 11.314l-96 96a7.976 7.976 0 0 1 -5.657 2.343z"/>
@@ -1083,22 +1085,22 @@ export default function Message({
               {(message?.fileURL && message?.favorites.includes(user?.uid)) ? (
                 <button
                   type="button"
-                  title="Remove favorite"
+                  title={t("Remove_favorite")}
                   className="th-bg-bg th-border-for th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none"
                   onClick={removeFavorite}
                 >
-                  <span className="sr-only">Favorite</span>
+                  <span className="sr-only">{t("Favorite")}</span>
                   <img className="h-4 w-4" alt="forward" src={`${process.env.PUBLIC_URL}/favorite_remove.png`} />
                 </button>
                 
               ) : (
                 <button
                   type="button"
-                  title="Add favorite"
+                  title={t("Add_favorite")}
                   className="th-bg-bg th-border-for th-color-for relative inline-flex items-center px-3 py-1 border text-sm font-medium focus:z-10 focus:outline-none"
                   onClick={() => initializeFavorite(message)}
                 >
-                  <span className="sr-only">Favorite</span>
+                  <span className="sr-only">{t("Favorite")}</span>
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" className="th-color-for w-4 h-4" fill="currentColor">
                     <path d="M29,13a.71.71,0,0,0,0-.21c0-.06,0-.12-.05-.17s-.07-.1-.1-.15a.7.7,0,0,0-.13-.16l0,0L24,8.36V6a1,1,0,0,0-1-1H20L16.64,2.23a1,1,0,0,0-1.28,0L12,5H9A1,1,0,0,0,8,6V8.36L3.36,12.23l0,0a.7.7,0,0,0-.13.16c0,.05-.07.09-.1.15s0,.11-.05.17A.71.71,0,0,0,3,13s0,0,0,0V29a1,1,0,0,0,1,1H28a1,1,0,0,0,1-1V13S29,13,29,13Zm-3.75-1H24V11ZM16,4.3l.84.7H15.16ZM22,7v8.88l-6,3-6-3V7ZM8,12H6.76L8,11ZM27,28H5V14H8v1a1,1,0,0,0-.89.54,1,1,0,0,0,.44,1.34l8,4a1,1,0,0,0,.9,0l8-4a1,1,0,0,0,.44-1.34A1,1,0,0,0,24,15V14h3Z"/>
                     <path d="M18,25H8a1,1,0,0,0,0,2H18a1,1,0,0,0,0-2Z"/>

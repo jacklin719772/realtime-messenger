@@ -141,7 +141,7 @@ export default function Editor() {
       }));
       filteredMembers.unshift({
         id: 0,
-        value: "All"
+        value: t("All")
       });
       setMentionMembers(filteredMembers);
     }
@@ -218,7 +218,7 @@ export default function Editor() {
               setIsTyping(false);
               setFiles([]);
             } catch (err: any) {
-              toast.error("Sending message failed.");
+              toast.error(t("Sending message failed."));
             }
             setSubmitting(false);
           }}

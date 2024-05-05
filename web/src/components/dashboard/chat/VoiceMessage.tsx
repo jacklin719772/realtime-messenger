@@ -5,8 +5,10 @@ import { Fragment, useContext, useEffect, useRef, useState } from 'react'
 import { ReactionsContext } from 'contexts/ReactionsContext';
 import { useReactMediaRecorder } from 'react-media-recorder';
 import classNames from 'utils/classNames';
+import { useTranslation } from 'react-i18next';
 
 export default function VoiceMessage() {
+  const { t } = useTranslation();
   const { themeColors } = useTheme();
   const {visibleAudioRecorder, setVisibleAudioRecorder, voiceBlob, setVoiceBlob} = useContext(ReactionsContext);
   const cancelButtonRef = useRef(null);
@@ -123,7 +125,7 @@ export default function VoiceMessage() {
                   style={{ color: themeColors?.foreground }}
                   className="font-bold max-w-full truncate"
                 >
-                  Voice Recorder
+                  {t("Voice_Recorder")}
                 </h5>
                 <div
                   role="button"
@@ -146,7 +148,7 @@ export default function VoiceMessage() {
                         status === "acquiring_media" ||
                         status === "stopped" ||
                         error) ? (
-                        <button className="button border-2 th-border-for p-2 rounded disabled:opacity-50 mr-2" onClick={startRecording} title="start">
+                        <button className="button border-2 th-border-for p-2 rounded disabled:opacity-50 mr-2" onClick={startRecording} title={t("Start")}>
                           <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 th-color-for" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2Zm0,18a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z"/>
                             <circle cx="12" cy="12" r="5"/>
@@ -160,7 +162,7 @@ export default function VoiceMessage() {
                       {status === "recording" && (
                         <button className={classNames(
                           "border-2 button th-border-for p-2 rounded disabled:opacity-50 mr-2"
-                        )} disabled={status === "recording" ? false : true} onClick={pauseRecording} title="pause">
+                        )} disabled={status === "recording" ? false : true} onClick={pauseRecording} title={t("Pause")}>
                           <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 th-color-for" fill="currentColor" height="512" viewBox="0 0 512 512" width="512">
                             <path d="m425.7 86.3c-45.3-45.3-105.6-70.3-169.7-70.3s-124.4 25-169.7 70.3-70.3 105.6-70.3 169.7 25 124.4 70.3 169.7 105.6 70.3 169.7 70.3 124.4-25 169.7-70.3 70.3-105.6 70.3-169.7-25-124.4-70.3-169.7zm-169.7 377.7c-114.7 0-208-93.3-208-208s93.3-208 208-208 208 93.3 208 208-93.3 208-208 208z"/>
                             <path d="m201.1 144c-8.8 0-16 7.2-16 16v192c0 8.8 7.2 16 16 16s16-7.2 16-16v-192c0-8.8-7.1-16-16-16z"/>
@@ -171,19 +173,19 @@ export default function VoiceMessage() {
                       {status !== "recording" && (
                         <button className={classNames(
                           "border-2 button th-border-for p-2 rounded disabled:opacity-50 mr-2"
-                        )} disabled={status === "paused" ? false : true} onClick={resumeRecording} title="resume">
+                        )} disabled={status === "paused" ? false : true} onClick={resumeRecording} title={t("Resume")}>
                           <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 th-color-for" fill="currentColor" viewBox="0 0 512 512" width="512" height="512">
                             <path d="M437.019,74.98C388.667,26.628,324.38,0,256,0C187.619,0,123.332,26.628,74.98,74.98C26.629,123.331,0,187.619,0,256    c0,68.38,26.629,132.667,74.98,181.019C123.332,485.371,187.62,512,256,512s132.667-26.629,181.019-74.981    C485.371,388.667,512,324.379,512,256C512,187.619,485.371,123.332,437.019,74.98z M256,482C131.383,482,30,380.617,30,256    S131.383,30,256,30s226,101.383,226,226S380.617,482,256,482z"/>
                             <path d="M392.033,243.01L199.232,131.697c-4.641-2.68-10.359-2.68-15,0c-4.641,2.679-7.5,7.631-7.5,12.99v222.621    c0,5.359,2.859,10.311,7.5,12.99c2.32,1.34,4.91,2.01,7.5,2.01c2.59,0,5.18-0.67,7.5-2.009L392.033,268.99    c4.641-2.68,7.5-7.632,7.5-12.991C399.533,250.641,396.674,245.689,392.033,243.01z M206.732,341.329V170.668L354.532,256    L206.732,341.329z"/>
                           </svg>
                         </button>
                       )}
-                      <button className="button border-2 th-border-for p-2 rounded disabled:opacity-50 mr-2" disabled={(status === "recording" || status === "paused") ? false : true} onClick={stopRecording} title="stop">
+                      <button className="button border-2 th-border-for p-2 rounded disabled:opacity-50 mr-2" disabled={(status === "recording" || status === "paused") ? false : true} onClick={stopRecording} title={t("Stop")}>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 th-color-for">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 7.5A2.25 2.25 0 0 1 7.5 5.25h9a2.25 2.25 0 0 1 2.25 2.25v9a2.25 2.25 0 0 1-2.25 2.25h-9a2.25 2.25 0 0 1-2.25-2.25v-9Z" />
                         </svg>
                       </button>
-                      <button className="button border-2 th-border-for p-2 rounded disabled:opacity-50 mr-2" disabled={status === "stopped" ? false : true} onClick={() => audioFileBlob(mediaBlobUrl || "")} title="save">
+                      <button className="button border-2 th-border-for p-2 rounded disabled:opacity-50 mr-2" disabled={status === "stopped" ? false : true} onClick={() => audioFileBlob(mediaBlobUrl || "")} title={t("Save")}>
                         <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 th-color-for" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeMiterlimit="10" strokeWidth="2">
                           <rect className="cls-1" height="6.68" width="5.73" x="7.23" y="7.2"/>
                           <polygon className="cls-1" points="12.96 10.07 12.96 11.02 15.82 13.89 16.77 13.89 16.77 7.21 15.82 7.21 12.96 10.07 12.96 10.07"/>

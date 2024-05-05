@@ -2,12 +2,14 @@ import { Dialog, Transition } from "@headlessui/react";
 import { TrashIcon, XIcon } from "@heroicons/react/outline";
 import { useModal } from "contexts/ModalContext";
 import React, { Fragment,  useRef } from "react";
+import { useTranslation } from "react-i18next";
 
 export default function DeleteConfirm({
   handleDelete,
 }: {
   handleDelete: any;
 }) {
+  const { t } = useTranslation();
   const cancelButtonRef = useRef(null);
   const {openDeletePad, setOpenDeletePad, checkedPads} = useModal();
 
@@ -55,7 +57,7 @@ export default function DeleteConfirm({
                 <div className="flex items-center space-x-2">
                   <TrashIcon className="th-color-for w-6" />
                   <h5 className="font-bold th-color-for">
-                    Are you want to delete this pad?
+                    {t("Are_you_want_to_delete_this_pad")}
                   </h5>
                 </div>
                 <div
@@ -69,10 +71,10 @@ export default function DeleteConfirm({
               </div>
               <div className="px-4 pb-2 pt-2 border-t th-border-for sm:px-6 sm:flex sm:flex-row-reverse sm:justify-start">
                 <button onClick={() => setOpenDeletePad(false)} className="th-bg-bg th-color-for th-border-for border-2 text-sm w-20 h-10 rounded font-bold focus:z-10 focus:outline-none ml-2">
-                  Cancel
+                  {t("Cancel")}
                 </button>
                 <button onClick={() => handleDelete(checkedPads)} className="th-bg-bg th-color-brred th-border-brred border-2 text-sm w-20 h-10 rounded font-bold focus:z-10 focus:outline-none">
-                  Delete
+                  {t("Delete")}
                 </button>
                 {/* <ModalButton onClick={deleteMessage} text="Delete" />
                 <ModalButton onClick={() => setOpen(false)} text="Cancel" /> */}

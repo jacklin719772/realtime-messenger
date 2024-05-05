@@ -6,6 +6,7 @@ import { Formik } from "formik";
 import { useForceUpdate } from "lib/hooks";
 import React, { useRef } from "react";
 import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 import { postData } from "utils/api-helpers";
 
 function EditMessageFooter({
@@ -23,6 +24,7 @@ function EditMessageFooter({
   editorRef: any;
   text: string;
 }) {
+  const { t } = useTranslation();
   const { themeColors } = useTheme();
   const editor = editorRef?.current?.getEditor();
   const realText = editor?.getText() as string | null | undefined;
@@ -35,7 +37,7 @@ function EditMessageFooter({
         className="border border-gray-500 font-medium th-bg-brwhite text-sm px-2 py-px rounded"
         onClick={() => setEdit(false)}
       >
-        Cancel
+        {t("Cancel")}
       </button>
       <button
         className="border border-gray-500 font-medium flex items-center text-sm th-color-brwhite px-3 py-px rounded disabled:opacity-50"
@@ -53,7 +55,7 @@ function EditMessageFooter({
                 {MESSAGE_MAX_CHARACTERS - isText.length}
               </span>
             ) : (
-              "Save"
+              t("Save")
             )}
           </>
         )}
@@ -69,6 +71,7 @@ export default function EditMessage({
   message: any;
   setEdit: React.Dispatch<React.SetStateAction<string>>;
 }) {
+  const { t } = useTranslation();
   const forceUpdate = useForceUpdate();
 
   const editorRef = useRef<any>(null);
@@ -103,7 +106,7 @@ export default function EditMessage({
           });
           setEdit("");
         } catch (err: any) {
-          toast.error("Editing message failed.");
+          toast.error(t("Editing message failed."));
         }
         setSubmitting(false);
       }}
@@ -126,7 +129,7 @@ export default function EditMessage({
               editorRef={editorRef}
               text={values.text}
               setFieldValue={setFieldValue}
-              placeholder="Send a message"
+              placeholder={t("Send a message")}
               handleSubmit={handleSubmit}
               forceUpdate={forceUpdate}
             />

@@ -9,12 +9,14 @@ import { uploadFile } from "gqlite-lib/dist/client/storage";
 import { useMyWorkspaces } from "hooks/useWorkspaces";
 import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { deleteData, postData } from "utils/api-helpers";
 import { getHref } from "utils/get-file-url";
 import now from "utils/now";
 
 export default function SettingsSection({ workspace }: { workspace: any }) {
+  const { t } = useTranslation();
   const [photo, setPhoto] = useState<any>(null);
   const [photoUrl, setPhotoUrl] = useState("");
   const fileRef = useRef<any>(null);
@@ -75,10 +77,10 @@ export default function SettingsSection({ workspace }: { workspace: any }) {
         deleteData(`/workspaces/${workspace.objectId}`);
         navigate("/");
       }
-      toast.success("Workspace deleted.");
+      toast.success(t("Workspace deleted."));
       setOpen(false);
     } catch (err: any) {
-      toast.error("Deleting workspace failed.");
+      toast.error(t("Deleting workspace failed."));
     }
   };
 
@@ -104,7 +106,7 @@ export default function SettingsSection({ workspace }: { workspace: any }) {
             });
             setOpen(false);
           } catch (err: any) {
-            toast.error("Updating workspace failed.");
+            toast.error(t("Updating workspace failed."));
           }
           setSubmitting(false);
         }}
@@ -118,24 +120,24 @@ export default function SettingsSection({ workspace }: { workspace: any }) {
             <div className="p-6 pt-0 pb-6 grid grid-cols-3 th-bg-bg">
               <div className="col-span-2 space-y-6">
                 <TextField
-                  label="Workspace name"
+                  label={t("Workspace_name")}
                   name="name"
                   value={values.name}
                   handleChange={handleChange}
-                  placeholder="Workspace name"
+                  placeholder={t("Workspace_name")}
                   disabled={!owner}
                 />
                 <TextField
-                  label="Description"
+                  label={t("Description")}
                   name="details"
                   value={values.details}
                   handleChange={handleChange}
-                  placeholder="Description"
+                  placeholder={t("Description")}
                 />
               </div>
               <div className="col-span-1 flex flex-col items-center pl-7">
                 <h4 className="block text-sm font-bold th-color-for">
-                  Workspace icon
+                  {t("Workspace_icon")}
                 </h4>
                 <input
                   ref={fileRef}
@@ -159,7 +161,7 @@ export default function SettingsSection({ workspace }: { workspace: any }) {
                   className="th-bg-cyan th-color-brwhite w-44 inline-flex justify-center py-2 px-4 text-base font-bold rounded focus:outline-none focus:ring-4 focus:ring-blue-200 mt-6 sm:w-auto sm:text-sm"
                   onClick={() => fileRef?.current?.click()}
                 >
-                  Upload an Image
+                  {t("Upload_an_Image")}
                 </button>
                 {workspacePhotoURL && (
                   <button
@@ -167,13 +169,13 @@ export default function SettingsSection({ workspace }: { workspace: any }) {
                     className="w-44 text-center text-sm mt-3 th-color-blue"
                     onClick={handleDeletePicture}
                   >
-                    Remove icon
+                    {t("Remove photo")}
                   </button>
                 )}
               </div>
             </div>
             <div className="pt-5 px-6 flex flex-row-reverse border-t mt-auto th-border-for">
-              <ModalButton text="Save" isSubmitting={isSubmitting} />
+              <ModalButton text={t("Save")} isSubmitting={isSubmitting} />
               <CancelButton setOpen={setOpen} />
             </div>
           </form>

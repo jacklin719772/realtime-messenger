@@ -19,6 +19,7 @@ import { getHref } from 'utils/get-file-url'
 import AddMemberConfirm from './chat/AddMemberConfirm'
 import classNames from 'utils/classNames'
 import Style from 'components/Style';
+import { useTranslation } from 'react-i18next';
 
 function UserItem({
   data,
@@ -27,6 +28,7 @@ function UserItem({
   data: any;
   type: string;
 }) {
+  const { t } = useTranslation();
   const { user } = useUser();
   const { isPresent } = usePresenceByUserId(data?.objectId);
   const { value: dms } = useContext(DirectMessagesContext);
@@ -46,7 +48,7 @@ function UserItem({
       navigate(`/dashboard/workspaces/${workspaceId}/dm/${directId}`);
       setOpenAdd(false);
     } catch (err: any) {
-      toast.error("Creating direct message has been failed.", {
+      toast.error(t("Creating direct message has been failed."), {
         position: "top-right",
         autoClose: 2000,
         hideProgressBar: false,
@@ -96,6 +98,7 @@ function UserItem({
 }
 
 function Contact() {
+  const { t } = useTranslation();
   const { themeColors } = useTheme()
   const { workspaceId } = useParams()
   const { value } = useWorkspaceById(workspaceId)
@@ -120,7 +123,7 @@ function Contact() {
   return (
     <div className="col-span-2 row-span-2 p-0 my-2 ml-2 overflow-hidden flex flex-col border th-border-for rounded-xl th-bg-selbg">
       <div className="flex items-center justify-between w-full px-4 py-4 h-14 th-color-brblue th-bg-selbg border-b th-border-for">
-        <h5 className="font-bold th-color-brblue max-w-sm truncate">Contacts</h5>
+        <h5 className="font-bold th-color-brblue max-w-sm truncate">{t("Contacts")}</h5>
         {visibleContact && <XIcon className="h-4 w-4 button" style={{cursor: "pointer"}} onClick={() => setVisibleContact(false)} />}
       </div>
       <div className="px-2">
@@ -132,7 +135,7 @@ function Contact() {
             id="searchFiles"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search for users..."
+            placeholder={t("Search_for_users")}
             className="bg-white block text-sm th-color-for border-0 w-full focus:outline-none focus:ring-0"
           />
           <XIcon className="h-4 w-4 th-color-for" style={{cursor: 'pointer'}} onClick={() => setSearch("")} />
@@ -143,9 +146,9 @@ function Contact() {
           className="block appearance-none w-2/3 th-bg-bg th-color-for border th-border-for bg-color-for py-2 px-4 pr-8 mr-2 text-sm rounded leading-tight"
           onChange={(e) => setSection(e.target.value)}
         >
-          <option value="mine">My Contacts</option>
-          <option value="all">All Contacts</option>
-          <option value="online">Online Only</option>
+          <option value="mine">{t("My_Contacts")}</option>
+          <option value="all">{t("All_Contacts")}</option>
+          <option value="online">{t("Online_Only")}</option>
         </select>
       </div>
       <div className="border-r th-color-brblue th-border-selbg overflow-y-auto mt-1">
@@ -167,7 +170,7 @@ function Contact() {
               <UserItem data={item} type={section} key={index} />
             )}
           /> : 
-          <div className="p-2 text-center text-sm th-color-brblue">No Results</div>}
+          <div className="p-2 text-center text-sm th-color-brblue">{t("No_Results")}</div>}
         </div>)}
         {(section === "all") && (<div>
           {allUsers.length > 0 ? 
@@ -179,7 +182,7 @@ function Contact() {
               <UserItem data={item} type={section} key={index} />
             )}
           /> : 
-          <div className="p-2 text-center text-sm th-color-brblue">No Results</div>}
+          <div className="p-2 text-center text-sm th-color-brblue">{t("No_Results")}</div>}
         </div>)}
         {(section === "online") && (<div>
           {allUsers.length > 0 ? 
@@ -191,7 +194,7 @@ function Contact() {
               <UserItem data={item} type={section} key={index} />
             )}
           /> : 
-          <div className="p-2 text-center text-sm th-color-brblue">No Results</div>}
+          <div className="p-2 text-center text-sm th-color-brblue">{t("No_Results")}</div>}
         </div>)}
       </div>
     </div>

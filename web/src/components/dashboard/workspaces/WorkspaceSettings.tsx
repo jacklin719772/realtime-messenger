@@ -5,9 +5,11 @@ import SettingsSection from "components/dashboard/workspaces/SettingsSection";
 import { useModal } from "contexts/ModalContext";
 import { useTheme } from "contexts/ThemeContext";
 import { Fragment, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import classNames from "utils/classNames";
 
 export default function WorkspaceSettings({ workspace }: { workspace: any }) {
+  const { t } = useTranslation();
   const { themeColors } = useTheme();
   const {
     openWorkspaceSettings: open,
@@ -70,7 +72,7 @@ export default function WorkspaceSettings({ workspace }: { workspace: any }) {
                   style={{ color: themeColors?.foreground }}
                   className="font-bold"
                 >
-                  Edit Workspace
+                  {t("Edit_Workspace")}
                 </h5>
                 <div
                   role="button"
@@ -127,7 +129,7 @@ export default function WorkspaceSettings({ workspace }: { workspace: any }) {
                           borderColor: checked ? themeColors?.cyan : "",
                         }}
                       >
-                        <span>Settings</span>
+                        <span>{t("Settings")}</span>
                       </div>
                     )}
                   </RadioGroup.Option>

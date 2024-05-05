@@ -10,6 +10,7 @@ import { Formik } from "formik";
 import { uploadFile } from "gqlite-lib/dist/client/storage";
 import React, { Fragment, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 import { postData } from "utils/api-helpers";
 import { getHref } from "utils/get-file-url";
 import now from "utils/now";
@@ -21,6 +22,7 @@ export default function EditProfile({
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
+  const { t } = useTranslation();
   const { userdata } = useUser();
 
   const userPhotoURL = getHref(userdata?.photoURL);
@@ -134,7 +136,7 @@ export default function EditProfile({
                     });
                     setOpen(false);
                   } catch (err: any) {
-                    toast.error("Updating profile failed.");
+                    toast.error(t("Updating profile failed."));
                   }
                   setSubmitting(false);
                 }}
@@ -147,7 +149,7 @@ export default function EditProfile({
                   >
                     <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4 flex justify-between items-center th-bg-bg border-b th-border-for">
                       <h5 className="font-bold th-color-for">
-                        Edit your profile
+                        {t("Edit_your_profile")}
                       </h5>
                       <div
                         role="button"
@@ -161,40 +163,40 @@ export default function EditProfile({
                     <div className="p-6 pt-2 pb-2 grid grid-cols-3 th-bg-bg">
                       <div className="col-span-2 space-y-6 px-px max-h-450 overflow-y-auto">
                         <TextField
-                          label="Full name"
+                          label={t("Full_name")}
                           name="fullName"
                           value={values.fullName}
                           handleChange={handleChange}
-                          placeholder="Full name"
+                          placeholder={t("Full_name")}
                         />
                         <TextField
-                          label="Display name"
+                          label={t("Display_name")}
                           name="displayName"
                           value={values.displayName}
                           handleChange={handleChange}
-                          placeholder="Display name"
-                          infos={`This could be your first name, or a nickname — however you’d like people to refer to you in ${APP_NAME}.`}
+                          placeholder={t("Display_name")}
+                          infos={t("Display_name_Detail")}
                         />
                         <TextField
-                          label="What I do"
+                          label={t("What_I_do")}
                           name="title"
                           value={values.title}
                           handleChange={handleChange}
-                          placeholder="What I do"
-                          infos="Let people know what you do."
+                          placeholder={t("What_I_do")}
+                          infos={t("What_I_do_Detail")}
                         />
                         <TextField
-                          label="Phone number"
+                          label={t("Phone_number")}
                           name="phoneNumber"
                           value={values.phoneNumber}
                           handleChange={handleChange}
                           placeholder="(123) 555-555"
-                          infos="Enter a phone number."
+                          infos={t("Phone_number_Detail")}
                         />
                         <div className="w-full">
                           <div className="w-full space-x-2">
                             <label htmlFor="sound" className="text-sm font-bold th-color-for">
-                              Promoting Sound
+                              {t("Prompt_Sound")}
                             </label>
                             <input
                               type="checkbox"
@@ -205,12 +207,12 @@ export default function EditProfile({
                               className="appearance-none checked:bg-blue-500"
                             />
                           </div>
-                          <div className="text-xs font-normal mt-2 th-color-for">Control the promoting sound status when receiving a messaage</div>
+                          <div className="text-xs font-normal mt-2 th-color-for">{t("Prompt_Sound_Detail")}</div>
                         </div>
                       </div>
                       <div className="col-span-1 flex flex-col pl-7">
                         <h4 className="block text-sm font-bold th-color-for">
-                          Profile photo
+                          {t("Profile_photo")}
                         </h4>
                         <input
                           ref={fileRef}
@@ -234,7 +236,7 @@ export default function EditProfile({
                           className="th-bg-cyan th-color-for inline-flex justify-center py-2 px-4 text-base font-bold rounded focus:outline-none focus:ring-4 focus:ring-blue-200 mt-4 sm:w-auto sm:text-sm"
                           onClick={() => fileRef?.current?.click()}
                         >
-                          Upload an Image
+                          {t("Upload_an_Image")}
                         </button>
                         {userPhotoURL && (
                           <button
@@ -242,13 +244,13 @@ export default function EditProfile({
                             className="th-bg-brred th-color-for inline-flex justify-center py-2 px-4 text-base font-bold rounded focus:outline-none focus:ring-4 focus:ring-blue-200 mt-4 sm:w-auto sm:text-sm"
                             onClick={handleDeletePicture}
                           >
-                            Remove photo
+                            {t("Remove photo")}
                           </button>
                         )}
                       </div>
                     </div>
                     <div className="px-4 py-2 sm:px-6 sm:flex sm:flex-row-reverse border-t th-border-for">
-                      <ModalButton text="Save" isSubmitting={isSubmitting} />
+                      <ModalButton text={t("Save")} isSubmitting={isSubmitting} />
                       <CancelButton setOpen={setOpen} />
                     </div>
                   </form>

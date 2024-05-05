@@ -80,7 +80,7 @@ export default function AddPadModal({
                   style={{ color: themeColors?.foreground }}
                   className="font-bold"
                 >
-                  Add New Pad
+                  {t("Add_New_Pad")}
                 </h5>
                 <div
                   role="button"
@@ -114,7 +114,7 @@ export default function AddPadModal({
                       }
                     });
                     if (response.statusText !== "OK") {
-                      toast.error('Creating the pad has been failed.', {
+                      toast.error(t('Creating the pad has been failed.'), {
                         position: "top-right",
                         autoClose: 2000,
                         hideProgressBar: false,
@@ -126,7 +126,7 @@ export default function AddPadModal({
                       });
                     }
                     if (response.statusText === "OK") {
-                      toast.success('The pad has been successfully created.', {
+                      toast.success(t('The pad has been successfully created.'), {
                         position: "top-right",
                         autoClose: 2000,
                         hideProgressBar: false,
@@ -142,7 +142,7 @@ export default function AddPadModal({
                       handleOpen(padName);
                     }
                   } catch (err: any) {
-                    toast.error('Creating the pad has been failed.', {
+                    toast.error(t('Creating the pad has been failed.'), {
                       position: "top-right",
                       autoClose: 2000,
                       hideProgressBar: false,
@@ -164,17 +164,17 @@ export default function AddPadModal({
                     >
                       <div className="space-y-6 pt-2">
                         <TextField
-                          label="Pad name"
+                          label={t("Pad_name")}
                           name="padName"
                           focus
                           value={values.padName}
                           handleChange={handleChange}
-                          placeholder="Please input pad name"
+                          placeholder={t("Please_input_pad_name")}
                         />
                       </div>
                     </div>
                     <div className="px-4 pb-5 pt-1 sm:px-6 sm:flex sm:flex-row-reverse">
-                      <ModalButton isSubmitting={isSubmitting} text="Create" />
+                      <ModalButton isSubmitting={isSubmitting} text={t("Create")} />
                     </div>
                   </form>
                 )}

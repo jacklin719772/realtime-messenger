@@ -9,8 +9,10 @@ import { updateUser } from "gqlite-lib/dist/client/auth";
 import useAuth from "hooks/useAuth";
 import { Fragment, useRef } from "react";
 import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 
 export default function EditPasswordModal() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const cancelButtonRef = useRef(null);
   const { openEditPassword: open, setOpenEditPassword: setOpen } = useModal();
@@ -57,7 +59,7 @@ export default function EditPasswordModal() {
             <div className="inline-block align-bottom rounded-xl border th-border-for text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full th-bg-bg">
               <div className=" p-6 pb-4 flex justify-between items-center th-bg-bg border-b th-border-for">
                 <h5 className="font-bold th-color-for">
-                  Change password
+                  {t("Change_password")}
                 </h5>
                 <div
                   role="button"
@@ -80,11 +82,11 @@ export default function EditPasswordModal() {
                   setSubmitting(true);
                   try {
                     if (newPassword !== newPasswordConfirm)
-                      throw new Error("Passwords do not match.");
+                      throw new Error(t("Passwords do not match."));
                     await updateUser(user.uid, { password: newPassword });
                     setOpen(false);
                   } catch (err: any) {
-                    toast.error("Changing password has been failed.");
+                    toast.error(t("Changing password has been failed."));
                   }
                   setSubmitting(false);
                 }}
@@ -94,7 +96,7 @@ export default function EditPasswordModal() {
                     <div className="p-6 pt-0 pb-4 th-bg-bg">
                       <div className="space-y-6 pt-2">
                         <TextField
-                          label="New password"
+                          label={t("New_password")}
                           name="newPassword"
                           focus
                           type="password"
@@ -103,7 +105,7 @@ export default function EditPasswordModal() {
                           placeholder=""
                         />
                         <TextField
-                          label="Confirm new password"
+                          label={t("Confirm_new_password")}
                           name="newPasswordConfirm"
                           type="password"
                           value={values.newPasswordConfirm}
@@ -113,7 +115,7 @@ export default function EditPasswordModal() {
                       </div>
                     </div>
                     <div className="px-4 pb-2 pt-2 sm:px-6 sm:flex sm:flex-row-reverse border-t th-border-for">
-                      <ModalButton isSubmitting={isSubmitting} text="Save" />
+                      <ModalButton isSubmitting={isSubmitting} text={t("Save")} />
                       <CancelButton setOpen={setOpen} />
                     </div>
                   </form>

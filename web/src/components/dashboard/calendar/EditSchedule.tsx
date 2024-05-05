@@ -21,6 +21,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Dropzone from 'react-dropzone';
 import { useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 function FileViewer({
   event,
@@ -51,6 +52,7 @@ function FileViewer({
   setOpenPrivateFiles: any;
   setOpenRecordingFiles: any;
 }) {
+  const { t } = useTranslation();
   const getFileSizeText = (byte: number) => {
     if (byte < 1024) {
       return byte + ' B';
@@ -130,13 +132,13 @@ function FileViewer({
             <section className="w-auto h-10 cursor-pointer">
               <div className="rounded w-full h-full flex justify-between border th-border-cyan items-center px-4" {...getRootProps()}>
                 <input {...getInputProps()} />
-                <p className="text-sm th-color-cyan">Local File</p>
+                <p className="text-sm th-color-cyan">{t("Local_File")}</p>
               </div>
             </section>
           )}
         </Dropzone>
-        <div className="cursor-pointer rounded h-10 border th-border-cyan text-sm th-color-cyan px-4 flex items-center" onClick={() => setOpenPrivateFiles(true)}>Private File</div>
-        <div className="cursor-pointer rounded h-10 border th-border-cyan text-sm th-color-cyan px-4 flex items-center" onClick={() => setOpenRecordingFiles(true)}>Recording File</div>
+        <div className="cursor-pointer rounded h-10 border th-border-cyan text-sm th-color-cyan px-4 flex items-center" onClick={() => setOpenPrivateFiles(true)}>{t("Private_File")}</div>
+        <div className="cursor-pointer rounded h-10 border th-border-cyan text-sm th-color-cyan px-4 flex items-center" onClick={() => setOpenRecordingFiles(true)}>{t("Recording_File")}</div>
       </div>
       {attachFiles.length > 0 && <div className="w-full flex items-center space-x-2 p-2 pl-6">
         {attachFiles.map((f: any, index: number) => (
@@ -155,6 +157,7 @@ function EditSchedule({
 }: {
   event?: any;
 }) {
+  const { t } = useTranslation();
   const location = useLocation();
   const teamcal = location.pathname?.includes("teamcal");
   const cancelButtonRef = useRef(null);
@@ -604,7 +607,7 @@ function EditSchedule({
                 <div className="flex items-center space-x-2">
                   <img src={`${process.env.PUBLIC_URL}/calendar.png`} className="w-6 h-6" alt="favorite" />
                   <h5 className="font-bold th-color-for">
-                    {event ? "Edit Event" : "Add Event"}
+                    {event ? "Edit Event" : t("Add_event")}
                   </h5>
                 </div>
                 <div
@@ -628,7 +631,7 @@ function EditSchedule({
                       label=""
                       name="title"
                       autoComplete="title"
-                      placeholder="Title"
+                      placeholder={t("Title")}
                     />
                   </div>
                   <div className="w-full flex items-center">
@@ -646,7 +649,7 @@ function EditSchedule({
                         dateFormat="yyyy-MM-dd HH:mm"
                         showTimeSelect
                         timeIntervals={15}
-                        timeCaption="Time"
+                        timeCaption={t("Time")}
                         disabled={values.is_all_day}
                       />
                     </div>
@@ -663,7 +666,7 @@ function EditSchedule({
                         dateFormat="yyyy-MM-dd HH:mm"
                         showTimeSelect
                         timeIntervals={15}
-                        timeCaption="Time"
+                        timeCaption={t("Time")}
                         disabled={values.is_all_day}
                       />
                     </div>
@@ -704,7 +707,7 @@ function EditSchedule({
                       </select>
                     </div>
                     <div className="w-[10%] flex items-center justify-end">
-                      <label className="text-sm mr-2 th-color-for" htmlFor="#is_all_day">All Day</label>
+                      <label className="text-sm mr-2 th-color-for" htmlFor="#is_all_day">{t("All_day")}</label>
                       <input
                         value={values.is_all_day}
                         type="checkbox"
@@ -728,7 +731,7 @@ function EditSchedule({
                       label=""
                       name="location"
                       autoComplete="location"
-                      placeholder="Location"
+                      placeholder={t("Location")}
                     />
                   </div>
                   <div className="w-full flex items-center">
@@ -743,7 +746,7 @@ function EditSchedule({
                       </select>
                     </div> */}
                     <div className="flex items-center mr-2 th-color-for">
-                      <div className="text-sm mr-2">Remind: </div>
+                      <div className="text-sm mr-2">{t("Remind")}: </div>
                       <select name="remind" onChange={handleChange} value={values.remind} className="th-bg-bg th-border-for th-color-for focus:ring-indigo-400 focus:border-indigo-500 block w-full shadow-sm text-sm rounded disabled:opacity-50">
                         <option value="0" selected >Never</option>
                         <option value="5" >5 mins</option>
@@ -757,7 +760,7 @@ function EditSchedule({
                       </select>
                     </div>
                     <div className="flex items-center th-color-for">
-                      <div className="text-sm mr-2">Mail remind at same time</div>
+                      <div className="text-sm mr-2">{t("Mail_remined_at_same_time")}</div>
                       <input
                         value={values.is_mail_remind}
                         type="checkbox"
@@ -777,7 +780,7 @@ function EditSchedule({
                       label=""
                       name="description"
                       autoComplete="description"
-                      placeholder="Description"
+                      placeholder={t("Description")}
                     />
                   </div>
                   <FileViewer
@@ -823,7 +826,7 @@ function EditSchedule({
                 </div>
                 <div className="px-4 pb-2 pt-2 border-t th-border-for sm:px-6 sm:flex sm:flex-row-reverse sm:justify-start">
                   <button onClick={handleClose} className="th-bg-bg th-color-for th-border-for border-2 text-sm w-20 h-10 rounded font-bold focus:z-10 focus:outline-none ml-2">
-                    Cancel
+                    {t("Cancel")}
                   </button>
                   <button type="submit" className={classNames(isSubmitting ? "w-24" : "w-20", "th-bg-bg th-color-cyan th-border-cyan border-2 text-sm h-10 rounded font-bold focus:z-10 focus:outline-none ml-2 flex items-center justify-center")}>
                     {isSubmitting &&
@@ -847,7 +850,7 @@ function EditSchedule({
                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                       />
                     </svg>}
-                    {event ? "Edit" : "Create"}
+                    {event ? t("Edit") : t("Create")}
                   </button>
                 </div>
               </form>

@@ -26,6 +26,7 @@ import { useTranslation } from "react-i18next";
 import { DetailsContext } from "contexts/DetailsContext";
 
 function CreateChannel() {
+  const { t } = useTranslation();
   const { themeColors } = useTheme();
   const cancelButtonRef = useRef(null);
   const { openCreateChannel: open, setOpenCreateChannel: setOpen } = useModal();
@@ -83,7 +84,7 @@ function CreateChannel() {
                   style={{ color: themeColors?.foreground }}
                   className="font-bold"
                 >
-                  Create a channel
+                  {t("Create_a_channel")}
                 </h5>
                 <div
                   role="button"
@@ -118,10 +119,10 @@ function CreateChannel() {
                     navigate(
                       `/dashboard/workspaces/${workspaceId}/channels/${channelId}`
                     );
-                    toast.success("Channel created.");
+                    toast.success(t("Channel created."));
                     setOpen(false);
                   } catch (err: any) {
-                    toast.error("Creating channel failed.");
+                    toast.error(t("Creating channel failed."));
                   }
                   setSubmitting(false);
                 }}
@@ -142,8 +143,7 @@ function CreateChannel() {
                         style={{ color: themeColors?.foreground }}
                         className="font-base text-sm"
                       >
-                        Channels are where your team communicates. They’re best
-                        when organized around a topic — #marketing, for example.
+                        {t("Create_channel_Detail")}
                       </span>
                       <div className="space-y-6 pt-5">
                         <TextField
@@ -170,12 +170,12 @@ function CreateChannel() {
                           value={values.details}
                           handleChange={handleChange}
                           placeholder=""
-                          infos="What's this channel about?"
+                          infos={t("Create_channel_Description_Detail")}
                         />
                       </div>
                     </div>
                     <div className="px-4 pb-2 pt-2 sm:px-6 sm:flex sm:flex-row-reverse border-t th-border-for">
-                      <ModalButton text="Create" isSubmitting={isSubmitting} />
+                      <ModalButton text={t("Create")} isSubmitting={isSubmitting} />
                     </div>
                   </form>
                 )}
@@ -367,7 +367,7 @@ export default function Channels({
                         static
                         className="left-0 th-bg-bg border th-border-for origin-top-right z-20 absolute mt-1 w-32 rounded-md shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none py-2"
                       >
-                        <div className="th-color-for font-bold text-sm px-2 pb-1">Sort by</div>
+                        <div className="th-color-for font-bold text-sm px-2 pb-1">{t("Sort_by")}</div>
                         <div className="w-full h-px th-bg-forbr" />
                         <Menu.Item>
                           {({ active }) => (
@@ -381,7 +381,7 @@ export default function Channels({
                               onClick={() => setType("Time")}
                             >
                               {type === "Time" ? <CheckIcon className="w-4 h-4 th-color-for" /> : <div className="w-4 h-4 th-color-for" />}
-                              <div className="th-color-for text-sm">Time</div>
+                              <div className="th-color-for text-sm">{t("Time")}</div>
                             </div>
                           )}
                         </Menu.Item>
@@ -397,7 +397,7 @@ export default function Channels({
                               onClick={() => setType("Unread")}
                             >
                               {type === "Unread" ? <CheckIcon className="w-4 h-4 th-color-for" /> : <div className="w-4 h-4 th-color-for" />}
-                              <div className="th-color-for text-sm">Unread</div>
+                              <div className="th-color-for text-sm">{t("Unread")}</div>
                             </div>
                           )}
                         </Menu.Item>

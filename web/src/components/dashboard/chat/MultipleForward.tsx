@@ -27,6 +27,7 @@ import { Autocomplete, Box, TextField as MuiTextField } from "@mui/material";
 import TextField from "components/TextField";
 import { useModal } from "contexts/ModalContext";
 import hexToRgbA from "utils/hexToRgbA";
+import { useTranslation } from "react-i18next";
 
 function ForwardFooter({
   setEdit,
@@ -43,6 +44,7 @@ function ForwardFooter({
   text: string;
   chatId: string | null;
 }) {
+  const { t } = useTranslation();
   const { themeColors } = useTheme();
   const editor = editorRef?.current?.getEditor();
   const realText = editor?.getText() as string | null | undefined;
@@ -56,7 +58,7 @@ function ForwardFooter({
         className="border-2 th-border-for th-color-for font-medium text-sm h-10 w-20 rounded"
         onClick={() => setEdit(false)}
       >
-        Cancel
+        {t("Cancel")}
       </button>
       <button
         className="border-2 th-color-cyan font-medium flex justify-center items-center text-sm h-10 w-20 rounded disabled:opacity-50"
@@ -74,7 +76,7 @@ function ForwardFooter({
                 {MESSAGE_MAX_CHARACTERS - isText.length}
               </span>
             ) : (
-              "Forward"
+              t("Forward")
             )}
           </>
         )}
@@ -84,6 +86,7 @@ function ForwardFooter({
 }
 
 export default function MultipleForward() {
+  const { t } = useTranslation();
   const forceUpdate = useForceUpdate();
   const {workspaceId} = useParams();
   const navigate = useNavigate();
@@ -188,7 +191,7 @@ export default function MultipleForward() {
             navigate(`/dashboard/workspaces/${workspaceId}/dm/${chatId}`);
           }
         } catch (err: any) {
-          toast.error("Forward message failed.");
+          toast.error(t("Forward message failed."));
         }
         setSubmitting(false);
         setVisibleForwardMultiple(false);

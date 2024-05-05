@@ -5,9 +5,11 @@ import TeammatesSection from "components/dashboard/sidebar/TeammatesSection";
 import { useModal } from "contexts/ModalContext";
 import { useTheme } from "contexts/ThemeContext";
 import { Fragment, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import classNames from "utils/classNames";
 
 export default function CreateMessageModal() {
+  const { t } = useTranslation();
   const { themeColors } = useTheme();
   const cancelButtonRef = useRef(null);
   const {
@@ -68,7 +70,7 @@ export default function CreateMessageModal() {
                   style={{ color: themeColors?.foreground }}
                   className="font-bold text-base"
                 >
-                  New message
+                  {t("New_message")}
                 </h5>
                 <div
                   role="button"

@@ -47,6 +47,7 @@ import { v4 as uuidv4 } from "uuid";
 import { useMessages } from "hooks/useMessages";
 import Preferences from "components/dashboard/navbar/Preferences";
 import Contact from "components/dashboard/Contact";
+import { useTranslation } from "react-i18next";
 
 interface ServerToClientEvents {
   noArg: () => void;
@@ -83,6 +84,7 @@ function ProfileViewItem({ value, text }: { value: string; text: string }) {
 }
 
 function ProfileView() {
+  const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
   const userId = location.pathname.split("/user_profile/")[1];
@@ -141,7 +143,7 @@ function ProfileView() {
       await postData(`/directs/${dm?.objectId}/close`);
       if (dmId === id) navigate(`/dashboard/workspaces/${workspaceId}`);
     } catch (err: any) {
-      toast.error("Close conversation failed.", {
+      toast.error(t("Close conversation failed."), {
         position: "top-right",
         autoClose: 2000,
         hideProgressBar: false,
@@ -188,7 +190,7 @@ function ProfileView() {
             />
           </div>
           <div className="space-y-3 w-full">
-            <ProfileViewItem text="Display name" value={value?.displayName} />
+            <ProfileViewItem text={t("Display_name")} value={value?.displayName} />
             <ProfileViewItem text="Email address" value={value?.email} />
             {value?.phoneNumber && (
               <ProfileViewItem text="Phone number" value={value?.phoneNumber} />
@@ -222,6 +224,7 @@ function ProfileView() {
 }
 
 export default function Dashboard() {
+  const { t } = useTranslation();
   const { workspaceId, channelId, dmId } = useParams();
   const { value, loading } = useMyWorkspaces();
   const { user, userdata } = useUser();
@@ -320,7 +323,7 @@ export default function Dashboard() {
         setRecipientInfo([]);
         setRoomName("");
         setIsVideoDisabled(false);
-        toast.info('Sorry, but this call timed out.', {
+        toast.info(t('Sorry, but this call timed out.'), {
           position: "top-right",
           autoClose: 2000,
           hideProgressBar: false,
@@ -337,7 +340,7 @@ export default function Dashboard() {
         setRecipientInfo([]);
         setRoomName("");
         setIsVideoDisabled(false);
-        toast.info('The caller has interrupted the call.', {
+        toast.info(t('The caller has interrupted the call.'), {
           position: "top-right",
           autoClose: 2000,
           hideProgressBar: false,
@@ -356,7 +359,7 @@ export default function Dashboard() {
           setSenderInfo(null);
           setRoomName("");
           setIsVideoDisabled(false);
-          toast.info('The recipient has declined the call.', {
+          toast.info(t('The recipient has declined the call.'), {
             position: "top-right",
             autoClose: 2000,
             hideProgressBar: false,
@@ -375,7 +378,7 @@ export default function Dashboard() {
         // setRecipientInfo(null);
         // setRoomName("");
         // setIsVideoDisabled(false);
-        toast.info('The recipient has accepted the call.', {
+        toast.info(t('The recipient has accepted the call.'), {
           position: "top-right",
           autoClose: 2000,
           hideProgressBar: false,

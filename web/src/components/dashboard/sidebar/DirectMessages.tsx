@@ -21,6 +21,7 @@ import { DetailsContext } from "contexts/DetailsContext";
 import RemoveMemberConfirm from "../chat/RemoveMemberConfirm";
 
 function DirectMessage({ dm }: { dm: any }) {
+  const { t } = useTranslation();
   const { themeColors } = useTheme();
   const navigate = useNavigate();
   const { workspaceId, dmId } = useParams();
@@ -54,7 +55,7 @@ function DirectMessage({ dm }: { dm: any }) {
       await postData(`/directs/${dm?.objectId}/close`);
       if (dmId === id) navigate(`/dashboard/workspaces/${workspaceId}`);
     } catch (err: any) {
-      toast.error("Close conversation failed.");
+      toast.error(t("Close conversation failed."));
     }
     setLoading(false);
   };
@@ -272,7 +273,7 @@ export default function DirectMessages() {
                               onClick={() => setType("Time")}
                             >
                               {type === "Time" ? <CheckIcon className="w-4 h-4 th-color-for" /> : <div className="w-4 h-4 th-color-for" />}
-                              <div className="th-color-for text-sm">Time</div>
+                              <div className="th-color-for text-sm">{t("Time")}</div>
                             </div>
                           )}
                         </Menu.Item>
@@ -288,7 +289,7 @@ export default function DirectMessages() {
                               onClick={() => setType("Unread")}
                             >
                               {type === "Unread" ? <CheckIcon className="w-4 h-4 th-color-for" /> : <div className="w-4 h-4 th-color-for" />}
-                              <div className="th-color-for text-sm">Unread</div>
+                              <div className="th-color-for text-sm">{t("Unread")}</div>
                             </div>
                           )}
                         </Menu.Item>
