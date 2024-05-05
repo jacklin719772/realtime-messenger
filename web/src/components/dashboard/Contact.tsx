@@ -127,7 +127,7 @@ function Contact() {
         {visibleContact && <XIcon className="h-4 w-4 button" style={{cursor: "pointer"}} onClick={() => setVisibleContact(false)} />}
       </div>
       <div className="px-2">
-        <div className="flex items-center border w-full pl-2 pr-4 th-color-for bg-white th-border-for mt-2 rounded-full">
+        <div className="flex items-center border w-full pl-2 pr-4 th-color-for th-bg-bg th-border-for mt-2 rounded-full">
           <SearchIcon className="h-4 w-4 th-color-for" />
           <input
             type="text"
@@ -136,7 +136,7 @@ function Contact() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder={t("Search_for_users")}
-            className="bg-white block text-sm th-color-for border-0 w-full focus:outline-none focus:ring-0"
+            className="th-bg-bg block text-sm th-color-for border-0 w-full focus:outline-none focus:ring-0"
           />
           <XIcon className="h-4 w-4 th-color-for" style={{cursor: 'pointer'}} onClick={() => setSearch("")} />
         </div>
@@ -151,7 +151,7 @@ function Contact() {
           <option value="online">{t("Online_Only")}</option>
         </select>
       </div>
-      <div className="border-r th-color-brblue th-border-selbg overflow-y-auto mt-1">
+      <div className="border-r th-color-brblue th-border-selbg overflow-y-auto mt-2">
         <Style css={`
           .th-color-for.relative > div > div > div {
             color: ${themeColors?.brightBlue} !important;

@@ -8,7 +8,7 @@ export const DEFAULT_THEME = "theme01";
 export const STICKERS_COUNT = 78;
 
 // The number of files in the `public/themes` folder
-export const THEMES_COUNT = 60;
+export const THEMES_COUNT = 26;
 
 // The max number of characters a message can have
 export const MESSAGE_MAX_CHARACTERS = 12000;

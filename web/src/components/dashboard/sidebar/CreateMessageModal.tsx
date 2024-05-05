@@ -109,7 +109,7 @@ export default function CreateMessageModal() {
                           borderColor: checked ? themeColors?.foreground : "",
                         }}
                       >
-                        <span>Channels</span>
+                        <span>{t("Channels")}</span>
                       </div>
                     )}
                   </RadioGroup.Option>
@@ -127,7 +127,7 @@ export default function CreateMessageModal() {
                           borderColor: checked ? themeColors?.foreground : "",
                         }}
                       >
-                        <span>Members</span>
+                        <span>{t("Members")}</span>
                       </div>
                     )}
                   </RadioGroup.Option>

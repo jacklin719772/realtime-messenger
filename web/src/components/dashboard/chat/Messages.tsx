@@ -90,7 +90,7 @@ export default function Messages({ lastRead, filter }: { lastRead: number | null
           result.push({...message, text});
           return result;
         }, []).map((message: any, index: number) => (
-          <>
+          <div key={message?.objectId}>
             <Style css={`
               .date-show {
                 unicode-bidi: plaintext;
@@ -134,7 +134,7 @@ export default function Messages({ lastRead, filter }: { lastRead: number | null
                 <div className="h-px w-full mr-3 my-3 th-bg-forbr" />
               </div>
             )}
-          </>
+          </div>
         ))}
         {loading && messages?.length === 0 && (
           <div className="flex w-full items-center py-10 justify-center">

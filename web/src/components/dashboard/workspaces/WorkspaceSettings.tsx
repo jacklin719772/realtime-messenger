@@ -111,7 +111,7 @@ export default function WorkspaceSettings({ workspace }: { workspace: any }) {
                           borderColor: checked ? themeColors?.cyan : "",
                         }}
                       >
-                        <span>Members</span>
+                        <span>{t("Members")}</span>
                       </div>
                     )}
                   </RadioGroup.Option>
