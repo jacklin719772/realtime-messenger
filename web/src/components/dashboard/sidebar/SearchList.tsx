@@ -286,7 +286,7 @@ function SearchList() {
                   borderColor: checked ? themeColors?.cyan : "",
                 }}
               >
-                <span>{t("Contact")}</span>
+                <span>{t("Contacts")}</span>
               </div>
             )}
           </RadioGroup.Option>
@@ -367,7 +367,7 @@ function SearchList() {
         </div>)}
         {(section === "all" || section === "file") && (<div>
           <div className="px-4 py-2 th-color-brblue th-bg-bgdark text-xs border-b th-border-for">
-            {t("Files")}
+            {t("File")}
           </div>
           {fileList.length > 0 ? fileList : loading? <div className="flex justify-center items-center th-bg-bg h-16"><Spinner className="h-4 w-4 th-color-brblue" /></div> : <div className="p-2 text-center text-sm th-color-brblue">{t("No_Results")}</div>}
         </div>)}

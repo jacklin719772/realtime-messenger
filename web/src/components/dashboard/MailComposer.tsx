@@ -385,7 +385,7 @@ function MailComposer() {
                             <section className="py-2 pr-4 w-1/5" style={{cursor: 'pointer'}}>
                               <div className="rounded w-full h-12 th-bg-bg flex justify-between border th-border-for th-color-for items-center px-4" {...getRootProps()}>
                                 <input {...getInputProps()} />
-                                <p>{t("Files")}</p>
+                                <p className="text-sm">{t("Files")}</p>
                                 <AttachFileIcon className="h-5 w-5 cursor-pointer th-color-for" />
                               </div>
                             </section>

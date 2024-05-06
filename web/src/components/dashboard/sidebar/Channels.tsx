@@ -365,7 +365,7 @@ export default function Channels({
                     >
                       <Menu.Items
                         static
-                        className="left-0 th-bg-bg border th-border-for origin-top-right z-20 absolute mt-1 w-32 rounded-md shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none py-2"
+                        className="left-0 th-bg-bg border th-border-for origin-top-right z-20 absolute mt-1 w-40 rounded-md shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none py-2"
                       >
                         <div className="th-color-for font-bold text-sm px-2 pb-1">{t("Sort_by")}</div>
                         <div className="w-full h-px th-bg-forbr" />
