@@ -95,7 +95,7 @@ export default function AddPeopleToChannelDialog({
             leaveFrom="opacity-100 translate-y-0 sm:scale-100"
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
-            <div className="th-bg-bg inline-block align-bottom rounded-xl border th-border-for text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <div className="th-bg-bg inline-block align-bottom rounded-xl border th-border-for text-left overflow-hidden shadow-xl transform transition-all sm:my-2 sm:align-middle sm:max-w-lg sm:w-full">
               <div className="th-bg-bg px-4 py-3 sm:p-6 sm:py-3 flex justify-between items-center">
                 <div>
                   <h5 className="font-bold th-color-for">
@@ -112,7 +112,7 @@ export default function AddPeopleToChannelDialog({
                   <XIcon className="h-5 w-5 th-color-for" />
                 </div>
               </div>
-              <div className="p-6 pt-0 pb-6 th-bg-bg border-t th-border-for">
+              <div className="p-6 pt-0 pb-2 th-bg-bg border-t th-border-for">
                 <div className="space-y-6">
                   <TextField
                     name="searchMembers"
@@ -124,18 +124,18 @@ export default function AddPeopleToChannelDialog({
                   />
                 </div>
               </div>
-              <div className="max-h-96 overflow-y-auto">
+              <div className="max-h-72 overflow-y-auto">
               {waitingMembers.map((member: any) => (
-                <li className="px-8 py-2 flex justify-between items-center cursor-pointer group">
+                <li className="px-6 py-1 flex justify-between items-center cursor-pointer group">
                   <div
                     className="group-hover:w-5/6 flex items-center w-full"
                   >
                     <img
-                      className="rounded mr-4 h-10 w-10"
+                      className="rounded mr-4 h-8 w-8"
                       src={getHref(member?.thumbnailURL) || getHref(member?.photoURL) || `${process.env.PUBLIC_URL}/blank_user.png`}
                       alt={member?.objectId}
                     />
-                    <div className="font-bold truncate th-color-for">
+                    <div className="text-sm font-medium truncate th-color-for">
                       {member?.fullName}
                     </div>
                   </div>

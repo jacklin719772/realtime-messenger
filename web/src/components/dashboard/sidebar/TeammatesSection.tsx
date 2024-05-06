@@ -165,7 +165,7 @@ export default function TeammatesSection() {
         </div>
       </div>
       <ul className="w-full mt-6 overflow-y-auto" style={{ height: 250, maxHeight: 250 }}>
-        <li
+        {/* <li
           className="px-8 py-2 flex items-center cursor-pointer"
           onClick={() => {
             setOpenCreateMessage(false);
@@ -176,7 +176,7 @@ export default function TeammatesSection() {
             <UserAddIcon className="h-5 w-5 th-color-for" />
           </div>
           <span className="text-sm th-color-for">{t("Invite_member")}</span>
-        </li>
+        </li> */}
         {displayMembers.map((member: any) => (
           <MemberItem
             key={member.objectId}

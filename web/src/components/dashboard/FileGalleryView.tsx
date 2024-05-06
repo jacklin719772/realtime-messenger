@@ -454,7 +454,7 @@ function FileGalleryView() {
         as="div"
         value={section}
         onChange={setSection}
-        className="flex justify-center space-x-2 px-2 text-sm font-normal overflow-x-auto"
+        className="flex justify-center space-x-4 pt-2 px-2 text-sm font-normal overflow-x-auto"
         style={{ color: themeColors?.foreground }}
       >
         <RadioGroup.Option

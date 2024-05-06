@@ -1,17 +1,20 @@
 import { SearchIcon, TrashIcon, UserAddIcon } from "@heroicons/react/outline";
 import AddPeopleToChannelDialog from "components/dashboard/channels/AddPeopleToChannelDialog";
 import Spinner from "components/Spinner";
+import { DirectMessagesContext } from "contexts/DirectMessagesContext";
 import { useUser } from "contexts/UserContext";
 import { UsersContext } from "contexts/UsersContext";
 import { useChannelById } from "hooks/useChannels";
 import { useWorkspaceById } from "hooks/useWorkspaces";
-import { useContext, useMemo, useState } from "react";
-import toast from "react-hot-toast";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
-import { deleteData } from "utils/api-helpers";
+import { deleteData, postData } from "utils/api-helpers";
 import classNames from "utils/classNames";
 import { getHref } from "utils/get-file-url";
+import ModalButton from "../ModalButton";
+import AddMemberConfirm from "../chat/AddMemberConfirm";
+import { toast } from "react-toastify";
 
 function MemberItem({
   id,
@@ -33,6 +36,31 @@ function MemberItem({
   const photoURL = getHref(member?.thumbnailURL) || getHref(member?.photoURL);
 
   const [loading, setLoading] = useState(false);
+  const [openAdd, setOpenAdd] = useState(false);
+
+  const newMessage = async () => {
+    setLoading(true);
+    try {
+      const { directId } = await postData("/directs", {
+        workspaceId,
+        userId: member?.objectId,
+      });
+      navigate(`/dashboard/workspaces/${workspaceId}/dm/${directId}`);
+      setOpenAdd(false);
+    } catch (err: any) {
+      toast.error(t("Creating direct message has been failed."), {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+    }
+    setLoading(false);
+  };
 
   console.log('isOwner: ', isOwner);  
 
@@ -51,11 +79,31 @@ function MemberItem({
 
   const isMe = id === user?.uid;
 
+  const { value: directs } = useContext(DirectMessagesContext);
+
+  const [openDirect, setOpenDirect] = useState<any>(null);
+
+  useEffect(() => {
+    if (directs) {
+      setOpenDirect(
+        isMe
+          ? directs.find(
+              (direct: any) =>
+                direct.active.includes(user?.uid) && direct.members.length === 1
+            )
+          : directs.find(
+              (direct: any) =>
+                direct.active.includes(user?.uid) && direct.members.includes(id)
+            )
+      );
+    }
+  }, [directs, user?.uid]);
+
   return (
     <li className="px-8 py-2 flex justify-between items-center cursor-pointer group">
       <div
         className={classNames(
-          defaultChannel || owner ? "" : "group-hover:w-5/6",
+          defaultChannel || owner ? "" : "group-hover:w-4/6",
           "flex items-center w-full"
         )}
       >
@@ -79,6 +127,20 @@ function MemberItem({
           )}
         </div>
       </div>
+      <ModalButton
+        isSubmitting={loading}
+        text={t("New_message")}
+        onClick={
+          openDirect
+            ? () => {
+                navigate(
+                  `/dashboard/workspaces/${workspaceId}/dm/${openDirect.objectId}`
+                );
+              }
+            : () => setOpenAdd(true)
+        }
+        className="w-full sm:ml-3 justify-center items-center py-1 px-4 border border-transparent text-sm font-bold rounded text-white focus:outline-none focus:ring-4 focus:ring-blue-200 sm:w-auto sm:text-sm disabled:opacity-50 hidden group-hover:inline-flex"
+      />
       {(!defaultChannel && !owner && isOwner) && (
         <div className="opacity-0 group-hover:opacity-100">
           {loading ? (
@@ -91,6 +153,7 @@ function MemberItem({
           )}
         </div>
       )}
+      <AddMemberConfirm open={openAdd} setOpen={setOpenAdd} addMember={newMessage} loading={loading} />
     </li>
   );
 }
