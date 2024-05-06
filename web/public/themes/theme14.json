@@ -16,7 +16,7 @@
   "brightPurple": "#ff55ff",
   "brightCyan": "#55ffff",
   "brightWhite": "#ffffff",
-  "background": "#ffffff",
+  "background": "#f5f5f5",
   "backgroundDark": "#006344",
   "foreground": "#242424",
   "cursorColor": "#000000",

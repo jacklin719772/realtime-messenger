@@ -116,7 +116,7 @@ function MemberItem({
               }
             : () => newMessage()
         }
-        className="w-full sm:ml-3 justify-center items-center py-1 px-4 border border-transparent text-sm font-bold rounded text-white focus:outline-none focus:ring-4 focus:ring-blue-200 sm:w-auto sm:text-sm disabled:opacity-50 hidden group-hover:inline-flex"
+        className="w-full sm:ml-3 justify-center items-center py-1 px-4 border border-transparent text-sm font-bold rounded focus:outline-none focus:ring-4 focus:ring-blue-200 sm:w-auto sm:text-sm disabled:opacity-50 hidden group-hover:inline-flex"
       />
     </li>
   );

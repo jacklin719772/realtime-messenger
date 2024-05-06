@@ -256,6 +256,18 @@
     "Join workspace": "Join workspace",
     "Sign In": "Sign In",
     "Your password": "Your password",
-    "I agree to the Term of User": "I agree to the Term of User",
-    "Sign Me In": "Sign Me In"
+    "I agree to the": "I agree to the",
+    "Term of User": "Term of User",
+    "Sign Me In": "Sign Me In",
+    "Are you want to delete this event?": "Are you want to delete this event?",
+    "Edit Event": "Edit Event",
+    "Leave_channel": "Leave channel",
+    "Profile": "Profile",
+    "Email address": "Email address",
+    "Remove member": "Remove Member",
+    "Select All": "Select All",
+    "Unselect All": "Unselect All",
+    "Choose members": "Choose members",
+    "Visit weboffice": "Visit weboffice",
+    "Add as member": "Add as member"
 }

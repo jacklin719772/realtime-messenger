@@ -121,7 +121,7 @@ function ProfileView() {
       navigate(`/dashboard/workspaces/${workspaceId}/dm/${directId}`);
       setOpenAdd(false);
     } catch (err: any) {
-      toast.error("Adding member failed.", {
+      toast.error(t("Adding member failed."), {
         position: "top-right",
         autoClose: 2000,
         hideProgressBar: false,
@@ -160,7 +160,7 @@ function ProfileView() {
   return (
     <div className="row-span-2 border rounded-xl flex flex-col overflow-hidden th-border-for my-2 mr-2 th-bg-bg">
       <div className="h-14 border-b flex items-center justify-between py-1 px-4 th-border-for">
-        <h5 className="text-base font-bold th-color-for">Profile</h5>
+        <h5 className="text-base font-bold th-color-for">{t("Profile")}</h5>
         <XIcon
           onClick={() => navigate(location.pathname.split("/user_profile")[0])}
           className="h-5 w-5 cursor-pointer th-color-for"
@@ -191,28 +191,28 @@ function ProfileView() {
           </div>
           <div className="space-y-3 w-full">
             <ProfileViewItem text={t("Display_name")} value={value?.displayName} />
-            <ProfileViewItem text="Email address" value={value?.email} />
+            <ProfileViewItem text={t("Email address")} value={value?.email} />
             {value?.phoneNumber && (
-              <ProfileViewItem text="Phone number" value={value?.phoneNumber} />
+              <ProfileViewItem text={t("Phone_number")} value={value?.phoneNumber} />
             )}
             {value?.title && (
-              <ProfileViewItem text="What I do?" value={value?.title} />
+              <ProfileViewItem text={t("What_I_do")} value={value?.title} />
             )}
           </div>
         </div>
         <div className="w-full px-5 pt-2 flex items-center justify-around pb-8">
           {dmUsers.includes(value.objectId) && (
             <button className="w-28 p-2 border-2 th-border-brred th-color-brred rounded text-xs shadow" onClick={() => setOpenRemove(true)}>
-              Remove member
+              {t("Remove member")}
             </button>
           )}
           {!dmUsers.includes(value.objectId) && (
             <button className="w-28 p-2 border-2 th-border-cyan th-color-cyan rounded text-xs shadow" onClick={() => setOpenAdd(true)}>
-              Add as member
+              {t("Add as member")}
             </button>
           )}
           <button className="w-28 p-2 border-2 th-border-for th-color-for rounded text-xs shadow" onClick={() => setOpenOffice(true)}>
-            Visit weboffice
+            {t("Visit weboffice")}
           </button>
         </div>
       </div>

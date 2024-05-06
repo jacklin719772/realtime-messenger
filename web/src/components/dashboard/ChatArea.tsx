@@ -208,7 +208,7 @@ function HeaderChannel() {
           name={value?.name}
           topic={value?.topic}
           details={value?.details}
-          createdAt={new Date(value?.createdAt)?.toDateString()}
+          createdAt={new Date(value?.createdAt)?.toISOString().split("T")[0]}
         />
       </div>
       <div className="flex">
@@ -227,7 +227,7 @@ function HeaderChannel() {
           <img className="h-5 w-5" alt="search" src={`${process.env.PUBLIC_URL}/search.png`} />
         </button>
         <button
-          title={t("File_search")}
+          title={t("File_Search")}
           className="th-color-for inline-flex justify-center items-center text-sm w-8 h-10 rounded-lg font-extrabold focus:z-10 focus:outline-none"
           onClick={() => setVisibleFileSearch(!visibleFileSearch)}
         >
@@ -263,7 +263,7 @@ function HeaderChannel() {
                     className="th-bg-bg border th-border-for origin-top-right z-20 absolute right-0 mt-1 w-48 h-72  rounded-md shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none py-2"
                   >
                     <div className="px-5 flex items-center justify-between">
-                      <div className="text-base th-color-for">Choose members</div>
+                      <div className="text-base th-color-for">{t("Choose members")}</div>
                     </div>
                     <div className="w-full h-px th-bg-for" />
                     <div className="overflow-y-auto h-52">
@@ -285,13 +285,13 @@ function HeaderChannel() {
                         <button className="th-color-for border-2 th-border-for rounded text-xs px-2 py-1" onClick={() =>  {
                           setCheckedUsers(users?.filter((u: any) => (value?.members.includes(u?.objectId) && u?.objectId !== userdata?.objectId)));
                           setChecked(true);
-                        }}>Select All</button>
+                        }}>{t("Select All")}</button>
                       }
                       {checked &&
                         <button className="th-color-for border-2 th-border-for rounded text-xs px-2 py-1" onClick={() =>  {
                           setCheckedUsers([]);
                           setChecked(false);
-                        }}>Unselect All</button>
+                        }}>{t("Unselect All")}</button>
                       }
                     </div>
                   </Menu.Items>
@@ -330,7 +330,7 @@ function HeaderChannel() {
                     className="th-bg-bg border th-border-for origin-top-right z-20 absolute right-0 mt-1 w-48 h-72  rounded-md shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none py-2"
                   >
                     <div className="px-5 flex items-center justify-between">
-                      <div className="text-base th-color-for">Choose members</div>
+                      <div className="text-base th-color-for">{t("Choose members")}</div>
                     </div>
                     <div className="w-full h-px th-bg-for" />
                     <div className="overflow-y-auto h-52">
@@ -352,13 +352,13 @@ function HeaderChannel() {
                         <button className="th-color-for border-2 th-border-for rounded text-xs px-2 py-1" onClick={() =>  {
                           setCheckedUsers(users?.filter((u: any) => (value?.members.includes(u?.objectId) && u?.objectId !== userdata?.objectId)));
                           setChecked(true);
-                        }}>Select All</button>
+                        }}>{t("Select All")}</button>
                       }
                       {checked &&
                         <button className="th-color-for border-2 th-border-for rounded text-xs px-2 py-1" onClick={() =>  {
                           setCheckedUsers([]);
                           setChecked(false);
-                        }}>Unselect All</button>
+                        }}>{t("Unselect All")}</button>
                       }
                     </div>
                   </Menu.Items>
@@ -526,7 +526,7 @@ function HeaderDirectMessage() {
           <img className="h-5 w-5" alt="search" src={`${process.env.PUBLIC_URL}/search.png`} />
         </button>
         <button
-          title={t("File_search")}
+          title={t("File_Search")}
           className="th-color-for inline-flex justify-center items-center text-sm w-8 h-10 rounded-lg font-extrabold focus:z-10 focus:outline-none"
           onClick={() => setVisibleFileSearch(!visibleFileSearch)}
         >

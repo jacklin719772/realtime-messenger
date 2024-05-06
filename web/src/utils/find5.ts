@@ -499,6 +499,15 @@ function create_div_html(isShowTxt: any, root: string) {
   findwindow.style.fontSize = "14px";
   findwindow.className = "outMain";
 
+  var searchMessage = localStorage.getItem("currentLanguage") === "" || localStorage.getItem("currentLanguage") === "zhs" ? "查找消息..." :
+                      localStorage.getItem("currentLanguage") === "en" ? "Search messages..." : "查找消息...";
+  var prevText = localStorage.getItem("currentLanguage") === "" || localStorage.getItem("currentLanguage") === "zhs" ? "前一个" :
+                  localStorage.getItem("currentLanguage") === "en" ? "Prev" : "前一个";
+  var nextText = localStorage.getItem("currentLanguage") === "" || localStorage.getItem("currentLanguage") === "zhs" ? "下一个" :
+                  localStorage.getItem("currentLanguage") === "en" ? "Next" : "下一个";
+  var resultText = localStorage.getItem("currentLanguage") === "" || localStorage.getItem("currentLanguage") === "zhs" ? "结果" :
+                  localStorage.getItem("currentLanguage") === "en" ? "Results" : "结果";
+
   var string = "";
   var searchIcon =
     '<div id="searchIcon" style="display: flex;align-items: center;justify-content: center;cursor: pointer;width: 30px;cursor: pointer;"><svg focusable="false" class="" data-icon="search" width="1em" height="1em" fill="#6C6C6C" aria-hidden="true" viewBox="64 64 896 896"><path d="M909.6 854.5L649.9 594.8C690.2 542.7 712 479 712 412c0-80.2-31.3-155.4-87.9-212.1-56.6-56.7-132-87.9-212.1-87.9s-155.5 31.3-212.1 87.9C143.2 256.5 112 331.8 112 412c0 80.1 31.3 155.5 87.9 212.1C256.5 680.8 331.8 712 412 712c67 0 130.6-21.8 182.7-62l259.7 259.6a8.2 8.2 0 0011.6 0l43.6-43.5a8.2 8.2 0 000-11.6zM570.4 570.4C528 612.7 471.8 636 412 636s-116-23.3-158.4-65.6C211.3 528 188 471.8 188 412s23.3-116.1 65.6-158.4C296 211.3 352.2 188 412 188s116.1 23.2 158.4 65.6S636 352.2 636 412s-23.3 116.1-65.6 158.4z"></path></svg></div>';
@@ -510,7 +519,7 @@ function create_div_html(isShowTxt: any, root: string) {
     '<form onsubmit="return false;"><div style="display: flex;padding: 3px;"><input autocomplete="off"' +
     ' class="paperview-input-text focus:outline-none focus:ring-0 text-sm" ' +
     ' style="float:left;height: 27px;width: 500px;border: none;outline: 0px;" id="fwtext"' +
-    ' placeholder="Search messages..."/>' +
+    ' placeholder="' + searchMessage + '"/>' +
     closeIcon +
     searchIcon +
     "</div>";
@@ -518,9 +527,9 @@ function create_div_html(isShowTxt: any, root: string) {
     "</form></div>" +
     '<div class="searchRight" style=" display: flex; width: 300px">' +
     '<div class="res"  style=" display: flex;justify-content: space-around;align-items: center;">' +
-    `<div class="txt th-color-for" style="font-size: 14px;">Results：<span id="total">0</span></div>` +
-    '<div id="btnUp" class="btn item th-bg-bg border-2 rounded th-border-for th-color-for text-xs" style="display: flex;justify-content: center;align-items: center;width: 68px;height: 24px; margin: 12px 2px;cursor: pointer;margin-left: 10px;">Prev</div>' +
-    '<div id="btnDown" class="btn item th-bg-bg border-2 rounded th-border-for th-color-for text-xs" style="display: flex;justify-content: center;align-items: center;width: 68px;height: 24px; margin: 12px 2px;cursor: pointer;">Next</div>' +
+    `<div class="txt th-color-for" style="font-size: 14px;">` + resultText + `：<span id="total">0</span></div>` +
+    '<div id="btnUp" class="btn item th-bg-bg border-2 rounded th-border-for th-color-for text-xs" style="display: flex;justify-content: center;align-items: center;width: 68px;height: 24px; margin: 12px 2px;cursor: pointer;margin-left: 10px;">' + prevText + '</div>' +
+    '<div id="btnDown" class="btn item th-bg-bg border-2 rounded th-border-for th-color-for text-xs" style="display: flex;justify-content: center;align-items: center;width: 68px;height: 24px; margin: 12px 2px;cursor: pointer;">' + nextText + '</div>' +
     '<div class="txt" id="find_msg"  style="font-size: 14px; color: #6c6c6c;margin-left: 10px;">0/0</div>' +
     "</div>" +
     "</div>";

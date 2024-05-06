@@ -607,7 +607,7 @@ function EditSchedule({
                 <div className="flex items-center space-x-2">
                   <img src={`${process.env.PUBLIC_URL}/calendar.png`} className="w-6 h-6" alt="favorite" />
                   <h5 className="font-bold th-color-for">
-                    {event ? "Edit Event" : t("Add_event")}
+                    {event ? t("Edit Event") : t("Add_event")}
                   </h5>
                 </div>
                 <div

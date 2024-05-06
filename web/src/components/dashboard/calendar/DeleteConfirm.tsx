@@ -60,7 +60,7 @@ export default function DeleteConfirm({
                   <h5 className="font-bold th-color-for">
                     {t("Delete_Event")}
                   </h5>
-                  <span className="opacity-70 text-sm th-color-for">Are you want to delete this event?</span>
+                  <span className="opacity-70 text-sm th-color-for">{t("Are you want to delete this event?")}</span>
                 </div>
               </div>
               <div className="px-4 pb-5 pt-1 border-t th-border-for sm:px-6 sm:flex sm:flex-row-reverse sm:justify-start">

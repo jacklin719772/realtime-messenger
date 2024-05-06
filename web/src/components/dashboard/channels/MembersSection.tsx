@@ -103,7 +103,7 @@ function MemberItem({
     <li className="px-8 py-2 flex justify-between items-center cursor-pointer group">
       <div
         className={classNames(
-          defaultChannel || owner ? "" : "group-hover:w-4/6",
+          defaultChannel || owner ? "group-hover:w-4/6" : "group-hover:w-4/6",
           "flex items-center w-full"
         )}
       >
@@ -139,7 +139,7 @@ function MemberItem({
               }
             : () => setOpenAdd(true)
         }
-        className="w-full sm:ml-3 justify-center items-center py-1 px-4 border border-transparent text-sm font-bold rounded text-white focus:outline-none focus:ring-4 focus:ring-blue-200 sm:w-auto sm:text-sm disabled:opacity-50 hidden group-hover:inline-flex"
+        className="w-full sm:ml-3 justify-center items-center py-1 px-4 border border-transparent text-sm font-bold rounded focus:outline-none focus:ring-4 focus:ring-blue-200 sm:w-auto sm:text-sm disabled:opacity-50 hidden group-hover:inline-flex"
       />
       {(!defaultChannel && !owner && isOwner) && (
         <div className="opacity-0 group-hover:opacity-100">

@@ -108,7 +108,7 @@ export default function EditProfile({
             leaveFrom="opacity-100 translate-y-0 sm:scale-100"
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
-            <div className="inline-block align-bottom rounded-xl border th-border-for text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full th-bg-bg">
+            <div className="inline-block align-bottom rounded-xl border th-border-for text-left overflow-hidden shadow-xl transform transition-all sm:my-2 sm:align-middle sm:max-w-2xl sm:w-full th-bg-bg">
               <Formik
                 initialValues={{
                   fullName: userdata?.fullName || "",
@@ -160,8 +160,8 @@ export default function EditProfile({
                         <XIcon className="h-5 w-5 th-color-for" />
                       </div>
                     </div>
-                    <div className="p-6 pt-2 pb-2 grid grid-cols-3 th-bg-bg">
-                      <div className="col-span-2 space-y-6 px-px max-h-450 overflow-y-auto">
+                    <div className="p-6 pt-2 pb-2 grid grid-cols-3 th-bg-bg max-h-96 overflow-y-auto">
+                      <div className="col-span-2 space-y-6 px-px">
                         <TextField
                           label={t("Full_name")}
                           name="fullName"

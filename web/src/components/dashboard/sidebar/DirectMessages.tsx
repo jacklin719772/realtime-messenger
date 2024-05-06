@@ -180,7 +180,7 @@ function AddTeammates() {
       }}
     >
       <div className="flex items-center justify-center rounded p-1 mr-2 th-bg-brblue">
-        <PlusIcon className="h-3 w-3 th-color-brwhite" />
+        <PlusIcon className="h-3 w-3 th-color-selbg" />
       </div>
       <h5 className="th-color-brblue">{t("Add_members")}</h5>
     </div>

@@ -196,7 +196,7 @@ export default function Login() {
                       onChange={handleChange}
                       className="bg-[#495057] text-2xl w-6 h-6 border-0 outline-0 mr-2"
                     />
-                    <div className="text-lg text-[#adb5bd]">I agree to the <a href="#" className="font-bold">Term of User</a></div>
+                    <div className="text-lg text-[#adb5bd]">{t("I agree to the")} <a href="#" className="font-bold">{t("Term of User")}</a></div>
                   </div>
                   <div className="pt-[1vw]">
                     <AuthButton text={t("Sign Me In")} isSubmitting={isSubmitting} />

@@ -233,6 +233,8 @@ export default function EditChannel({
                       <div className="border rounded-xl th-bg-bg th-border-for">
                         <EditChannelItems
                           name={t("Topic")}
+                          placeholder={t("Add_a_Topic")}
+                          title={t("Edit_Topic")}
                           field="topic"
                           value={topic}
                           editable={t("Edit_Topic_Detail")}
@@ -240,6 +242,8 @@ export default function EditChannel({
                         />
                         <EditChannelItems
                           name={t("Description")}
+                          placeholder={t("Add_a-description")}
+                          title={t("Edit_Description")}
                           field="details"
                           value={details}
                           editable={t("Edit_Description_Detail")}
