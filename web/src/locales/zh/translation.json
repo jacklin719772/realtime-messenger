@@ -194,7 +194,7 @@
     "online_error": "网络连接错误，请检查您设备的联网状态.",
     "connection_error": "无法连接至服务器，请刷新网页或联系管理员.",
     "auth_error": "您的登录认证已过期，请重新登录.",
-    "uteamwork_error": "请退出并重新登录Uteamwork系统.",
+    "uteamwork_error": "请分别退出Messenger和Uteamwork后重新登录系统.",
     "Please enter all fields.": "请输入全部必填项.",
     "New bookmark has been successfully created.": "书签添加成功！",
     "Creating the bookmark has been failed.": "书签添加失败！",
@@ -269,5 +269,6 @@
     "Unselect All": "全不选",
     "Choose members": "选择通话对象",
     "Visit weboffice": "访问网络办公室",
-    "Add as member": "添加为成员"
+    "Add as member": "添加为成员",
+    "Detail": "详情"
 }

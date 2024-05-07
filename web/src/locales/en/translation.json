@@ -194,7 +194,7 @@
     "online_error": "Please check your network connection status.",
     "connection_error": "Connection to the server is failed. Please refresh the page.",
     "auth_error": "You authentication is expired. Please re-sign in.",
-    "uteamwork_error": "Please sign out and re-sign in from uteamwork.",
+    "uteamwork_error": "Please sign out of Messenger and Uteamwork respectively and then sign in again to the system.",
     "Please enter all fields.": "Please enter all fields.",
     "New bookmark has been successfully created.": "New bookmark has been successfully created.",
     "Creating the bookmark has been failed.": "Creating the bookmark has been failed.",
@@ -269,5 +269,6 @@
     "Unselect All": "Unselect All",
     "Choose members": "Choose members",
     "Visit weboffice": "Visit weboffice",
-    "Add as member": "Add as member"
+    "Add as member": "Add as member",
+    "Detail": "Detail"
 }

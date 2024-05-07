@@ -194,7 +194,7 @@
     "online_error": "網路連接錯誤，請檢察您設備的網路狀態。",
     "connection_error": "無法連接至伺服器，請重新整理網頁或聯繫管理員。",
     "auth_error": "您的登入認證已過期，請重新登入。",
-    "uteamwork_error": "請退出並重新登入 Uteamwork 系統。",
+    "uteamwork_error": "請退Messenger和Uteamwork后重新登入系統。",
     "Please enter all fields.": "請輸入全部必填項目。",
     "New bookmark has been successfully created.": "書籤新增成功！",
     "Creating the bookmark has been failed.": "書籤新增失敗！",
@@ -269,5 +269,6 @@
     "Unselect All": "全不選",
     "Choose members": "選擇通話對象",
     "Visit weboffice": "訪問網路辦公室",
-    "Add as member": "新增為成員"
+    "Add as member": "新增為成員",
+    "Detail": "詳情"
 }

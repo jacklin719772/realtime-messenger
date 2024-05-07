@@ -207,7 +207,7 @@ function EditSchedule({
       end_time: new Date(event.end_time),
       timezone: event.timezone,
       is_all_day: event.is_all_day === 0 ? false : true,
-      repeat: event.repeat ? event.repeat : "",
+      repeat: event.repeat ? event.repeat : 0,
       repeat_from: event.repeat_from ? event.repeat_from : "",
       repeat_to: event.repeat_to ? event.repeat_to : "",
       repeat_option: event.repeat_option,
@@ -216,7 +216,7 @@ function EditSchedule({
       is_edit_repeat: true,
       is_mail_remind: event.is_mail_remind === 0 ? false : true,
       description: event.description,
-      location: event.localtion,
+      location: event.location,
       completed: 0,
     },
     validationSchema: Yup.object({
@@ -850,7 +850,7 @@ function EditSchedule({
                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                       />
                     </svg>}
-                    {event ? t("Edit") : t("Create")}
+                    {event ? t("Save") : t("Create")}
                   </button>
                 </div>
               </form>

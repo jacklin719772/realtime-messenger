@@ -75,7 +75,7 @@ function InviteUserItem({
       </div>
       <div className="flex items-center space-x-4">
         <img src={getHref(item.thumbnailURL) || getHref(item.photoURL) || `${process.env.PUBLIC_URL}/blank_user.png`} alt={item.displayName} className="w-6" />
-        <div className="font-bold text-sm">{item.displayName}</div>
+        <div className="font-normal text-sm">{item.displayName}</div>
       </div>
     </div>
   )
@@ -208,7 +208,7 @@ function HeaderChannel() {
           name={value?.name}
           topic={value?.topic}
           details={value?.details}
-          createdAt={new Date(value?.createdAt)?.toISOString().split("T")[0]}
+          createdAt={value?.createdAt ? new Date(value?.createdAt)?.toISOString().split("T")[0] : ""}
         />
       </div>
       <div className="flex">
@@ -330,7 +330,7 @@ function HeaderChannel() {
                     className="th-bg-bg border th-border-for origin-top-right z-20 absolute right-0 mt-1 w-48 h-72  rounded-md shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none py-2"
                   >
                     <div className="px-5 flex items-center justify-between">
-                      <div className="text-base th-color-for">{t("Choose members")}</div>
+                      <div className="text-sm font-medium th-color-for">{t("Choose members")}</div>
                     </div>
                     <div className="w-full h-px th-bg-for" />
                     <div className="overflow-y-auto h-52">

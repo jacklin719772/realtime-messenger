@@ -209,7 +209,7 @@ export default function Navbar() {
         "max-h-12 px-4 th-bg-blue grid grid-cols-6"
       )}
     >
-      <div className="flex items-center justify-start col-span-3">
+      <div className="flex items-center justify-start col-span-5">
         <div className="flex items-center pl-1 pr-3">
           <Menu as="div" className="relative">
             {({ open }) => (
@@ -366,22 +366,20 @@ export default function Navbar() {
             </button>
           </div>
         )}
-      </div>
-      <div className="col-span-2 flex items-center">
         {!isOnline ?
-        <div className="text-xs rounded-lg px-2 py-1 focus:outline-none th-color-brwhite th-bg-red font-medium flex items-center justify-center">
+        <div className="text-xs rounded-lg px-2 py-1 focus:outline-none th-color-brwhite th-bg-red font-medium flex items-center justify-center mr-2">
           <ExclamationIcon className="w-5 h-5 th-color-brwhite" />
           <div className="text-sm">{t("online_error")}</div>
         </div> : !connected ?
-        <div className="text-xs rounded-lg px-2 py-1 focus:outline-none th-color-brwhite th-bg-red font-medium flex items-center justify-center">
+        <div className="text-xs rounded-lg px-2 py-1 focus:outline-none th-color-brwhite th-bg-red font-medium flex items-center justify-center mr-2">
           <ExclamationIcon className="w-5 h-5 th-color-brwhite" />
           <div className="text-sm">{t("connection_error")}</div>
         </div> : !authenticated ? 
-        <div className="text-xs rounded-lg px-2 py-1 focus:outline-none th-color-brwhite th-bg-red font-medium flex items-center justify-center">
+        <div className="text-xs rounded-lg px-2 py-1 focus:outline-none th-color-brwhite th-bg-red font-medium flex items-center justify-center mr-2">
           <ExclamationIcon className="w-5 h-5 th-color-brwhite" />
           <div className="text-sm">{t("auth_error")}</div>
         </div> : !uteamwork ? 
-        <div className="text-xs rounded-lg px-2 py-1 focus:outline-none th-color-brwhite th-bg-red font-medium flex items-center justify-center">
+        <div className="text-xs rounded-lg px-2 py-1 focus:outline-none th-color-brwhite th-bg-red font-medium flex items-center justify-center mr-2">
           <ExclamationIcon className="w-5 h-5 th-color-brwhite" />
           <div className="text-sm">{t("uteamwork_error")}</div>
         </div> : ""}
