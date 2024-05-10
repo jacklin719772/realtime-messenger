@@ -236,7 +236,7 @@ export default function Dashboard() {
   const teamcal = location.pathname?.includes("teamcal");
   const {visibleFileSearch, visibleGlobalSearch} = useContext(ReactionsContext);
   const {visibleContact, setVisibleContact} = useModal();
-  const {openMailSender, openFavorite, uteamworkUserData, etherpadMinimized, setCurrentWorkspaceId, openMeetingModal, openCalling, setOpenCalling, openReceiving, setOpenReceiving, recipientInfo, setRecipientInfo, senderInfo, setSenderInfo, roomName, setRoomName, isVideoDisabled, setIsVideoDisabled, setOpenMeetingModal, iframeLoaded} = useContext(ModalContext);
+  const {openMailSender, openFavorite, uteamworkUserData, setUteamworkUserData, etherpadMinimized, setCurrentWorkspaceId, openMeetingModal, openCalling, setOpenCalling, openReceiving, setOpenReceiving, recipientInfo, setRecipientInfo, senderInfo, setSenderInfo, roomName, setRoomName, isVideoDisabled, setIsVideoDisabled, setOpenMeetingModal, iframeLoaded} = useContext(ModalContext);
   const [isOwner, setIsOwner] = useState(false);
   const [ownerData, setOwnerData] = useState<any>(null);
   const { soundActivated, messageSent, setMessageSent } = useModal();
@@ -254,6 +254,22 @@ export default function Dashboard() {
       workspaceId,
       chatType: "Direct",
     });
+  }
+
+  const getUteamworkUserData =async () => {
+    const response = await fetch("https://www.uteamwork.com/_api/annonymous/getUsers", {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json",
+      }
+    });
+    const result = await response.json();
+    console.log(result);
+    if (result.result) {
+      setUteamworkUserData(result.result);
+    } else {
+      setUteamworkUserData(null);
+    }
   }
 
   useEffect(() => {
@@ -406,6 +422,10 @@ export default function Dashboard() {
       setOwnerData(uteamworkUserData.filter((u: any) => u.email === owner?.email)[0]);
     }
   }, [owner, uteamworkUserData]);
+
+  useEffect(() => {
+    getUteamworkUserData();
+  }, []);
 
   useEffect(() => {
     if (user?.uid) {

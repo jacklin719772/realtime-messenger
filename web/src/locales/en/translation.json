@@ -270,5 +270,14 @@
     "Choose members": "Choose members",
     "Visit weboffice": "Visit weboffice",
     "Add as member": "Add as member",
-    "Detail": "Detail"
+    "Detail": "Detail",
+    "Please input all required fields.": "Please input all required fields.",
+    "End time must be later than start time.": "End time must be later than start time.",
+    "Start time must be later than current time.": "Start time must be later than current time.",
+    "Uploading local file has been failed.": "Uploading local file has been failed.",
+    "Updating the event has been failed.": "Updating the event has been failed.",
+    "Creating the event has been failed.": "Creating the event has been failed.",
+    "You have any event at this time already": "You have any event at this time already",
+    "The event has been successfully updated.": "The event has been successfully updated.",
+    "The event has been successfully created.": "The event has been successfully created."
 }

@@ -156,7 +156,7 @@ export default function EditChannel({
                   />
                 </div>
               </div>
-              <div className="pt-1" style={{ color: themeColors?.background }}>
+              <div className="pt-2" style={{ color: themeColors?.background }}>
                 <RadioGroup
                   as="div"
                   value={section}
@@ -224,7 +224,7 @@ export default function EditChannel({
                 <div
                   className={classNames(
                     section === "members" ? "" : "px-8",
-                    "space-y-6 pt-5 pb-8 border-tth-bg-bg th-border-selbg"
+                    "space-y-4 pt-4 pb-8 th-bg-bg th-border-selbg"
                   )}
                   style={{height: 350, maxHeight: 350}}
                 >

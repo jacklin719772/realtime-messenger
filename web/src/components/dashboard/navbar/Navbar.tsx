@@ -367,19 +367,19 @@ export default function Navbar() {
           </div>
         )}
         {!isOnline ?
-        <div className="text-xs rounded-lg px-2 py-1 focus:outline-none th-color-brwhite th-bg-red font-medium flex items-center justify-center mr-2">
+        <div className="text-xs rounded-lg px-2 py-1 focus:outline-none th-color-brwhite th-bg-red font-medium flex items-center justify-center ml-4">
           <ExclamationIcon className="w-5 h-5 th-color-brwhite" />
           <div className="text-sm">{t("online_error")}</div>
         </div> : !connected ?
-        <div className="text-xs rounded-lg px-2 py-1 focus:outline-none th-color-brwhite th-bg-red font-medium flex items-center justify-center mr-2">
+        <div className="text-xs rounded-lg px-2 py-1 focus:outline-none th-color-brwhite th-bg-red font-medium flex items-center justify-center ml-4">
           <ExclamationIcon className="w-5 h-5 th-color-brwhite" />
           <div className="text-sm">{t("connection_error")}</div>
         </div> : !authenticated ? 
-        <div className="text-xs rounded-lg px-2 py-1 focus:outline-none th-color-brwhite th-bg-red font-medium flex items-center justify-center mr-2">
+        <div className="text-xs rounded-lg px-2 py-1 focus:outline-none th-color-brwhite th-bg-red font-medium flex items-center justify-center ml-4">
           <ExclamationIcon className="w-5 h-5 th-color-brwhite" />
           <div className="text-sm">{t("auth_error")}</div>
         </div> : !uteamwork ? 
-        <div className="text-xs rounded-lg px-2 py-1 focus:outline-none th-color-brwhite th-bg-red font-medium flex items-center justify-center mr-2">
+        <div className="text-xs rounded-lg px-2 py-1 focus:outline-none th-color-brwhite th-bg-red font-medium flex items-center justify-center ml-4">
           <ExclamationIcon className="w-5 h-5 th-color-brwhite" />
           <div className="text-sm">{t("uteamwork_error")}</div>
         </div> : ""}

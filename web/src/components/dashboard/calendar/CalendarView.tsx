@@ -67,31 +67,59 @@ function CalendarView({
   const calendarRef = useRef<any>(null);
 
   const getAllMeeting =async () => {
+    console.log('GetAllMeeting.....');
     try {
-      let response;
-      if (!teamcal || isOwner) {
-        response = await axios.post("https://www.uteamwork.com/_api/meeting/getAllMeeting", {}, {
-          headers: {
-            "Accept": "application/json, text/plain, */*",
-            "Authorization": `Bearer ${localStorage.getItem("t")}`,
-          },
-        });
-      } else {
-        response = await axios.post("https://www.uteamwork.com/_api/meeting/getAllMeeting2", {
-          id: ownerData.memberId,
-          email: ownerData.email,
-        }, {
-          headers: {
-            "Accept": "application/json, text/plain, */*",
-          },
-        });
-      }
+      // let response;
+      console.log('Try.....');
+      // const response2 =  await axios.post("https://www.uteamwork.com/_api/meeting/getAllMeeting2", {
+      //   id: ownerData.memberId,
+      //   email: ownerData.email,
+      // }, {
+      //   headers: {
+      //     "Accept": "application/json, text/plain, */*",
+      //   },
+      // });
+      const response = (!teamcal || isOwner) ? await axios.post("https://www.uteamwork.com/_api/meeting/getAllMeeting", {}, {
+        headers: {
+          "Accept": "application/json, text/plain, */*",
+          "Authorization": `Bearer ${localStorage.getItem("t")}`,
+        },
+      }) : await axios.post("https://www.uteamwork.com/_api/meeting/getAllMeeting2", {
+        id: ownerData.memberId,
+        email: ownerData.email,
+      }, {
+        headers: {
+          "Accept": "application/json, text/plain, */*",
+        },
+      });
+      // if (!teamcal || isOwner) {
+      //   console.log('Calendar.....');
+      //   response = await axios.post("https://www.uteamwork.com/_api/meeting/getAllMeeting", {}, {
+      //     headers: {
+      //       "Accept": "application/json, text/plain, */*",
+      //       "Authorization": `Bearer ${localStorage.getItem("t")}`,
+      //     },
+      //   });
+      // } else {
+      //   console.log('Teamcal....');
+      //   response = await axios.post("https://www.uteamwork.com/_api/meeting/getAllMeeting2", {
+      //     id: ownerData.memberId,
+      //     email: ownerData.email,
+      //   }, {
+      //     headers: {
+      //       "Accept": "application/json, text/plain, */*",
+      //     },
+      //   });
+      //   console.log(response);
+      // }
       console.log(response.data);
+      // console.log(response2.data);
       const filteredResult = teamcal ? response.data.result.filter((m: any) => m.title.includes("--teamcal")) : response.data.result.filter((m: any) => !m.title.includes("--teamcal"));
       setAllMeeting(filteredResult);
       const todayEvents = filteredResult.filter((m: any) => new Date(m.start_time).toLocaleDateString() === new Date().toLocaleDateString());
       setDateEvents(todayEvents);
-    } catch (error) {
+    } catch (error: any) {
+      console.log(error);
       setAllMeeting([]);
     }
   }
@@ -159,6 +187,11 @@ function CalendarView({
       });
     }
   }
+
+  useEffect(() => {
+    console.log('Page is loaded...');
+    getAllMeeting();
+  }, [teamcal, isOwner]);
 
   useEffect(() => {
     if (!openEditSchedule && !openEditMeeting) {

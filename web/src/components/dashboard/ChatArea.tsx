@@ -262,8 +262,8 @@ function HeaderChannel() {
                     static
                     className="th-bg-bg border th-border-for origin-top-right z-20 absolute right-0 mt-1 w-48 h-72  rounded-md shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none py-2"
                   >
-                    <div className="px-5 flex items-center justify-between">
-                      <div className="text-base th-color-for">{t("Choose members")}</div>
+                    <div className="px-5 pb-1 flex items-center justify-between">
+                      <div className="text-sm font-medium th-color-for">{t("Choose members")}</div>
                     </div>
                     <div className="w-full h-px th-bg-for" />
                     <div className="overflow-y-auto h-52">
@@ -329,7 +329,7 @@ function HeaderChannel() {
                     static
                     className="th-bg-bg border th-border-for origin-top-right z-20 absolute right-0 mt-1 w-48 h-72  rounded-md shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none py-2"
                   >
-                    <div className="px-5 flex items-center justify-between">
+                    <div className="px-5 pb-1 flex items-center justify-between">
                       <div className="text-sm font-medium th-color-for">{t("Choose members")}</div>
                     </div>
                     <div className="w-full h-px th-bg-for" />

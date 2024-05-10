@@ -224,7 +224,7 @@ function EditSchedule({
     }),
     onSubmit: async ({ start_time, end_time, title, timezone, is_all_day, repeat, repeat_from, repeat_to, repeat_option, repeat_value, is_edit_repeat, is_mail_remind, description, location, remind }, { setSubmitting, setFieldValue }) => {
       if (title === "") {
-        toastr.error('Please input all required fields.', {
+        toastr.error(t('Please input all required fields.'), {
           position: "top-right",
           autoClose: 2000,
           hideProgressBar: false,
@@ -237,7 +237,7 @@ function EditSchedule({
         return;
       }
       if (start_time >= end_time) {
-        toastr.error('End time must be later than start time.', {
+        toastr.error(t('End time must be later than start time.'), {
           position: "top-right",
           autoClose: 2000,
           hideProgressBar: false,
@@ -249,8 +249,8 @@ function EditSchedule({
         });
         return;
       }
-      if (start_time < new Date()) {
-        toastr.error('Start time must be later than current time.', {
+      if (!event && start_time < new Date()) {
+        toastr.error(t('Start time must be later than current time.'), {
           position: "top-right",
           autoClose: 2000,
           hideProgressBar: false,
@@ -280,7 +280,7 @@ function EditSchedule({
           },
         });
         if (fileResponse.statusText !== "OK") {
-          toastr.error('Uploading local file has been failed.', {
+          toastr.error(t('Uploading local file has been failed.'), {
             position: "top-right",
             autoClose: 2000,
             hideProgressBar: false,
@@ -366,7 +366,7 @@ function EditSchedule({
           },
         });
         if (response.statusText !== "OK") {
-          toastr.error(event ? 'Updating the event has been failed.' : 'Creating the event has been failed.', {
+          toastr.error(event ? t('Updating the event has been failed.') : t('Creating the event has been failed.'), {
             position: "top-right",
             autoClose: 2000,
             hideProgressBar: false,
@@ -379,7 +379,7 @@ function EditSchedule({
         }
         if (response.statusText === "OK") {
           if (response.data.message === "You have any event at this time already") {
-            toastr.error(response.data.message, {
+            toastr.error(t(response.data.message), {
               position: "top-right",
               autoClose: 2000,
               hideProgressBar: false,
@@ -391,7 +391,7 @@ function EditSchedule({
             });
             setFiles([]);
           } else {
-            toastr.success(event ? 'The event has been successfully updated.' : 'The event has been successfully created.', {
+            toastr.success(event ? t('The event has been successfully updated.') : t('The event has been successfully created.'), {
               position: "top-right",
               autoClose: 2000,
               hideProgressBar: false,
@@ -405,7 +405,7 @@ function EditSchedule({
           }
         }
       } catch (err: any) {
-        toastr.error(err.message, {
+        toastr.error(event ? t('Updating the event has been failed.') : t('Creating the event has been failed.'), {
           position: "top-right",
           autoClose: 2000,
           hideProgressBar: false,
