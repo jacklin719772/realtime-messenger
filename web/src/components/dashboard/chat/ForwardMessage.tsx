@@ -5,8 +5,10 @@ import { Fragment, useContext, useRef, useState } from 'react'
 import Forward from "components/dashboard/chat/Forward";
 import { ReactionsContext } from 'contexts/ReactionsContext';
 import Style from 'components/Style';
+import { useTranslation } from 'react-i18next';
 
 export default function ForwardMessage() {
+  const { t } = useTranslation();
   const { themeColors } = useTheme();
   const {visibleForward, setVisibleForward, forwardMessage} = useContext(ReactionsContext);
   const cancelButtonRef = useRef(null);
@@ -67,7 +69,7 @@ export default function ForwardMessage() {
                   style={{ color: themeColors?.foreground }}
                   className="font-bold max-w-full truncate"
                 >
-                  Forward this message
+                  {t("Forward this message")}
                 </h5>
                 <div
                   role="button"

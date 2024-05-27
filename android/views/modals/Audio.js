@@ -1,10 +1,13 @@
+import { env } from '@/config/env';
+import { useMessageFeature } from '@/contexts/MessageContext';
 import {useParams} from '@/contexts/ParamsContext';
 import {showAlert} from '@/lib/alert';
 import {postData} from '@/lib/api-helpers';
-import {now} from '@/lib/auth';
+import {getIdToken, now} from '@/lib/auth';
 import {formatMs, msToSeconds} from '@/lib/convert';
 import {uploadFile} from '@/lib/storage';
 import {modalStyles} from '@/styles/styles';
+import axios from 'axios';
 import {Audio} from 'expo-av';
 import * as FileSystem from 'expo-file-system';
 import React from 'react';
@@ -15,6 +18,7 @@ import {
   Appbar,
   Colors,
   IconButton,
+  ProgressBar,
 } from 'react-native-paper';
 import {v4 as uuidv4} from 'uuid';
 
@@ -93,8 +97,11 @@ export default function AudioModal({open, setOpen}) {
   const [uri, setUri] = React.useState(null);
   const [status, setStatus] = React.useState(null);
   const [playingPosition, setPlayingPosition] = React.useState(0);
+  const {setMessageSent} = useMessageFeature();
 
   const [loading, setLoading] = React.useState(false);
+
+  const [percentage, setPercentage] = React.useState(0);
 
   function resetStates() {
     setUri(null);
@@ -141,9 +148,9 @@ export default function AudioModal({open, setOpen}) {
     try {
       const duration = msToSeconds(status?.durationMillis) * 1000;
 
-      if (duration < 5000) {
-        throw new Error('Cannot send an empty message.');
-      }
+      // if (duration < 5000) {
+      //   throw new Error('Cannot send an empty message.');
+      // }
 
       // Get file name from URI
       const fileName = uri.split('/').pop();
@@ -152,13 +159,34 @@ export default function AudioModal({open, setOpen}) {
 
       const messageId = uuidv4();
 
-      const filePath = await uploadFile(
-        'messenger',
-        `Message/${messageId}/${now()}_file`,
+      const body = new FormData();
+      body.append('key', `${now()}.${fileName.split(".").pop()}`);
+      body.append('file', {
         uri,
-        fileType,
-        fileName,
+        type: fileType,
+        name: fileName,
+      });
+
+      console.log(body);
+
+      const res = await axios.post(
+        `${env.GQL_SERVER}/storage/b/messenger/upload`,
+        body,
+        {
+          headers: {
+            Authorization: `Bearer ${await getIdToken()}`,
+            'Content-Type': 'multipart/form-data',
+          },
+          onUploadProgress: (progressEvent) => {
+            const { loaded, total } = progressEvent;
+            setPercentage(Math.floor(loaded / total * 100) / 100);
+            console.log(Math.floor(loaded / total * 100) / 100);
+          },
+        },
       );
+
+      const filePath = res.data.url;
+      console.log(filePath);
 
       await postData('/messages', {
         objectId: messageId,
@@ -169,11 +197,12 @@ export default function AudioModal({open, setOpen}) {
         filePath,
         chatType,
       });
-
-      setOpen(false);
+      setMessageSent(true);
       setUri(null);
       setStatus(null);
       setRecording(null);
+      setPercentage(0);
+      setOpen(false);
     } catch (err) {
       showAlert(err.message);
     }
@@ -272,6 +301,29 @@ export default function AudioModal({open, setOpen}) {
               </View>
             )}
             {loading && <ActivityIndicator />}
+            {loading &&
+              <View
+                style={{
+                  paddingVertical: 8,
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: Colors.black,
+                    textAlign: 'center',
+                  }}
+                >{percentage * 100}% uploading... </Text>
+                <ProgressBar
+                  progress={percentage}
+                  color={Colors.red500}
+                  style={{
+                    height: 8,
+                    borderRadius: 4,
+                  }}
+                />
+              </View>
+            }
           </View>
         </View>
       </View>

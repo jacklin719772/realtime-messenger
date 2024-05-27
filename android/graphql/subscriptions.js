@@ -115,20 +115,55 @@ export const MESSAGE = gql`
       chatId
       chatType
       counter
+      favorites
       fileName
       fileSize
       fileType
       fileURL
+      forwardId
+      forwardChatId
+      forwardChatType
+      forwardSenderId
+      forwardCreatedAt
       isDeleted
       isEdited
+      isNoticeRead
       mediaDuration
       mediaHeight
       mediaWidth
+      replyId
+      replyFileType
+      replyFileName
+      replyFileSize
+      replyFileURL
+      replyMediaDuration
+      replyMediaHeight
+      replyMediaWidth
+      replySenderId
+      replyText
+      replyThumbnailURL
+      replyCreatedAt
       senderId
       sticker
       text
+      type
       thumbnailURL
       workspaceId
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const REACTION = gql`
+  subscription OnUpdateReaction($objectId: String, $chatId: String) {
+    onUpdateReaction(objectId: $objectId, chatId: $chatId) {
+      objectId
+      chatId
+      messageId
+      userId
+      workspaceId
+      reaction
       createdAt
       updatedAt
     }

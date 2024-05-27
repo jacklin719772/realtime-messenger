@@ -49,14 +49,20 @@ export default function ProfileModal() {
     },
     enableReinitialize: true,
     onSubmit: async val => {
-      await postData(`/users/${userdata.objectId}`, {
-        fullName: val.fullName,
-        displayName: val.displayName,
-        title: val.title,
-        phoneNumber: val.phoneNumber,
-      });
-      showAlert('Profile updated successfully');
-      setOpen(false);
+      try {
+        console.log(val);
+        const res = await postData(`/users/${userdata.objectId}`, {
+          fullName: val.fullName,
+          displayName: val.displayName,
+          title: val.title,
+          phoneNumber: val.phoneNumber,
+        });
+        console.log(res);
+        showAlert('Profile updated successfully');
+        setOpen(false);
+      } catch (err) {
+        showAlert(err.message);
+      }
     },
   });
 

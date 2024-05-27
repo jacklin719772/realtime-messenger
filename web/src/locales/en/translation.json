@@ -279,5 +279,22 @@
     "Creating the event has been failed.": "Creating the event has been failed.",
     "You have any event at this time already": "You have any event at this time already",
     "The event has been successfully updated.": "The event has been successfully updated.",
-    "The event has been successfully created.": "The event has been successfully created."
+    "The event has been successfully created.": "The event has been successfully created.",
+    "Add a message, if you'd like.": "Add a message, if you'd like.",
+    "Excited": "Excited",
+    "Loved": "Loved",
+    "Happy": "Happy",
+    "Sad": "Sad",
+    "Thumbsy": "Thumbsy",
+    "I feel nothing": "I feel nothing",
+    "Are you want to create a channel with this user?": "Are you want to create a channel with this user?",
+    "Forward this message": "Forward this message",
+    "Select for channel or person": "Select for channel or person",
+    "Reply to this message": "Reply to this message",
+    "Forward ": "Forward ",
+    " messages": " messages",
+    " message": " message",
+    " replied to your message": " replied to your message",
+    " mentioned you": " mentioned you",
+    "Missed call from ": "Missed call from "
 }

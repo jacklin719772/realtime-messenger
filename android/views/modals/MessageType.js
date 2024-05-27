@@ -1,3 +1,4 @@
+import { useMessageFeature } from '@/contexts/MessageContext';
 import {useParams} from '@/contexts/ParamsContext';
 import {postData} from '@/lib/api-helpers';
 import {now} from '@/lib/auth';
@@ -43,6 +44,7 @@ function Button({text, icon, onPress}) {
 
 export default function MessageTypeModal({open, setOpen, setAudioOpen}) {
   const {chatId, workspaceId, chatType} = useParams();
+  const {setMessageSent} = useMessageFeature();
 
   const handlePickerResult = async result => {
     if (!result.cancelled) {
@@ -55,7 +57,7 @@ export default function MessageTypeModal({open, setOpen, setAudioOpen}) {
 
       const filePath = await uploadFile(
         'messenger',
-        `Message/${messageId}/${now()}_file`,
+        `${now()}.${fileName.split(".").pop()}`,
         result.uri,
         fileType,
         fileName,
@@ -70,6 +72,7 @@ export default function MessageTypeModal({open, setOpen, setAudioOpen}) {
         filePath,
         chatType,
       });
+      setMessageSent(true);
     }
   };
 

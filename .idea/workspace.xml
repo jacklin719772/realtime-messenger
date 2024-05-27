@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="db443fd9-fc82-47e9-b688-77976479dd4e" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/android/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/android/App.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/android/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/android/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/android/app/src/main/java/com/messenger/MainApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/android/app/src/main/java/com/messenger/MainApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/android/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/android/android/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/android/gradle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/android/android/gradle.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/android/settings.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/android/android/settings.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/components/Input.js" beforeDir="false" afterPath="$PROJECT_DIR$/android/components/Input.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/components/Message.js" beforeDir="false" afterPath="$PROJECT_DIR$/android/components/Message.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/config/env.js" beforeDir="false" afterPath="$PROJECT_DIR$/android/config/env.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/contexts/ChannelsContext.js" beforeDir="false" afterPath="$PROJECT_DIR$/android/contexts/ChannelsContext.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/contexts/DirectMessagesContext.js" beforeDir="false" afterPath="$PROJECT_DIR$/android/contexts/DirectMessagesContext.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/contexts/ModalContext.js" beforeDir="false" afterPath="$PROJECT_DIR$/android/contexts/ModalContext.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/graphql/queries.js" beforeDir="false" afterPath="$PROJECT_DIR$/android/graphql/queries.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/graphql/subscriptions.js" beforeDir="false" afterPath="$PROJECT_DIR$/android/graphql/subscriptions.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/hooks/useMessages.js" beforeDir="false" afterPath="$PROJECT_DIR$/android/hooks/useMessages.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/ios/Podfile" beforeDir="false" afterPath="$PROJECT_DIR$/android/ios/Podfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/lib/convert.js" beforeDir="false" afterPath="$PROJECT_DIR$/android/lib/convert.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/lib/usePresence.js" beforeDir="false" afterPath="$PROJECT_DIR$/android/lib/usePresence.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/android/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/android/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/views/Chat.js" beforeDir="false" afterPath="$PROJECT_DIR$/android/views/Chat.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/views/DMs.js" beforeDir="false" afterPath="$PROJECT_DIR$/android/views/DMs.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/views/Home.js" beforeDir="false" afterPath="$PROJECT_DIR$/android/views/Home.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/views/Workspace.js" beforeDir="false" afterPath="$PROJECT_DIR$/android/views/Workspace.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/src/components/ReactionModal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/web/src/components/ReactionModal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/src/components/dashboard/Calling.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/web/src/components/dashboard/Calling.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/src/components/dashboard/chat/AddChannelConfirm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/web/src/components/dashboard/chat/AddChannelConfirm.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/src/components/dashboard/chat/Forward.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/web/src/components/dashboard/chat/Forward.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/src/components/dashboard/chat/ForwardMessage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/web/src/components/dashboard/chat/ForwardMessage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/src/components/dashboard/chat/Message.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/web/src/components/dashboard/chat/Message.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/src/components/dashboard/chat/MultipleForward.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/web/src/components/dashboard/chat/MultipleForward.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/src/components/dashboard/chat/MultipleForwardMessage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/web/src/components/dashboard/chat/MultipleForwardMessage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/src/components/dashboard/chat/Reply.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/web/src/components/dashboard/chat/Reply.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/src/components/dashboard/chat/ReplyMessage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/web/src/components/dashboard/chat/ReplyMessage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/src/components/dashboard/navbar/Navbar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/web/src/components/dashboard/navbar/Navbar.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/src/locales/en/translation.json" beforeDir="false" afterPath="$PROJECT_DIR$/web/src/locales/en/translation.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/src/locales/zh-HK/translation.json" beforeDir="false" afterPath="$PROJECT_DIR$/web/src/locales/zh-HK/translation.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/src/locales/zh/translation.json" beforeDir="false" afterPath="$PROJECT_DIR$/web/src/locales/zh/translation.json" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="2gYbIYbSkuo92gEL7P64debcWp4" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "cidr.known.project.marker": "true",
+    "last_opened_file_path": "C:/Users/Administrator/Downloads/Messenger/android/android"
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="db443fd9-fc82-47e9-b688-77976479dd4e" name="Changes" comment="" />
+      <created>1715877378148</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1715877378148</updated>
+    </task>
+    <servers />
+  </component>
+</project>

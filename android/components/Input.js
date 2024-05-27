@@ -9,7 +9,7 @@ const resetTyping = debounce(setTyping => {
   setTyping(false);
 }, 3000);
 
-const Input = ({text, setText, isSubmitting}) => {
+const Input = ({text, placeholder, setText, width, isSubmitting}) => {
   const {chatId, chatType} = useParams();
   const [typing, setTyping] = React.useState(false);
 
@@ -80,8 +80,8 @@ const Input = ({text, setText, isSubmitting}) => {
         setTyping(true);
         resetTypingDebounce();
       }}
-      style={styles.textInput}
-      placeholder="Aa"
+      style={[styles.textInput, (width && {width: width})]}
+      placeholder={placeholder ? placeholder : "Aa"}
       multiline
       placeholderTextColor={Colors.grey400}
     />

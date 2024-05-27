@@ -73,6 +73,7 @@ function ForwardFooter({
 }
 
 export default function Reply() {
+  const { t } = useTranslation();
   const forceUpdate = useForceUpdate();
   const { workspaceId, channelId, dmId } = useParams();
   const navigate = useNavigate();
@@ -330,7 +331,7 @@ export default function Reply() {
               editorRef={editorRef}
               text={values.text}
               setFieldValue={setFieldValue}
-              placeholder="Add a message, if you'd like."
+              placeholder={t("Add a message, if you'd like.")}
               handleSubmit={handleSubmit}
               forceUpdate={forceUpdate}
             />

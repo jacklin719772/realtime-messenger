@@ -11,16 +11,17 @@ import { v4 as uuidv4 } from "uuid";
 import axios from 'axios';
 import { useChannelById } from "hooks/useChannels";
 import { useTranslation } from "react-i18next";
+import { io } from "socket.io-client";
 
 
 export default function MeetingModal() {
   const { t } = useTranslation();
-  const { userdata } = useUser();
+  const { user, userdata } = useUser();
   const { workspaceId, channelId, dmId } = useParams();
   const jitsiContainerId = "jitsi-container-id";
-  const {openMeetingModal, setOpenMeetingModal, setOpenCalling, setOpenReceiving, recipientInfo, setRecipientInfo, senderInfo, setSenderInfo, roomName, setRoomName, isVideoDisabled, setIsVideoDisabled, setIframeLoaded, enableMic, meetingMinimized, setMeetingMinimized} = useModal();
+  const {openMeetingModal, setOpenMeetingModal, openCalling, setOpenCalling, openReceiving, setOpenReceiving, recipientInfo, setRecipientInfo, senderInfo, setSenderInfo, roomName, setRoomName, isVideoDisabled, setIsVideoDisabled, setIframeLoaded, enableMic, meetingMinimized, setMeetingMinimized} = useModal();
   const cancelButtonRef = useRef(null);
-  const [jitsi, setJitsi] = useState({});
+  const [jitsi, setJitsi] = useState<any>({});
   const [meetStartTime, setMeetStartTime] = useState(new Date().getTime());
   const [meetEndTime, setMeetEndTime] = useState(new Date().getTime());
   const { value: users } = useContext(UsersContext);
@@ -56,6 +57,7 @@ export default function MeetingModal() {
         hideLogo: true,
         logoClickUrl: 'https://meeting.uteamwork.com',
         logoImageUrl: '',
+        disableDeepLinking: true,
         startAudioOnly: isVideoDisabled,
         toolbarButtons: isVideoDisabled ? [
           'hangup',
@@ -133,6 +135,7 @@ export default function MeetingModal() {
       if (_jitsi.getNumberOfParticipants() < 2) {
         if (senderInfo?.objectId === userdata?.objectId) {
           sendCallMessage(startTime);
+          handleLeft();
         }
         _jitsi.dispose();
         handleClose();
@@ -142,6 +145,7 @@ export default function MeetingModal() {
     _jitsi.addEventListener("videoConferenceLeft", (info: any) => {
       if (senderInfo?.objectId === userdata?.objectId) {
         sendCallMessage(startTime);
+        handleLeft();
         _jitsi.dispose();
       }
       handleClose();
@@ -176,6 +180,21 @@ export default function MeetingModal() {
     });
   }
 
+  const handleLeft = async () => {
+    try {
+      await postData('/send-message', {
+        sender: userdata,
+        receiver: recipientInfo,
+        type: "participantLeft",
+        room: roomName,
+        audioOnly: isVideoDisabled,
+      });
+      console.log('Message sent successfully');
+    } catch (err) {
+      console.error('Error sending message', err);
+    }
+  }
+
   const handleCallingButton = async (user: any) => {
     try {
       await axios.post('/send-message', {
@@ -195,10 +214,30 @@ export default function MeetingModal() {
     initialiseJitsi();
 
     return () => {
+      if (senderInfo?.objectId === userdata?.objectId) {
+        handleLeft();
+      }
       jitsi?.dispose?.();
       handleClose();
     }
   }, []);
+
+  useEffect(() => {
+    const socket = io();
+    socket.on('newMessage', (data: any) => {
+      const { message } = JSON.parse(data);
+      const { receiver, type } = JSON.parse(message);
+      if (receiver?.filter((r: any) => r?.objectId === user?.uid).length > 0 && type === "participantLeft" && !openReceiving) {
+        if (jitsi?.getNumberOfParticipants() < 2) {
+          jitsi?.dispose?.();
+          handleClose();
+        }
+      }
+    });
+    return () => {
+      socket.disconnect();
+    }
+  }, [openCalling, openReceiving, roomName, recipientInfo, isVideoDisabled]);
 
   return (
     <>

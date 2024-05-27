@@ -321,14 +321,14 @@ export default function MultipleForward() {
                     src={(getHref(option?.thumbnailURL) || getHref(option?.photoURL) || `${process.env.PUBLIC_URL}/blank_user.png`)}
                     alt=""
                   />}
-                  <span className="text-sm">{option.name} {option.userId === user?.uid && "(me)"}</span>
+                  <span className="text-sm">{option.name} {option.userId === user?.uid && `(${t("me")})`}</span>
                 </Box>
               )}
               renderInput={(params) => (
                 <MuiTextField
                   {...params}
                   autoFocus
-                  label="Select for channel or person"
+                  label={t("Select for channel or person")}
                 />
               )}
             />
@@ -338,7 +338,7 @@ export default function MultipleForward() {
               editorRef={editorRef}
               text={values.text}
               setFieldValue={setFieldValue}
-              placeholder="Add a message, if you'd like."
+              placeholder={t("Add a message, if you'd like.")}
               handleSubmit={handleSubmit}
               forceUpdate={forceUpdate}
             />

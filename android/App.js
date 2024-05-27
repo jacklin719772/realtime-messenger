@@ -20,6 +20,10 @@ import {
   DefaultTheme,
   Provider as PaperProvider,
 } from 'react-native-paper';
+import { MessageProvider } from './contexts/MessageContext';
+import { ReactionProvider } from 'react-native-reactions';
+import { ReactionsProvider } from './contexts/ReactionsContext';
+import { MeetingProvider } from './contexts/MeetingContext';
 
 function Views() {
   const {isInitialized, isAuthenticated, user} = useAuth();
@@ -58,7 +62,15 @@ export default function App() {
                         <ChannelsProvider>
                           <DirectMessagesProvider>
                             <DetailsProvider>
-                              <Views />
+                              <MessageProvider>
+                                <ReactionsProvider>
+                                  <MeetingProvider>
+                                    <ReactionProvider>
+                                      <Views />
+                                    </ReactionProvider>
+                                  </MeetingProvider>
+                                </ReactionsProvider>
+                              </MessageProvider>
                             </DetailsProvider>
                           </DirectMessagesProvider>
                         </ChannelsProvider>

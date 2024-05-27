@@ -87,3 +87,59 @@ export function formatMs(milliseconds) {
     ms,
   ).slice(0, 2)}`;
 }
+
+export function getPassedDays(timestamp) {
+  const d = new Date(timestamp);
+  d.setHours(d.getHours() + 8);
+  const today = new Date(new Date().toDateString());
+  const dDate = new Date(d.toDateString());
+  const dateDifference = Math.floor((today - dDate) / 86400000);
+  if (dateDifference === 0) {
+    return 'Today';
+  }
+  if (dateDifference === 1) {
+    return 'Yesterday';
+  }
+  return dateDifference + ' days ago';
+}
+
+export const getFormattedTime = (str) => {
+  const d = new Date(str);
+  d?.setHours(d?.getHours() + 8);
+  const formattedTime = d?.toLocaleTimeString([], {hour12: false, hour: '2-digit', minute: '2-digit'});
+  return formattedTime;
+}
+
+export const equalDate = (date1, date2) => {
+  const d1 = new Date(date1);
+  const d2 = new Date(date2);
+  d1?.setHours(d1?.getHours() + 8);
+  d2?.setHours(d2?.getHours() + 8);
+  return d1?.getDate() === d2?.getDate();
+}
+
+export const getFormattedDate = (date) => {
+  const d = new Date(date);
+  d?.setHours(d?.getHours() + 8);
+  const today = new Date(new Date().toDateString());
+  const dDate = new Date(d.toDateString());
+  if (Math.floor((today - dDate) / 86400000) === 0) {
+    return 'Today';
+  }
+  if (Math.floor((today - dDate) / 86400000) === 1) {
+    return 'Yesterday';
+  }
+  return d?.toLocaleDateString([], { year:"numeric", day:"numeric", month:"long"});
+}
+
+export const getFileSize = (byte) => {
+  if (byte < 1024) {
+    return byte + ' B';
+  } else if ((byte / 1024) < 1024) {
+    return (byte / 1024).toFixed(2) + ' KB';
+  } else if ((byte / 1024 / 1024) < 1024) {
+    return (byte / 1024 / 1024).toFixed(2) + ' MB';
+  } else {
+    return (byte / 1024 / 1024 / 1024).toFixed(2) + ' GB';
+  }
+}

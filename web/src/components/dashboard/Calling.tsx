@@ -56,7 +56,7 @@ function Calling() {
 
   return (
     <div className="absolute w-full h-full bg-transparent" hidden={meetingMinimized}>
-      <div className="absolute w-96 m-auto inset-0 th-bg-bgdark h-40 p-4 flex items-center rounded-xl border th-border-for">
+      <div className="absolute w-96 m-auto inset-0 th-bg-bgdark h-40 p-4 flex items-center rounded-xl border th-border-for z-10">
         <div className="w-full flex flex-col justify-center space-y-4">
           {channelId && (
           <div className="flex items-center space-x-4">

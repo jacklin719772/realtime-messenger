@@ -71,7 +71,7 @@ function Direct({direct}) {
               fontSize: 17,
               fontWeight: notifications > 0 ? 'bold' : 'normal',
             }}>
-            {`${otherUser?.displayName}${isMe ? ' (you)' : ''}`}
+            {`${otherUser?.displayName}${isMe ? ' (me)' : ''}`}
           </Text>
           <Text
             style={{paddingHorizontal: 15, color: Colors.grey600}}

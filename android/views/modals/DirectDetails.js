@@ -1,7 +1,9 @@
 import PresenceIndicator from '@/components/PresenceIndicator';
 import {useDirectRecipient} from '@/contexts/DirectMessagesContext';
+import { useMessageFeature } from '@/contexts/MessageContext';
 import {useModal} from '@/contexts/ModalContext';
 import {useParams} from '@/contexts/ParamsContext';
+import { useUser } from '@/contexts/UserContext';
 import {showAlert} from '@/lib/alert';
 import {postData} from '@/lib/api-helpers';
 import {getFileURL} from '@/lib/storage';
@@ -10,12 +12,14 @@ import {globalStyles, modalStyles} from '@/styles/styles';
 import Feather from '@expo/vector-icons/Feather';
 import {useNavigation} from '@react-navigation/native';
 import {Image, Modal, ScrollView, View} from 'react-native';
-import {Appbar, Colors, Text, TouchableRipple} from 'react-native-paper';
+import {Appbar, Colors, Divider, IconButton, Text, TouchableRipple} from 'react-native-paper';
 
 export default function DirectDetailsModal() {
   const navigation = useNavigation();
   const {chatId} = useParams();
-  const {openDirectDetails: open, setOpenDirectDetails: setOpen} = useModal();
+  const {userdata} = useUser();
+  const {openDirectDetails: open, setOpenDirectDetails: setOpen, setOpenWebOffice, setWebOfficeSrc, setOpenSendMail} = useModal();
+  const {setMessageToSendMail} = useMessageFeature();
 
   const {value: otherUser} = useDirectRecipient(chatId);
 
@@ -30,6 +34,16 @@ export default function DirectDetailsModal() {
       showAlert(err.message);
     }
   };
+
+  const viewWebOffice = () => {
+    setOpenWebOffice(true);
+    setWebOfficeSrc(`https://www.uteamwork.com/webmessenger/ecard1.html?account=${otherUser?.email}&lang=ch&server=https://www.uteamwork.com&name=${userdata?.displayName}&email=${userdata?.email}`);
+  }
+
+  const handleOpenEmail = () => {
+    setOpenSendMail(true);
+    setMessageToSendMail('<p></p>');
+  }
 
   return (
     <Modal
@@ -47,8 +61,9 @@ export default function DirectDetailsModal() {
             <Appbar.Action icon="window-close" onPress={() => setOpen(!open)} />
             <Appbar.Content title={otherUser?.displayName} />
           </Appbar.Header>
-          <ScrollView
+          <View
             style={{
+              flex: 1,
               width: '100%',
               height: '100%',
               paddingHorizontal: 20,
@@ -61,62 +76,160 @@ export default function DirectDetailsModal() {
                 borderRadius: 5,
                 borderWidth: 1,
                 borderColor: Colors.grey200,
+                flex: 1,
+                justifyContent: 'space-between',
               }}>
-              <View style={globalStyles.alignStart}>
-                <View style={{position: 'relative'}}>
-                  <Image
+              <View>
+                <View style={{
+                  flexDirection: 'row',
+                  width: '100%',
+                  justifyContent: 'center',
+                }}>
+                  <View
                     style={{
-                      width: 30,
-                      height: 30,
-                      borderRadius: 5,
+                      position: 'relative',
                     }}
-                    source={
-                      otherUser?.thumbnailURL
-                        ? {uri: getFileURL(otherUser.thumbnailURL)}
-                        : require('@/files/blank_user.png')
-                    }
-                  />
-                  <PresenceIndicator isPresent={isPresent} />
+                  >
+                    <Image
+                      style={{
+                        width: 150,
+                        height: 150,
+                        borderRadius: 5,
+                      }}
+                      source={
+                        otherUser?.thumbnailURL
+                          ? {uri: getFileURL(otherUser.photoURL)}
+                          : require('@/files/blank_user.png')
+                      }
+                    />
+                    {/* <PresenceIndicator isPresent={isPresent} /> */}
+                  </View>
                 </View>
                 <View
                   style={{
-                    paddingHorizontal: 15,
-                    display: 'flex',
-                    flexDirection: 'column',
-                  }}>
-                  <Text numberOfLines={1} style={{fontSize: 15}}>
-                    {otherUser?.displayName}
-                  </Text>
-                  <Text numberOfLines={1} style={{fontSize: 12}}>
-                    {otherUser?.fullName}
-                  </Text>
+                    paddingTop: 12,
+                    alignItems: 'center',
+                  }}
+                >
+                  <View
+                    style={{
+                      position: 'relative',
+                      paddingHorizontal: 15,
+                      display: 'flex',
+                      flexDirection: 'column',
+                    }}>
+                    <Text numberOfLines={1} style={{fontSize: 16, fontWeight: 'bold'}}>
+                      {otherUser?.fullName}
+                    </Text>
+                    <PresenceIndicator isPresent={isPresent} />
+                  </View>
+                </View>
+                <View>
+                  <View
+                    style={{
+                      paddingHorizontal: 15,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      overflow: 'scroll',
+                    }}>
+                    <Text numberOfLines={1} style={{fontSize: 15, fontWeight: 'bold', paddingVertical: 4}}>
+                      Display name
+                    </Text>
+                    <Text numberOfLines={1} style={{fontSize: 15}}>
+                      {otherUser?.displayName}
+                    </Text>
+                    <Divider style={{margin: 4, backgroundColor: Colors.white}} />
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <Text numberOfLines={1} style={{fontSize: 15, fontWeight: 'bold'}}>
+                        Email address
+                      </Text>
+                      <IconButton
+                        icon="send"
+                        color={Colors.black}
+                        onPress={handleOpenEmail}
+                        style={{
+                          margin: 0,
+                          padding: 0,
+                        }}
+                      />
+                    </View>
+                    <Text numberOfLines={1} style={{fontSize: 15}}>
+                      {otherUser?.email}
+                    </Text>
+                    <Divider style={{margin: 4, backgroundColor: Colors.white}} />
+                    <Text numberOfLines={1} style={{fontSize: 15, fontWeight: 'bold', paddingVertical: 4}}>
+                      What I do?
+                    </Text>
+                    <Text numberOfLines={1} style={{fontSize: 15}}>
+                      {otherUser?.title}
+                    </Text>
+                    <Divider style={{margin: 4, backgroundColor: Colors.white}} />
+                    <Text numberOfLines={1} style={{fontSize: 15, fontWeight: 'bold', paddingVertical: 4}}>
+                      Phone Number
+                    </Text>
+                    <Text numberOfLines={1} style={{fontSize: 15}}>
+                      {otherUser?.phoneNumber}
+                    </Text>
+                  </View>
                 </View>
               </View>
-            </View>
-            <View
-              style={{
-                backgroundColor: Colors.white,
-                marginVertical: 15,
-                borderRadius: 5,
-                borderWidth: 1,
-                borderColor: Colors.grey200,
-              }}>
-              {/* Close conversation */}
-              <TouchableRipple
+              <View
                 style={{
-                  paddingHorizontal: 20,
-                  paddingVertical: 10,
-                }}
-                onPress={closeConversation}>
-                <View style={globalStyles.alignStart}>
-                  <Feather name="log-out" color={Colors.grey800} size={18} />
-                  <Text style={{paddingHorizontal: 10}}>
-                    Close conversation
-                  </Text>
-                </View>
-              </TouchableRipple>
+                  justifyContent: 'space-around',
+                  alignItems: 'center',
+                  padding: 15,
+                }}>
+                {/* Close conversation */}
+                <TouchableRipple
+                  style={{
+                    width: '100%',
+                    paddingVertical: 8,
+                    borderRadius: 12,
+                    borderWidth: 2,
+                    borderColor: Colors.red500,
+                    marginVertical: 8,
+                    justifyContent: 'center',
+                  }}
+                  onPress={closeConversation}>
+                  <View style={{
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                  }}>
+                    <Feather name="log-out" color={Colors.red500} size={18} />
+                    <Text style={{paddingHorizontal: 10, color: Colors.red500}}>
+                      Remove member
+                    </Text>
+                  </View>
+                </TouchableRipple>
+                <TouchableRipple
+                  style={{
+                    width: '100%',
+                    paddingVertical: 8,
+                    borderRadius: 12,
+                    borderWidth: 2,
+                    borderColor: Colors.blue500,
+                    marginVertical: 8,
+                    justifyContent: 'center',
+                  }}
+                  onPress={viewWebOffice}>
+                  <View style={{
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                  }}>
+                    <Feather name="log-out" color={Colors.blue500} size={18} />
+                    <Text style={{paddingHorizontal: 10, color: Colors.blue500}}>
+                      Visit weboffice
+                    </Text>
+                  </View>
+                </TouchableRipple>
+              </View>
             </View>
-          </ScrollView>
+          </View>
         </View>
       </View>
     </Modal>

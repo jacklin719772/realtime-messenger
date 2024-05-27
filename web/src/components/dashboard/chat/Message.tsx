@@ -1,5 +1,5 @@
-import { CheckCircleIcon, DocumentTextIcon, DownloadIcon, EyeIcon, PaperAirplaneIcon, ReplyIcon } from "@heroicons/react/outline";
-import { PencilIcon, TrashIcon } from "@heroicons/react/solid";
+import { CheckCircleIcon, DocumentTextIcon, DownloadIcon, EyeIcon, PaperAirplaneIcon, TrashIcon } from "@heroicons/react/outline";
+import { EmojiHappyIcon as EmojiHappyIconSolid, EmojiSadIcon, FireIcon, HeartIcon, PencilIcon, ThumbUpIcon, XIcon } from "@heroicons/react/solid";
 import DeleteConfirm from "components/dashboard/chat/DeleteConfirm";
 import EditMessage from "components/dashboard/chat/EditMessage";
 import QuillReader from "components/dashboard/quill/QuillReader";
@@ -9,7 +9,7 @@ import { ReactionsContext, useReactions } from "contexts/ReactionsContext";
 import { useTheme } from "contexts/ThemeContext";
 import { useUser } from "contexts/UserContext";
 import { useUserById } from "hooks/useUsers";
-import { reactions } from "lib/reactions";
+// import { reactions } from "lib/reactions";
 import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
@@ -51,6 +51,53 @@ function UserName({ id }: { id: string }) {
 
 function Reactions({ groupedReactions }: { groupedReactions: any[] }) {
   const keys = Object.keys(groupedReactions);
+
+  const { t } = useTranslation();
+
+  const reactions = [
+    {
+      name: t("Excited"),
+      value: "excited",
+      icon: FireIcon,
+      iconColor: "text-white",
+      bgColor: "bg-red-500",
+    },
+    {
+      name: t("Loved"),
+      value: "loved",
+      icon: HeartIcon,
+      iconColor: "text-white",
+      bgColor: "bg-pink-400",
+    },
+    {
+      name: t("Happy"),
+      value: "happy",
+      icon: EmojiHappyIconSolid,
+      iconColor: "text-white",
+      bgColor: "bg-green-400",
+    },
+    {
+      name: t("Sad"),
+      value: "sad",
+      icon: EmojiSadIcon,
+      iconColor: "text-white",
+      bgColor: "bg-yellow-400",
+    },
+    {
+      name: t("Thumbsy"),
+      value: "thumbsy",
+      icon: ThumbUpIcon,
+      iconColor: "text-white",
+      bgColor: "bg-blue-500",
+    },
+    {
+      name: t("I feel nothing"),
+      value: null,
+      icon: XIcon,
+      iconColor: "text-gray-400",
+      bgColor: "bg-transparent",
+    },
+  ];
 
   return (
     <div className="flex space-x-2 mt-1 px-8">
@@ -415,6 +462,9 @@ export default function Message({
             }>
               <img src={`${process.env.PUBLIC_URL}/call_start.png`} className="h-10 w-10" alt="mic_on" />
             </button>
+            <button className="rounded-full w-9 h-9 p-1 th-bg-brwhite th-color-brred" onClick={() => setOpen(true)}>
+              <TrashIcon className="w-7 h-7 th-color-brred" />
+            </button>
           </div>
         </div>
       </div>}
@@ -443,6 +493,11 @@ export default function Message({
             }>
               <img src={`${process.env.PUBLIC_URL}/call_start.png`} className="h-10 w-10" alt="mic_on" />
             </button>
+            {message?.senderId === user?.uid && (
+              <button className="rounded-full w-10 h-10 p-1 bg-brred th-color-brwhite" onClick={() => setOpen(true)}>
+                <TrashIcon className="w-8 h-8 th-color-brred" />
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -472,6 +527,11 @@ export default function Message({
               }>
                 <img src={`${process.env.PUBLIC_URL}/call_start.png`} className="h-10 w-10" alt="mic_on" />
               </button>
+              {message?.senderId === user?.uid && (
+                <button className="rounded-full w-10 h-10 p-1 bg-brred th-color-brwhite" onClick={() => setOpen(true)}>
+                  <TrashIcon className="w-8 h-8 th-color-brred" />
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -501,6 +561,11 @@ export default function Message({
               }>
                 <img src={`${process.env.PUBLIC_URL}/call_start.png`} className="h-10 w-10" alt="mic_on" />
               </button>
+              {message?.senderId === user?.uid && (
+                <button className="rounded-full w-10 h-10 p-1 bg-brred th-color-brwhite" onClick={() => setOpen(true)}>
+                  <TrashIcon className="w-8 h-8 th-color-brred" />
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -1160,9 +1225,9 @@ export default function Message({
           {!edit && <Reactions groupedReactions={groupedReactions} />}
         </div>
       </MessageDiv>
-      <DeleteConfirm open={open} setOpen={setOpen} deleteMessage={deleteMessage} />
     </div>
     }
+    <DeleteConfirm open={open} setOpen={setOpen} deleteMessage={deleteMessage} />
     </>
   );
 }

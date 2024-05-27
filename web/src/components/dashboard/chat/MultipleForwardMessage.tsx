@@ -6,8 +6,10 @@ import { useTheme } from 'contexts/ThemeContext';
 import React, { Fragment, useContext, useRef, useState } from 'react'
 import Forward from './Forward';
 import MultipleForward from './MultipleForward';
+import { useTranslation } from 'react-i18next';
 
 function MultipleForwardMessage() {
+  const { t } = useTranslation();
   const { themeColors } = useTheme();
   const {checkedMessages, visibleForwardMultiple, setVisibleForwardMultiple, forwardMessage} = useContext(ReactionsContext);
   const cancelButtonRef = useRef(null);
@@ -68,7 +70,7 @@ function MultipleForwardMessage() {
                   style={{ color: themeColors?.foreground }}
                   className="font-bold max-w-full truncate"
                 >
-                  {checkedMessages.length > 1 ? `Forward ${checkedMessages.length} messages` : `Forward ${checkedMessages.length} message`}
+                  {checkedMessages.length > 1 ? `${t("Forward ")}${checkedMessages.length}${t(" messages")}` : `${t("Forward ")}${checkedMessages.length}${t(" message")}`}
                 </h5>
                 <div
                   role="button"

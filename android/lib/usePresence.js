@@ -50,7 +50,7 @@ export function usePresenceByUserId(id) {
   if (isMe) isPresent = true;
   else if (currentPresence?.lastPresence)
     isPresent =
-      timeDiff(new Date(currentPresence.lastPresence), currentTime) < 35;
+      timeDiff(new Date(currentPresence.lastPresence), currentTime) < 30000;
 
   return {
     isPresent,

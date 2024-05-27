@@ -7,6 +7,16 @@ import * as subscriptions from '@/graphql/subscriptions';
 import {useQuery, useSubscription} from '@apollo/client';
 import {createContext, useContext, useEffect, useState} from 'react';
 
+function compareName(a, b) {
+  if (new Date(a.updatedAt) > new Date(b.updatedAt)) {
+    return -1;
+  }
+  if (new Date(a.updatedAt) < new Date(b.updatedAt)) {
+    return 1;
+  }
+  return 0;
+}
+
 export const DirectMessagesContext = createContext({
   value: null,
   loading: true,
@@ -50,7 +60,7 @@ export function DirectMessagesProvider({children}) {
   return (
     <DirectMessagesContext.Provider
       value={{
-        value: directs?.filter(item => item.active.includes(user?.uid)),
+        value: [...directs].sort(compareName).filter(item => item.active.includes(user?.uid)),
         loading,
       }}>
       {children}

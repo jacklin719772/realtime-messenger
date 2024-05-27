@@ -87,18 +87,85 @@ export const LIST_MESSAGES = gql`
       chatId
       chatType
       counter
+      favorites
       fileName
       fileSize
       fileType
       fileURL
+      forwardId
+      forwardChatId
+      forwardChatType
+      forwardSenderId
+      forwardCreatedAt
       isDeleted
       isEdited
+      isNoticeRead
       mediaDuration
       mediaHeight
       mediaWidth
+      replyId
+      replyFileType
+      replyFileName
+      replyFileSize
+      replyFileURL
+      replyMediaDuration
+      replyMediaHeight
+      replyMediaWidth
+      replySenderId
+      replyText
+      replyThumbnailURL
+      replyCreatedAt
       senderId
       sticker
       text
+      type
+      thumbnailURL
+      workspaceId
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const GET_MESSAGE = gql`
+  query GetMessage($objectId: String!) {
+    getMessage(objectId: $objectId) {
+      objectId
+      chatId
+      chatType
+      counter
+      favorites
+      fileName
+      fileSize
+      fileType
+      fileURL
+      forwardId
+      forwardChatId
+      forwardChatType
+      forwardSenderId
+      forwardCreatedAt
+      isDeleted
+      isEdited
+      isNoticeRead
+      mediaDuration
+      mediaHeight
+      mediaWidth
+      replyId
+      replyFileType
+      replyFileName
+      replyFileSize
+      replyFileURL
+      replyMediaDuration
+      replyMediaHeight
+      replyMediaWidth
+      replySenderId
+      replyText
+      replyThumbnailURL
+      replyCreatedAt
+      senderId
+      sticker
+      text
+      type
       thumbnailURL
       workspaceId
       createdAt
@@ -168,6 +235,36 @@ export const LIST_WORKSPACES = gql`
       ownerId
       photoURL
       thumbnailURL
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const GET_REACTION = gql`
+  query GetReaction($objectId: String!) {
+    getReaction(objectId: $objectId) {
+      objectId
+      chatId
+      messageId
+      userId
+      workspaceId
+      reaction
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const LIST_REACTIONS = gql`
+  query ListReactions($updatedAt: Date, $chatId: String) {
+    listReactions(updatedAt: $updatedAt, chatId: $chatId) {
+      objectId
+      chatId
+      messageId
+      userId
+      workspaceId
+      reaction
       createdAt
       updatedAt
     }

@@ -11,10 +11,10 @@ import {
 import {useModal} from '@/contexts/ModalContext';
 import {useParams} from '@/contexts/ParamsContext';
 import {useUser} from '@/contexts/UserContext';
-import {useUsers} from '@/contexts/UsersContext';
+import {useUserById, useUsers} from '@/contexts/UsersContext';
 import {useMessagesByChat} from '@/hooks/useMessages';
 import {showAlert} from '@/lib/alert';
-import {postData} from '@/lib/api-helpers';
+import {deleteData, postData} from '@/lib/api-helpers';
 import {usePresenceByUserId} from '@/lib/usePresence';
 import AudioModal from '@/views/modals/Audio';
 import ChannelDetailsModal from '@/views/modals/ChannelDetails';
@@ -22,22 +22,54 @@ import DirectDetailsModal from '@/views/modals/DirectDetails';
 import MessageTypeModal from '@/views/modals/MessageType';
 import StickersModal from '@/views/modals/Stickers';
 import {useFormik} from 'formik';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   FlatList,
+  Image,
   Pressable,
   SafeAreaView,
   StyleSheet,
+  TextInput,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import {
   ActivityIndicator,
+  Avatar,
+  Button,
+  Checkbox,
   Colors,
+  Dialog,
   Divider,
   IconButton,
+  List,
+  Menu,
+  Modal,
+  Portal,
+  Provider,
   Text,
 } from 'react-native-paper';
+import * as mime from 'react-native-mime-types';
+import * as ImagePicker from 'expo-image-picker';
+import * as DocumentPicker from 'expo-document-picker';
 import {v4 as uuidv4} from 'uuid';
+import EditMessage from './modals/EditMessage';
+import ReplyMessage from './modals/ReplyMessage';
+import ForwardMessage from './modals/ForwardMessage';
+import SendMail from './modals/SendMail';
+import { useMessageFeature } from '@/contexts/MessageContext';
+import { equalDate, getFormattedDate } from '@/lib/convert';
+import icon from '@/components/icon';
+import { getFileURL, uploadFile } from '@/lib/storage';
+import MultipleForwardMessage from './modals/MultipleForwardMessage';
+import { now } from '@/lib/auth';
+import EmojiSelector, { Categories } from '@manu_omg/react-native-emoji-selector';
+import VideoRecorder from './modals/VideoRecorder';
+import { useMeeting } from '@/contexts/MeetingContext';
+import { randomRoomName } from '@/lib/jitsiGenerator';
+import {MaterialCommunityIcons} from '@expo/vector-icons';
+import WebOfficeModal from './modals/WebOffice';
+import FileGalleryModal from './modals/FileGallery';
 
 function ChannelHeader({channel}) {
   const {setOpenChannelDetails} = useModal();
@@ -51,10 +83,10 @@ function ChannelHeader({channel}) {
         alignItems: 'center',
       }}>
       <View>
-        <Text style={{fontSize: 20, fontWeight: 'bold'}}># {channel.name}</Text>
-        <Text style={{fontSize: 14, color: Colors.grey600}}>
+        <Text style={{fontSize: 20, fontWeight: 'bold', marginLeft: -12}}># {channel.name.length > 7 ? `${channel.name.substr(0, 7)}...` : channel.name} ({channel.members.length})</Text>
+        {/* <Text style={{fontSize: 14, color: Colors.grey600}}>
           {channel.members.length} members
-        </Text>
+        </Text> */}
       </View>
     </Pressable>
   );
@@ -84,39 +116,145 @@ function DirectHeader({otherUser, isMe}) {
           <Text
             style={{fontSize: 20, fontWeight: 'bold', paddingHorizontal: 10}}>
             {otherUser.displayName}
-            {isMe ? ' (you)' : ''}
+            {isMe ? ' (me)' : ''}
           </Text>
         </View>
-        <Text style={{fontSize: 14, color: Colors.grey600}}>View details</Text>
       </View>
     </Pressable>
   );
 }
 
 export default function Chat({navigation}) {
-  const {user} = useUser();
+  const {userdata, user} = useUser();
   const {chatId, chatType, workspaceId} = useParams();
-  const {openChannelDetails, openDirectDetails, openStickers, setOpenStickers} =
-    useModal();
+  const {
+    openChannelDetails, 
+    openDirectDetails, 
+    openStickers, 
+    setOpenStickers, 
+    openEditMessage, 
+    openReplyMessage, 
+    openForwardMessage, 
+    openSendMail, 
+    setOpenSendMail, 
+    openMultipleForwardMessage, 
+    setOpenMultipleForwardMessage, 
+    openFileGallery, 
+    setOpenFileGallery,
+    openWebOffice,
+    setOpenWebOffice,
+    webOfficeSrc,
+    setWebOfficeSrc,
+  } = useModal();
+  const {messageToEdit, messageToReply, messageToForward, messageToSendMail, setMessageToSendMail, checkedMessages, setCheckedMessages, isSelecting, setIsSelecting, setMessageSent, searchText, setSearchText, isSearching, setIsSearching} = useMessageFeature();
+  const { openCalling, setOpenCalling, recipientInfo, setRecipientInfo, senderInfo, setSenderInfo, setRoomName, setIsVideoDisabled, openMeetingModal, isVideoDisabled } = useMeeting();
+
+  const [checkedUsers, setCheckedUsers] = useState([]);
+  const [openMemberModal, setOpenMemberModal] = useState(false);
+  const [isAudioOnly, setIsAudioOnly] = useState(true);
+  const [openMenu, setOpenMenu] = useState(false);
+  const {value: users} = useUsers();
+
+  React.useEffect(() => {
+    console.log('openMenu: ', openMenu);
+  }, [openMenu]);
 
   // CHANNELS ------------------------------------------------------------
   const {value: channel} = useChannelById(chatId);
+  const channelUsers = (chatType === "Channel" && users) ? users.filter((u) => (channel?.members.includes(u?.objectId) && u?.objectId !== userdata?.objectId)) : [];
+  const isUserSelected = (user) => {
+    return checkedUsers.filter((c) => c?.objectId === user?.objectId).length > 0;
+  }
+
+  const handleUserSelect = (checked, user) => {
+    if (checked) {
+      setCheckedUsers([...checkedUsers, user]);
+    } else {
+      setCheckedUsers(checkedUsers.filter((i) => i.objectId !== user?.objectId));
+    }
+  }
 
   React.useLayoutEffect(() => {
-    if (channel) {
+    if (isSelecting) {
       navigation.setOptions({
-        headerTitle: () => <ChannelHeader channel={channel} />,
+        headerTitle: () => (
+          <Text style={{ fontSize: 20, fontWeight: 'bold', }}>
+            {checkedMessages.length > 1 ? `${checkedMessages.length} messages selected` : `${checkedMessages.length} message selected`}
+          </Text>
+        ),
         headerRight: () => (
           <IconButton
-            icon="sticker-emoji"
+            icon="close"
             color={Colors.grey800}
             size={25}
-            onPress={() => setOpenStickers(true)}
+            onPress={() => {
+              setIsSelecting(false);
+              setCheckedMessages([]);
+            }}
           />
         ),
       });
+    } else {
+      if (channel) {
+        navigation.setOptions({
+          headerTitle: () => <ChannelHeader channel={channel} />,
+          headerRight: () => (
+            <View style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}>
+              <IconButton
+                icon="cloud-search-outline"
+                color={Colors.grey800}
+                size={25}
+                onPress={() => {
+                  setIsSearching(!isSearching);
+                  setSearchText("");
+                }}
+                style={{
+                  margin: 0,
+                }}
+              />
+              <IconButton
+                icon="phone"
+                color={Colors.grey800}
+                size={25}
+                onPress={() => {
+                  setOpenMemberModal(true);
+                  setIsAudioOnly(true);
+                }}
+                style={{
+                  margin: 0,
+                }}
+              />
+              <IconButton
+                icon="video"
+                color={Colors.grey800}
+                size={25}
+                onPress={() => {
+                  setOpenMemberModal(true);
+                  setIsAudioOnly(false);
+                }}
+                style={{
+                  margin: 0,
+                }}
+              />
+              <IconButton
+                icon="dots-vertical"
+                color={Colors.grey800}
+                size={25}
+                onPress={() => {setOpenMenu(true)}}
+                style={{
+                  margin: 0,
+                }}
+              />
+            </View>
+          ),
+        });
+      }
     }
-  }, [channel]);
+  }, [channel, isSelecting, checkedMessages]);
   // ---------------------------------------------------------------------
 
   // DIRECTS -------------------------------------------------------------
@@ -124,21 +262,205 @@ export default function Chat({navigation}) {
   const {value: otherUser, isMe} = useDirectRecipient(chatId);
 
   React.useLayoutEffect(() => {
-    if (otherUser) {
+    if (isSelecting) {
       navigation.setOptions({
-        headerTitle: () => <DirectHeader otherUser={otherUser} isMe={isMe} />,
+        headerTitle: () => (
+          <Text style={{ fontSize: 20, fontWeight: 'bold', }}>
+            {checkedMessages.length > 1 ? `${checkedMessages.length} messages selected` : `${checkedMessages.length} message selected`}
+          </Text>
+        ),
         headerRight: () => (
           <IconButton
-            icon="sticker-emoji"
+            icon="close"
             color={Colors.grey800}
             size={25}
-            onPress={() => setOpenStickers(true)}
+            onPress={() => {
+              setIsSelecting(false);
+              setCheckedMessages([]);
+            }}
           />
         ),
       });
+    } else {
+      if (otherUser) {
+        navigation.setOptions({
+          headerTitle: () => <DirectHeader otherUser={otherUser} isMe={isMe} />,
+          headerRight: () => (
+            <View style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}>
+              <IconButton
+                icon="cloud-search-outline"
+                color={Colors.grey800}
+                size={25}
+                onPress={() => {
+                  setIsSearching(!isSearching);
+                  setSearchText("");
+                }}
+                style={{
+                  margin: 0,
+                }}
+              />
+              {!isMe &&
+              <IconButton
+                icon="phone"
+                color={Colors.grey800}
+                size={25}
+                onPress={() => {handleCallingButton(true)}}
+                style={{
+                  margin: 0,
+                }}
+              />}
+              {!isMe &&
+              <IconButton
+                icon="video"
+                color={Colors.grey800}
+                size={25}
+                onPress={() => {handleCallingButton(false)}}
+                style={{
+                  margin: 0,
+                }}
+              />}
+              <IconButton
+                icon="dots-vertical"
+                color={Colors.grey800}
+                size={25}
+                onPress={() => {setOpenMenu(true)}}
+                style={{
+                  margin: 0,
+                }}
+              />
+              {/* <Menu
+                visible={openMenu}
+                onDismiss={() => setOpenMenu(false)}
+                anchor={
+                  <IconButton
+                    icon="dots-vertical"
+                    color={Colors.grey800}
+                    size={25}
+                    onPress={() => {setOpenMenu(true)}}
+                  />
+                }
+              >
+                <Menu.Item onPress={() => {}} title="Item 1" />
+                <Menu.Item onPress={() => {}} title="Item 2" />
+              </Menu> */}
+            </View>
+          ),
+        });
+      }
     }
-  }, [otherUser]);
+  }, [otherUser, isSelecting, checkedMessages]);
   // ---------------------------------------------------------------------
+
+  React.useEffect(() => {
+    console.log(checkedMessages);
+  }, [checkedMessages]);
+
+  React.useEffect(() => {
+    setIsSelecting(false);
+    setCheckedMessages([]);
+  }, []);
+
+  const handleSelect = (checked, message) => {
+    if (checked) {
+      console.log('1');
+      setCheckedMessages([...checkedMessages, message]);
+    } else {
+      console.log('2');
+      setCheckedMessages(checkedMessages.filter((i) => i.objectId !== message?.objectId));
+    }
+  }
+  // MEETING ------------------------------------------------------------
+  const handleCallingButton = async (audioOnly) => {
+    try {
+      const room = randomRoomName();
+      await postData('/send-message', {
+        sender: userdata,
+        receiver: [otherUser],
+        type: "Calling",
+        room,
+        audioOnly,
+      });
+      console.log('Message sent successfully');
+      setRecipientInfo([otherUser]);
+      setSenderInfo(userdata);
+      setRoomName(room);
+      setIsVideoDisabled(audioOnly);
+      setOpenCalling(true);
+    } catch (err) {
+      showAlert(err.message);
+    }
+  }
+
+  const handleGroupCalling = async (audioOnly) => {
+    try {
+      const room = randomRoomName();
+      await postData('/send-message', {
+        sender: userdata,
+        receiver: checkedUsers,
+        type: "Calling",
+        room,
+        audioOnly,
+      });
+      console.log('Message sent successfully');
+      setRecipientInfo([otherUser]);
+      setSenderInfo(userdata);
+      setRoomName(room);
+      setIsVideoDisabled(audioOnly);
+      setOpenCalling(true);
+      setOpenMemberModal(false);
+    } catch (err) {
+      showAlert(err.message);
+    }
+  }
+  
+  const handleTimeout = async (sender, receiver) => {
+    try {
+      await postData('/send-message', {
+        sender,
+        receiver,
+        type: "Timeout",
+        roomName: "",
+      });
+      console.log('Message sent successfully');
+      setOpenCalling(false);
+      setRecipientInfo([]);
+      setSenderInfo(null);
+      setRoomName("");
+      setIsVideoDisabled(false);
+      showAlert('Sorry, but the recipient you are calling right now is not responding.');
+    } catch (error) {
+      console.error('Error sending message', error);
+    }
+  }
+ 
+  const sendCallMessage = async (type, startTime) => {
+    const messageId = uuidv4();
+    await postData("/messages", {
+      objectId: messageId,
+      text: `[Jitsi_Call_Log:]: {"sender": ${JSON.stringify(senderInfo)}, "receiver": ${JSON.stringify(recipientInfo)}, "type": "${type}", "duration": "${startTime}", "audioOnly": ${isVideoDisabled}}`,
+      chatId,
+      workspaceId,
+      chatType,
+    });
+  }
+
+  useEffect(() => {
+    console.log(new Date());
+    let timer;
+    if (openCalling && !openMeetingModal) {
+      timer = setTimeout(() => {
+        sendCallMessage("Missed Call", new Date());
+        handleTimeout(userdata, [otherUser]);
+      }, 35000);
+    } else {
+      clearTimeout(timer);
+    }
+    return () => clearTimeout(timer);
+  }, [openCalling, openMeetingModal, senderInfo, recipientInfo, isVideoDisabled]);
 
   // LAST READ -----------------------------------------------------------
   const {value: detail} = useDetailByChat(chatId);
@@ -178,6 +500,7 @@ export default function Chat({navigation}) {
 
   const [messageTypeOpen, setMessageTypeOpen] = React.useState(false);
   const [audioOpen, setAudioOpen] = React.useState(false);
+  const [videoOpen, setVideoOpen] = React.useState(false);
 
   // FORM ----------------------------------------------------------------
   const {handleSubmit, setFieldValue, values, isSubmitting, resetForm} =
@@ -196,6 +519,7 @@ export default function Chat({navigation}) {
             workspaceId,
             chatType,
           });
+          setMessageSent(true);
           resetForm();
         } catch (err) {
           showAlert(err.message);
@@ -204,8 +528,10 @@ export default function Chat({navigation}) {
     });
   // ---------------------------------------------------------------------
 
+  const isDeleteDisabled = checkedMessages.length === 0 || checkedMessages.filter((m) => m.senderId !== user?.uid).length > 0;
+  const isEmailDisabled = checkedMessages.length === 0 || checkedMessages.filter((m) => (!m.fileURL || m.fileURL === "")).length > 0;
+
   // TYPING INDICATOR ----------------------------------------------------
-  const {value: users} = useUsers();
   const typingArray = chatDoc?.typing?.filter(typ => typ !== user?.uid);
 
   // memoize the typing users
@@ -254,11 +580,185 @@ export default function Chat({navigation}) {
   }, [chatId]);
   // ---------------------------------------------------------------------
 
+  const handleOpenEmail = () => {
+    let html = '';
+    for (const m of checkedMessages) {
+      html += `${getFileURL(m?.fileURL)}\n`;
+    }
+    setOpenSendMail(true);
+    setMessageToSendMail(html);
+  }
+
+  const [openDeleteConfirm, setOpenDeleteConfirm] = useState(false);
+
+  const handleMultipleDelete = async () => {
+    for (const m of checkedMessages) {
+      await deleteData(`/messages/${m?.objectId}`);
+    }
+    setOpenDeleteConfirm(false);
+    setIsSelecting(false);
+  }
+
+  const [openAddChannelConfirm, setOpenAddChannelConfirm] = useState(false);
+
+  const createChannelAndInviteMember = async () => {
+    try {
+      const { channelId } = await postData("/channels", {
+        name: `${userdata?.displayName.split(" ")[0]}, ${otherUser?.displayName}`,
+        description: "",
+        workspaceId,
+      });
+      await postData(`/channels/${channelId}/members`, {
+        email: otherUser?.email,
+      });
+      showAlert("Channel created and member added.");
+      navigation.navigate('Chat', {
+        objectId: channelId,
+      });
+    } catch (err) {
+      showAlert(err.message);
+    }
+    setOpenAddChannelConfirm(false);
+  }
+
+  // ---------------- Message Input Tool Button
+  const [openEmojiPicker, setOpenEmojiPicker] = useState(false);
+
+  const handlePickerResult = async result => {
+    try {
+      if (!result.cancelled) {
+        // Get file name from URI
+        const fileName = result.uri.split('/').pop();
+  
+        const fileType = mime.lookup(result.uri);
+  
+        const messageId = uuidv4();
+  
+        const filePath = await uploadFile(
+          'messenger',
+          `${now()}.${fileName.split(".").pop()}`,
+          result.uri,
+          fileType,
+          fileName,
+        );
+  
+        await postData('/messages', {
+          objectId: messageId,
+          text: '',
+          chatId,
+          workspaceId,
+          fileName,
+          filePath,
+          chatType,
+        });
+        setMessageSent(true);
+      }
+    } catch (err) {
+      showAlert(err.message);
+    }
+  };
+
+  const lauchCamera = async () => {
+    const result = await ImagePicker.launchCameraAsync({
+      quality: 1,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+    });
+    await handlePickerResult(result);
+  };
+
+  const pickImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      quality: 1,
+    });
+    await handlePickerResult(result);
+  };
+
+  const pickVideo = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Videos,
+      allowsEditing: true,
+      quality: 1,
+    });
+    await handlePickerResult(result);
+  };
+
+  const pickDocument = async () => {
+    try {
+      const result = await DocumentPicker.getDocumentAsync({});
+      if (result.type === 'success') {
+        await handlePickerResult(result);
+      }
+    } catch (err) {
+      showAlert(err);
+    }
+  }
+
+  const openChannelCalendar = () => {
+    setOpenMenu(false);
+    navigation.navigate('Calendar', {
+      objectId: chatId,
+    });
+  }
+
+  useEffect(() => {
+    return () => {
+      setLastRead(null);
+      setHasNew(false);
+      setPage(1);
+      setOpenDeleteConfirm(false);
+      setOpenEmojiPicker(false);
+      setMessageTypeOpen(false);
+      setAudioOpen(false);
+      setVideoOpen(false);
+    }
+  }, []);
+
   return (
     <SafeAreaView
       style={{flex: 1, flexDirection: 'column', backgroundColor: Colors.white}}>
+      {isSearching && (
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          width: '100%',
+          padding: 8,
+          borderBottomWidth: 1,
+          borderBottomColor: Colors.grey200,
+        }}
+      >
+        <TextInput
+          value={searchText}
+          onChangeText={text => setSearchText(text)}
+          style={{
+            width: '80%',
+            borderRadius: 8,
+            borderWidth: 1,
+            borderColor: Colors.grey700,
+            fontSize: 14,
+            paddingHorizontal: 8,
+            paddingVertical: 2,
+          }}
+        />
+        {/* <IconButton
+          icon="text-search"
+          color={Colors.black}
+          onPress={() => {}}
+        /> */}
+        <IconButton
+          icon="window-close"
+          color={Colors.black}
+          onPress={() => {
+            setIsSearching(false);
+            setSearchText("");
+          }}
+        />
+      </View>
+      )}
       {loading && <ActivityIndicator style={{paddingVertical: 10}} />}
-
       {/* MESSAGES */}
       <FlatList
         style={{paddingHorizontal: 10}}
@@ -292,67 +792,222 @@ export default function Chat({navigation}) {
         inverted
         renderItem={({item, index}) => (
           // MESSAGE ITEM
-          <Message
-            chat={item}
-            index={index}
-            previousSameSender={
-              index !== messages?.length
-                ? messages[index + 1]?.senderId === item?.senderId
-                : false
-            }
-            previousMessageDate={messages[index + 1]?.createdAt}>
-            {/* NEW MESSAGE INDICATOR */}
-            {lastRead !== null &&
-              lastRead + 1 === item?.counter &&
-              chatDoc &&
-              lastRead !== chatDoc?.lastMessageCounter &&
-              item?.senderId !== user?.uid && (
+          <View key={index}>
+            {(index === messages?.length - 1 || (index < messages?.length - 1 && !equalDate(item?.createdAt, messages[index + 1]?.createdAt))) && (
+              <View
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}>
                 <View
                   style={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'flex-start',
-                  }}>
+                    marginTop: 5,
+                    height: 1,
+                    width: '35%',
+                    backgroundColor: Colors.grey700,
+                  }}
+                />
+                <Text style={{
+                  color: Colors.grey700, 
+                  paddingHorizontal: 5
+                }}>
+                  {getFormattedDate(item?.createdAt)}
+                </Text>
+                <View
+                  style={{
+                    marginTop: 5,
+                    height: 1,
+                    width: '35%',
+                    backgroundColor: Colors.grey700,
+                  }}
+                />
+              </View>
+            )}
+            <Message
+              chat={item}
+              index={index}
+              handleSelect={handleSelect}
+              previousSameSender={
+                index !== messages?.length
+                  ? messages[index + 1]?.senderId === item?.senderId
+                  : false
+              }
+              previousMessageDate={messages[index + 1]?.createdAt}>
+              {/* NEW MESSAGE INDICATOR */}
+              {lastRead !== null &&
+                lastRead + 1 === item?.counter &&
+                chatDoc &&
+                lastRead !== chatDoc?.lastMessageCounter &&
+                item?.senderId !== user?.uid && (
                   <View
                     style={{
-                      marginTop: 5,
-                      height: 1,
-                      width: '90%',
-                      backgroundColor: Colors.red600,
-                    }}
-                  />
-                  <Text style={{color: Colors.red600, paddingHorizontal: 5}}>
-                    New
-                  </Text>
-                </View>
-              )}
-          </Message>
+                      display: 'flex',
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'flex-start',
+                    }}>
+                    <View
+                      style={{
+                        marginTop: 5,
+                        height: 1,
+                        width: '90%',
+                        backgroundColor: Colors.red600,
+                      }}
+                    />
+                    <Text style={{color: Colors.red600, paddingHorizontal: 5}}>
+                      New
+                    </Text>
+                  </View>
+                )}
+            </Message>
+          </View>
         )}
         keyExtractor={item => item.objectId}
       />
 
       {/* BOTTOM SECTION */}
-      <View style={styles.inputContainer}>
-        <IconButton
-          icon="plus"
-          color={Colors.grey800}
-          size={25}
-          onPress={() => setMessageTypeOpen(true)}
-        />
-        <Input
-          text={values.text}
-          setText={setFieldValue}
-          isSubmitting={isSubmitting}
-        />
-        <IconButton
-          icon="send"
-          color={Colors.grey800}
-          size={25}
-          disabled={!values.text || isSubmitting}
-          onPress={handleSubmit}
-        />
-      </View>
+      {isSelecting ? (
+        <View style={styles.bottomContainer}>
+          <TouchableOpacity
+            onPress={handleOpenEmail}
+            disabled={isEmailDisabled}
+            style={styles.bottomButton}
+          >
+            {icon("email")}
+            <Text style={{
+              fontSize: 12,
+            }}>
+              E-mail
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              setOpenMultipleForwardMessage(true);
+            }}
+            disabled={checkedMessages.length === 0}
+            style={styles.bottomButton}
+          >
+            {icon("forward")}
+            <Text style={{
+              fontSize: 12,
+            }}>
+              Forward
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => setOpenDeleteConfirm(true)}
+            disabled={isDeleteDisabled}
+            style={styles.bottomButton}
+          >
+            {icon("delete")}
+            <Text style={{
+              fontSize: 12,
+            }}>
+              Delete
+            </Text>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <>
+          <View style={styles.inputContainer}>
+            <Input
+              text={values.text}
+              setText={setFieldValue}
+              placeholder={"Type message here..."}
+              isSubmitting={isSubmitting}
+            />
+            <IconButton
+              icon="emoticon"
+              color={openEmojiPicker ? Colors.white : Colors.grey800}
+              style={{
+                backgroundColor: openEmojiPicker ? Colors.grey800 : Colors.white,
+              }}
+              size={25}
+              onPress={() => setOpenEmojiPicker(!openEmojiPicker)}
+            />
+            <IconButton
+              icon="send"
+              color={Colors.grey800}
+              size={25}
+              disabled={!values.text || isSubmitting}
+              onPress={handleSubmit}
+            />
+          </View>
+          <View style={styles.buttonContainer}>
+            <IconButton
+              icon="microphone"
+              color={Colors.black}
+              size={25}
+              onPress={() => setAudioOpen(true)}
+            />
+            <IconButton
+              icon="camera"
+              color={Colors.black}
+              size={25}
+              onPress={lauchCamera}
+            />
+            <IconButton
+              icon="movie"
+              color={Colors.black}
+              size={25}
+              onPress={() => setVideoOpen(true)}
+            />
+            <Pressable
+              style={{
+                borderRadius: 14,
+                margin: 12,
+              }}
+              onPress={() => setOpenStickers(true)}
+            >
+              <Avatar.Image size={25} source={require('@/files/sticker.png')} style={{backgroundColor: Colors.transparent}} />
+            </Pressable>
+            {/* <IconButton
+              icon="sticker-emoji"
+              color={Colors.black}
+              size={25}
+              onPress={() => setOpenStickers(true)}
+            /> */}
+            <Pressable
+              style={{
+                borderRadius: 0,
+                margin: 12,
+              }}
+              onPress={pickDocument}
+            >
+              <Avatar.Image size={25} source={require('@/files/upload-file.png')} style={{backgroundColor: Colors.transparent}} />
+            </Pressable>
+            {/* <IconButton
+              icon="file-upload-outline"
+              color={Colors.black}
+              size={25}
+              onPress={pickDocument}
+            /> */}
+          </View>
+          <View style={{
+            display: openEmojiPicker ? 'flex' : 'none',
+            width: '100%',
+            height: 240,
+            borderTopWidth: 1,
+            borderColor: Colors.grey200,
+          }}>
+            <EmojiSelector
+              showSectionTitles={false}
+              category={Categories.all}
+              showHistory={true}
+              onEmojiSelected={(emoji) => setFieldValue("text", values.text + emoji)}
+              columns={10}
+              searchbarStyle={{
+                paddingHorizontal: 24,
+              }}
+              searchbarContainerStyle={{
+                paddingVertical: 24,
+              }}
+            />
+          </View>
+        </>
+      )}
 
       {/* MODALS */}
       {messageTypeOpen && (
@@ -362,10 +1017,256 @@ export default function Chat({navigation}) {
           setAudioOpen={setAudioOpen}
         />
       )}
+      
       {openStickers && <StickersModal />}
       {openChannelDetails && <ChannelDetailsModal />}
       {openDirectDetails && <DirectDetailsModal />}
       <AudioModal open={audioOpen} setOpen={setAudioOpen} />
+      {videoOpen && <VideoRecorder open={videoOpen} setOpen={setVideoOpen} />}
+      {(openEditMessage && messageToEdit) && <EditMessage />}
+      {(openReplyMessage && messageToReply) && <ReplyMessage />}
+      {(openForwardMessage && messageToForward) && <ForwardMessage />}
+      {(openSendMail && messageToSendMail) && <SendMail />}
+      {(openMultipleForwardMessage && checkedMessages.length > 0) && <MultipleForwardMessage />}
+      {openWebOffice && <WebOfficeModal open={openWebOffice} setOpen={setOpenWebOffice} src={webOfficeSrc} />}
+      {openFileGallery && <FileGalleryModal />}
+      <Portal>
+          <Dialog visible={openDeleteConfirm} onDismiss={() => setOpenDeleteConfirm(false)}>
+            <Dialog.Title>Delete</Dialog.Title>
+            <Dialog.Content>
+              <Text variant="bodyMedium">Are you want to delete selected messages?</Text>
+            </Dialog.Content>
+            <Dialog.Actions>
+              <Button onPress={handleMultipleDelete}>Delete</Button>
+              <Button onPress={() => setOpenDeleteConfirm(false)}>Cancel</Button>
+            </Dialog.Actions>
+          </Dialog>
+      </Portal>
+      <Portal>
+          <Dialog visible={openAddChannelConfirm} onDismiss={() => setOpenAddChannelConfirm(false)}>
+            <Dialog.Title>Create channel</Dialog.Title>
+            <Dialog.Content>
+              <Text variant="bodyMedium">Are you want to create a chennel with this user?</Text>
+            </Dialog.Content>
+            <Dialog.Actions>
+              <Button onPress={createChannelAndInviteMember}>Create</Button>
+              <Button onPress={() => setOpenAddChannelConfirm(false)}>Cancel</Button>
+            </Dialog.Actions>
+          </Dialog>
+      </Portal>
+      {chatType === "Channel" && (
+      <Portal>
+        <Modal
+          visible={openMemberModal}
+          onDismiss={() => setOpenMemberModal(false)}
+          contentContainerStyle={styles.modalContainer}
+          style={styles.modalWrapper}
+        >
+          <List.Section title="Members">
+            {channelUsers.map(user => (
+              <List.Item
+                key={user.objectId}
+                title={user.displayName}
+                titleStyle={{
+                  color: Colors.grey800, 
+                }}
+                style={{
+                  padding: 4,
+                }}
+                left={props => (
+                  <List.Icon
+                    {...props}
+                    icon={() => (
+                      <Image
+                        style={{
+                          width: 24,
+                          height: 24,
+                          borderRadius: 5,
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                        source={
+                          user?.thumbnailURL
+                            ? {uri: getFileURL(user?.thumbnailURL)}
+                            : require('@/files/blank_user.png')
+                        }
+                      />
+                    )}
+                  />
+                )}
+                right={props => (
+                  <List.Icon
+                    {...props}
+                    icon={() => (
+                      <View>
+                        <Checkbox
+                          status={isUserSelected(user) ? 'checked' : 'unchecked'}
+                          onPress={() => handleUserSelect(!isUserSelected(user), user)}
+                        />
+                      </View>
+                    )}
+                  />
+                )}
+              />
+            ))}
+          </List.Section>
+          <View
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-around',
+              alignItems: 'center',
+            }}
+          >
+            <Button
+              style={{
+                borderRadius: 6,
+                borderWidth: 2,
+                borderColor: Colors.red500,
+              }}
+              labelStyle={{
+                color: Colors.red500,
+              }}
+              uppercase={false}
+              onPress={() => handleGroupCalling(isAudioOnly)}
+            >Confirm</Button>
+            {checkedUsers.length < channelUsers.length ? 
+            <Button
+              style={{
+                borderRadius: 6,
+                borderWidth: 2,
+                borderColor: Colors.blue400,
+              }}
+              labelStyle={{
+                color: Colors.blue400,
+              }}
+              uppercase={false}
+              onPress={() => setCheckedUsers(channelUsers)}
+            >Select All</Button> :
+            <Button
+              style={{
+                borderRadius: 6,
+                borderWidth: 2,
+                borderColor: Colors.blue400,
+              }}
+              labelStyle={{
+                color: Colors.blue400,
+              }}
+              uppercase={false}
+              onPress={() => setCheckedUsers([])}
+            >Unselect All</Button>}
+          </View>
+        </Modal>
+      </Portal>
+      )}
+      {openMenu && (
+      <Portal>
+        <Modal
+          visible={openMenu}
+          onDismiss={() => setOpenMenu(false)}
+          contentContainerStyle={styles.modalContainer}
+          style={styles.modalWrapper}
+        >
+          <List.Section title="More Actions" titleStyle={{
+            color: Colors.grey800,
+          }}>
+            {chatType === "Channel" && 
+            <List.Item
+              title="Calendar"
+              style={{
+                padding: 2,
+              }}
+              left={props => (
+                <List.Icon
+                  {...props}
+                  icon={() => (
+                    <MaterialCommunityIcons name="calendar-month" size={24} style={{color: Colors.black}} />
+                  )}
+                />
+              )}
+              onPress={openChannelCalendar}
+            />}
+            {chatType === "Direct" && !isMe &&
+            <List.Item
+              title="Create Channel"
+              style={{
+                padding: 2,
+              }}
+              left={props => (
+                <List.Icon
+                  {...props}
+                  icon={() => (
+                    <MaterialCommunityIcons name="account-multiple-plus-outline" size={24} style={{color: Colors.black}} />
+                  )}
+                />
+              )}
+              onPress={() => {
+                setOpenAddChannelConfirm(true);
+                setOpenMenu(false);
+              }}
+            />}
+            <List.Item
+              title="Gallery"
+              style={{
+                padding: 2,
+              }}
+              left={props => (
+                <List.Icon
+                  {...props}
+                  icon={() => (
+                    <MaterialCommunityIcons name="image-multiple-outline" size={24} style={{color: Colors.black}} />
+                  )}
+                />
+              )}
+              onPress={() => {
+                setOpenFileGallery(true);
+                setOpenMenu(false);
+              }}
+            />
+            {chatType === "Direct" &&
+            <List.Item
+              title="Send E-mail"
+              style={{
+                padding: 2,
+              }}
+              left={props => (
+                <List.Icon
+                  {...props}
+                  icon={() => (
+                    <MaterialCommunityIcons name="email" size={24} style={{color: Colors.black}} />
+                  )}
+                />
+              )}
+              onPress={() => {
+                setMessageToSendMail('<p></p>');
+                setOpenSendMail(true);
+                setOpenMenu(false);
+              }}
+            />}
+            {chatType === "Direct" &&
+            <List.Item
+              title="Visit weboffice"
+              style={{
+                padding: 2,
+              }}
+              left={props => (
+                <List.Icon
+                  {...props}
+                  icon={() => (
+                    <MaterialCommunityIcons name="office-building" size={24} style={{color: Colors.black}} />
+                  )}
+                />
+              )}
+              onPress={() => {
+                setOpenWebOffice(true);
+                setWebOfficeSrc(`https://www.uteamwork.com/webmessenger/ecard1.html?account=${otherUser?.email}&lang=ch&server=https://www.uteamwork.com&name=${userdata?.displayName}&email=${userdata?.email}`);
+                setOpenMenu(false);
+              }}
+            />}
+          </List.Section>
+        </Modal>
+      </Portal>
+      )}
     </SafeAreaView>
   );
 }
@@ -383,4 +1284,57 @@ const styles = StyleSheet.create({
     borderRightWidth: 0,
     borderBottomWidth: 0,
   },
+  buttonContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    minHeight: 60,
+    maxHeight: 120,
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    borderWidth: 0,
+    borderTopWidth: 1,
+    borderColor: Colors.grey200,
+  },
+  buttonLeftContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  bottomContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    minHeight: 60,
+    maxHeight: 120,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: Colors.grey200,
+    borderLeftWidth: 0,
+    borderRightWidth: 0,
+    borderBottomWidth: 0,
+  },
+  bottomButton: {
+    display: 'flex', 
+    flexDirection: 'column', 
+    alignItems: 'center', 
+    marginTop: 4,
+  },
+  modalContainer: {
+    width: '80%',
+    margin: 'auto',
+    backgroundColor: Colors.white,
+    padding: 12,
+    borderRadius: 12,
+  },
+  modalWrapper: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContainer: {
+    width: '60%',
+    margin: 'auto',
+    backgroundColor: Colors.white,
+    padding: 8,
+    borderRadius: 8,
+  }
 });

@@ -7,6 +7,8 @@ install! 'cocoapods', :deterministic_uuids => false
 
 target 'MessengerReact' do
   use_expo_modules!
+  pod 'react-native-webview', :path => '../node_modules/react-native-webview'
+
   post_integrate do |installer|
     begin
       expo_patch_react_imports!(installer)

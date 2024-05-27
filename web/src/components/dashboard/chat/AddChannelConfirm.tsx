@@ -61,7 +61,7 @@ export default function AddChannelConfirm({
               <div className="th-bg-bg px-4 pt-5 pb-4 sm:p-6 sm:pb-4 flex justify-between items-center">
                 <div>
                   <h5 className="font-bold th-color-for">
-                    Are you want to create a channel with this user?
+                    {t("Are you want to create a channel with this user?")}
                   </h5>
                 </div>
               </div>

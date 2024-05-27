@@ -1,4 +1,5 @@
 import {env} from '@/config/env';
+import { useMessageFeature } from '@/contexts/MessageContext';
 import {useModal} from '@/contexts/ModalContext';
 import {useParams} from '@/contexts/ParamsContext';
 import {showAlert} from '@/lib/alert';
@@ -11,6 +12,7 @@ import {Appbar, Divider} from 'react-native-paper';
 export default function StickersModal() {
   const {openStickers: open, setOpenStickers: setOpen} = useModal();
   const {chatId, workspaceId, chatType} = useParams();
+  const {setMessageSent} = useMessageFeature();
 
   // create numbers usng useMemo
   const numbers = React.useMemo(
@@ -30,6 +32,7 @@ export default function StickersModal() {
         chatType,
         sticker,
       });
+      setMessageSent(true);
       setOpen(false);
     } catch (err) {
       showAlert(err.message);

@@ -1,5 +1,6 @@
 import {env} from '@/config/env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 import jwt_decode from 'jwt-decode';
 
 const postData = async (url, data, addHeaders) => {
@@ -106,6 +107,17 @@ export async function login(email, password) {
   await AsyncStorage.setItem('refreshToken', refreshToken);
   await AsyncStorage.setItem('expires', String(now() + expires));
   await AsyncStorage.setItem('uid', uid);
+  const res = await axios.post('https://uteamwork.com/_api/user/login', {
+    username: email,
+    password,
+  }, {
+    headers: {
+      'Content-Type': 'application/json',
+    }
+  });
+  const {token} = res.data;
+  console.log(token);
+  await AsyncStorage.setItem('uteamToken', token);
   user = await getUser();
   return user;
 }
@@ -121,4 +133,9 @@ export async function createUser(email, password) {
   await AsyncStorage.setItem('uid', uid);
   user = await getUser();
   return user;
+}
+
+export async function getUteamToken() {
+  const uteamToken = await AsyncStorage.getItem('uteamToken');
+  return uteamToken;
 }

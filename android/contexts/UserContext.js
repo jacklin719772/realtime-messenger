@@ -31,6 +31,7 @@ export const UserProvider = ({children}) => {
 
   useEffect(() => {
     if (dataPush) {
+      console.log('Updated!!!');
       setUser(dataPush.onUpdateUser);
     }
   }, [dataPush]);

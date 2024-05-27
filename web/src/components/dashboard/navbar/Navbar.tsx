@@ -159,7 +159,7 @@ export default function Navbar() {
             `${process.env.PUBLIC_URL}/blank_user.png`} alt={r?.senderId} className="w-full" />
         </div>
         <div className="w-60">
-          <div className="font-bold text-sm">{users.filter((m: any) => m?.objectId === r?.senderId)[0].displayName} replied to your message:</div>
+          <div className="font-bold text-sm">{users.filter((m: any) => m?.objectId === r?.senderId)[0].displayName}{t(" replied to your message")}:</div>
           <div className="font-medium text-xs truncate">{r.text.replace(/(<([^>]+)>)/ig, '')}</div>
           <div className="font-medium text-xs">{new Date(r.createdAt).toLocaleString()}</div>
         </div>
@@ -174,7 +174,7 @@ export default function Navbar() {
             `${process.env.PUBLIC_URL}/blank_user.png`} alt={r?.senderId} className="w-full" />
         </div>
         <div className="w-60">
-          <div className="font-bold text-sm">{users.filter((m: any) => m?.objectId === r?.senderId)[0].displayName} mentioned you:</div>
+          <div className="font-bold text-sm">{users.filter((m: any) => m?.objectId === r?.senderId)[0].displayName}{t(" mentioned you")}:</div>
           <div className="font-medium text-xs truncate">{r.text.replace(/(<([^>]+)>)/ig, '')}</div>
           <div className="font-medium text-xs">{new Date(r.createdAt).toLocaleString()}</div>
         </div>
@@ -189,7 +189,7 @@ export default function Navbar() {
             `${process.env.PUBLIC_URL}/blank_user.png`} alt={r?.senderId} className="w-full" />
         </div>
         <div className="w-60">
-          <div className="font-bold text-sm">You missed {users.filter((m: any) => m?.objectId === r?.senderId)[0].displayName}'s call:</div>
+          <div className="font-bold text-sm">{t("Missed call from ")}{users.filter((m: any) => m?.objectId === r?.senderId)[0].displayName}:</div>
           <div className="font-medium text-xs">{new Date(r.createdAt).toLocaleString()}</div>
         </div>
       </div>

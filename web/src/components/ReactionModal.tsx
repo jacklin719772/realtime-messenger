@@ -1,6 +1,6 @@
 import { Listbox, Transition } from "@headlessui/react";
 import { EmojiHappyIcon } from "@heroicons/react/outline";
-import { reactions } from "lib/reactions";
+import { EmojiHappyIcon as EmojiHappyIconSolid, EmojiSadIcon, FireIcon, HeartIcon, ThumbUpIcon, XIcon } from "@heroicons/react/solid";
 import { Fragment, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
@@ -15,6 +15,52 @@ export function ReactionModal({
   myReaction: string;
 }) {
   const { t } = useTranslation();
+
+  const reactions = [
+    {
+      name: t("Excited"),
+      value: "excited",
+      icon: FireIcon,
+      iconColor: "text-white",
+      bgColor: "bg-red-500",
+    },
+    {
+      name: t("Loved"),
+      value: "loved",
+      icon: HeartIcon,
+      iconColor: "text-white",
+      bgColor: "bg-pink-400",
+    },
+    {
+      name: t("Happy"),
+      value: "happy",
+      icon: EmojiHappyIconSolid,
+      iconColor: "text-white",
+      bgColor: "bg-green-400",
+    },
+    {
+      name: t("Sad"),
+      value: "sad",
+      icon: EmojiSadIcon,
+      iconColor: "text-white",
+      bgColor: "bg-yellow-400",
+    },
+    {
+      name: t("Thumbsy"),
+      value: "thumbsy",
+      icon: ThumbUpIcon,
+      iconColor: "text-white",
+      bgColor: "bg-blue-500",
+    },
+    {
+      name: t("I feel nothing"),
+      value: null,
+      icon: XIcon,
+      iconColor: "text-gray-400",
+      bgColor: "bg-transparent",
+    },
+  ];
+  
   const [selected, setSelected] = useState(reactions[reactions.length - 1]);
 
   useEffect(() => {

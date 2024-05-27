@@ -548,9 +548,6 @@ export const deleteMessage = async (
     if (!chat.members.includes(uid)) {
       throw new Error("The user is not authorized to delete this message.");
     }
-    if (message.senderId !== uid) {
-      throw new Error("The user is not authorized to delete this message.");
-    }
 
     await graphQLClient(res.locals.token).request(UPDATE_MESSAGE, {
       input: {

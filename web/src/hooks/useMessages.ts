@@ -3,6 +3,8 @@ import * as queries from "graphql/queries";
 import * as subscriptions from "graphql/subscriptions";
 import { useEffect, useState } from "react";
 import useAuth from "./useAuth";
+import { useChannels } from "./useChannels";
+import { useDirectMessagesByWorkspace } from "./useDirects";
 
 function compareDate(a: any, b: any) {
   return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
@@ -99,6 +101,8 @@ export function useMessages(
   const [messages, setMessages] = useState<any[]>([]);
   const [messageArrived, setMessageArrived] = useState(false);
   const { user } = useAuth();
+  const { value: channels } = useChannels();
+  const { value: directs } = useDirectMessagesByWorkspace();
 
   const { data, loading } = useQuery(queries.LIST_MESSAGES, {
     variables: {
@@ -123,7 +127,10 @@ export function useMessages(
 
   useEffect(() => {
     if (dataPush) {
-      if (dataPush.onUpdateMessage.senderId !== user.uid ) {
+      if (dataPush.onUpdateMessage.senderId !== user.uid && 
+        (channels?.filter((c: any) => c.objectId === dataPush.onUpdateMessage.chatId).length > 0 ||
+        directs?.filter((d: any) => d.objectId === dataPush.onUpdateMessage.chatId).length > 0)
+      ) {
         setMessageArrived(true);
       }
       setMessages([
@@ -133,7 +140,7 @@ export function useMessages(
         dataPush.onUpdateMessage,
       ]);
     }
-  }, [dataPush]);
+  }, [dataPush, user]);
 
   return {
     value: [...messages].filter((m) => !m.isDeleted).sort(compareDate),

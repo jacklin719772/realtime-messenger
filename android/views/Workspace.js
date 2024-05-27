@@ -1,3 +1,6 @@
+import { useChannels } from '@/contexts/ChannelsContext';
+import { useDirectMessages } from '@/contexts/DirectMessagesContext';
+import { useModal } from '@/contexts/ModalContext';
 import {useParams} from '@/contexts/ParamsContext';
 import {useWorkspaceById} from '@/contexts/WorkspacesContext';
 import {getFileURL} from '@/lib/storage';
@@ -14,7 +17,8 @@ import {
 } from '@react-navigation/stack';
 import React from 'react';
 import {Image, TouchableOpacity} from 'react-native';
-import {Colors} from 'react-native-paper';
+import {Colors, IconButton} from 'react-native-paper';
+import ChannelCalendar from './ChannelCalendar';
 
 function showHeader(route) {
   const routeName = getFocusedRouteNameFromRoute(route) ?? 'Home';
@@ -24,7 +28,7 @@ function showHeader(route) {
       return true;
     case 'DMs':
       return false;
-    case 'You':
+    case 'Me':
       return false;
   }
 }
@@ -68,7 +72,7 @@ function Menu() {
         }}
       />
       <Tab.Screen
-        name="You"
+        name="Me"
         component={You}
         options={{
           tabBarIcon: ({color}) => (
@@ -94,6 +98,9 @@ export default function Workspace({route, navigation}) {
 
   const {setWorkspaceId} = useParams();
   const {value: workspace} = useWorkspaceById(objectId);
+  const {value: channels} = useChannels();
+  const {value: directs} = useDirectMessages();
+  const {setOpenAddChat} = useModal();
 
   React.useEffect(() => {
     setWorkspaceId(objectId);
@@ -105,7 +112,7 @@ export default function Workspace({route, navigation}) {
         name="Menu"
         component={Menu}
         options={({route}) => ({
-          headerTitle: workspace?.name || 'Home',
+          headerTitle: workspace?.name + ' (' + (channels?.length + directs?.length) + ')' || 'Home',
           headerTintColor: Colors.white,
           headerStyle: {
             backgroundColor: Colors.blue500,
@@ -127,12 +134,42 @@ export default function Workspace({route, navigation}) {
               />
             </TouchableOpacity>
           ),
+          headerRight: () => (
+            // <TouchableOpacity onPress={() => {}}>
+            //   <Image
+            //     style={{
+            //       width: 30,
+            //       height: 30,
+            //       borderRadius: 5,
+            //       marginRight: 12,
+            //     }}
+            //     source={require('@/files/plus-circle.png')}
+            //   />
+            // </TouchableOpacity>
+            <IconButton
+              icon="plus-circle-outline"
+              size={28}
+              color={Colors.white}
+              onPress={() => setOpenAddChat(true)}
+            />
+          ),
           headerShown: showHeader(route),
         })}
       />
       <Stack.Screen
         name="Chat"
         component={Chat}
+        options={{
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+          headerStyle: {
+            borderBottomWidth: 1,
+            borderBottomColor: Colors.grey300,
+          },
+        }}
+      />
+      <Stack.Screen
+        name="Calendar"
+        component={ChannelCalendar}
         options={{
           cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
           headerStyle: {
