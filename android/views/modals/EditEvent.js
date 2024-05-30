@@ -519,10 +519,11 @@ export default function EditEventModal({
                 }}
               >
                 <Checkbox
+                  disabled={values.remind == "0"}
                   status={values.is_mail_remind ? 'checked' : 'unchecked'}
                   onPress={() => setFieldValue("is_mail_remind", !values.is_mail_remind)}
                 />
-                <Text style={{
+                <Text disabled={values.remind == "0"} style={{
                   fontSize: 16,
                   color: Colors.black,
                 }}>E-mail remind</Text>

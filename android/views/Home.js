@@ -48,10 +48,6 @@ function ChannelItem({channel}) {
     }
   }, [ch, detail]);
 
-  React.useEffect(() => {
-    setChatId(null);
-  }, []);
-
   return (
     <List.Item
       key={channel.objectId}
@@ -137,10 +133,6 @@ function DirectMessageItem({direct}) {
       setNotifications(dm.lastMessageCounter - (detail?.lastRead || 0));
     }
   }, [dm, detail]);
-
-  React.useEffect(() => {
-    setChatId(null);
-  }, []);
 
   return (
     <List.Item

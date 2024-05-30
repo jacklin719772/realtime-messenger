@@ -14,12 +14,14 @@ import React, { useRef, useState } from 'react';
 import {
   Image,
   ImageBackground,
+  PermissionsAndroid,
+  Platform,
   Pressable,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
-import {ActivityIndicator, Button, Checkbox, Colors, Dialog, IconButton, List, Modal, Portal, ProgressBar} from 'react-native-paper';
+import {ActivityIndicator, Avatar, Button, Checkbox, Colors, Dialog, IconButton, List, Modal, Portal, ProgressBar} from 'react-native-paper';
 import icon from './icon';
 import { deleteData, postData } from '@/lib/api-helpers';
 import { showAlert } from '@/lib/alert';
@@ -34,6 +36,10 @@ import FilePreviewModal from '@/views/modals/FilePreview';
 import { useMeeting } from '@/contexts/MeetingContext';
 import { randomRoomName } from '@/lib/jitsiGenerator';
 import Highlighter from '@luciapp/react-native-highlight-words';
+import FileViewer from 'react-native-file-viewer';
+import RNFS from "react-native-fs";
+import Share from 'react-native-share';
+import * as Clipboard from 'expo-clipboard';
 
 function AudioPlayer({chat, setPosition, setVisible}) {
   const [sound, setSound] = React.useState(null);
@@ -90,17 +96,7 @@ function AudioPlayer({chat, setPosition, setVisible}) {
         flexDirection: 'row',
         alignItems: 'center',
       }}
-      onLongPress={
-        setPosition && setVisible
-          ? ({nativeEvent}) => {
-              // setPosition({
-              //   x: Number(nativeEvent.pageX.toFixed(2)),
-              //   y: Number(nativeEvent.pageY.toFixed(2)),
-              // });
-              setVisible(true);
-            }
-          : null
-      }
+      onLongPress={() => setVisible(true)}
       onPress={() => {
         if (status?.isPlaying) {
           pauseSound();
@@ -153,6 +149,84 @@ function AudioPlayer({chat, setPosition, setVisible}) {
 function VideoPlayer({chat, setPosition, setVisible}) {
   const [file, setFile] = React.useState('');
   const [open, setOpen] = React.useState(false);
+  const [openSelect, setOpenSelect] = React.useState(false);
+  const [localFile, setLocalFile] = React.useState(null);
+
+  const previewFile = async (chat) => {
+    const uri = chat.fileURL;
+    setOpenSelect(false);
+    const fileName = chat?.fileName;
+    const file = `${RNFS.DownloadDirectoryPath}/${fileName}`;
+    setLocalFile(`${RNFS.DownloadDirectoryPath}/${fileName}`);
+    const options = {
+      fromUrl: getFileURL(uri),
+      toFile: file,
+    };
+
+    try {
+      if (Platform.OS === 'android') {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+          {
+            title: 'Storage Permission Required',
+            message: 'App needs access to your storage to download the file',
+            buttonNeutral: 'Ask Me Later',
+            buttonNegative: 'Cancel',
+            buttonPositive: 'OK',
+          }
+        );
+
+        if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+          Alert.alert('Permission Denied!', 'You need to give storage permission to download the file');
+          return;
+        }
+      }
+
+      // Download the file
+      const downloadResult = await RNFS.downloadFile(options).promise;
+
+      if (downloadResult.statusCode === 200) {
+        // Share the file
+        handleOpenWithOtherApp(file);
+      } else {
+        showAlert('Download failed');
+      }
+    } catch (error) {
+      // error
+      console.log('Error-----', error);
+      showAlert(error.message);
+    }
+  };
+
+  const handleOpenWithOtherApp = async (url) => {
+    console.log(`file://${url}`)
+    try {
+      await Share.open({
+        url: `file://${url}`,
+        type: '*/*',
+      });
+    } catch (error) {
+      if (error.message !== 'User did not share') {
+        showAlert('Could not share the file');
+        console.error(error);
+      }
+    }
+  };
+
+  const handleOpenPreview = () => {
+    setOpen(true);
+    setOpenSelect(false);
+  }
+  
+  const copyToClipboard = async (chat) => {
+    try {
+      await Clipboard.setStringAsync(`https://im.flybird360.com:3003${chat.fileURL}`);
+      setOpenSelect(false);
+      showAlert('File link copied to clipboard.');
+    } catch (error) {
+      showAlert(error.message);
+    }
+  };
 
   React.useEffect(() => {
     if (chat?.fileURL) {
@@ -173,22 +247,12 @@ function VideoPlayer({chat, setPosition, setVisible}) {
   return (
     <Pressable
       style={{
-        width: 300,
-        height: 300,
+        width: 150,
+        height: 150,
         maxWidth: '100%',
       }}
-      onPress={() => setOpen(true)}
-      onLongPress={
-        setPosition && setVisible
-          ? ({nativeEvent}) => {
-              // setPosition({
-              //   x: Number(nativeEvent.pageX.toFixed(2)),
-              //   y: Number(nativeEvent.pageY.toFixed(2)),
-              // });
-              setVisible(true);
-            }
-          : null
-      }>
+      onPress={() => setOpenSelect(true)}
+      onLongPress={() => setVisible(true)}>
       <ImageBackground
         imageStyle={{
           resizeMode: 'cover',
@@ -224,26 +288,135 @@ function VideoPlayer({chat, setPosition, setVisible}) {
           uri={getFileURL(chat?.fileURL)}
         />
       )}
+      
+      <Portal>
+        <Dialog
+          visible={openSelect}
+          onDismiss={() => setOpenSelect(false)}
+          style={{
+            borderRadius: 16,
+          }}
+        >
+          <View style={{
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}>
+            <Dialog.Title>File Preview</Dialog.Title>
+            <IconButton
+              icon="window-close"
+              color={Colors.black}
+              size={25}
+              onPress={() => setOpenSelect(false)}
+            />
+          </View>
+          <Dialog.Actions>
+            <Pressable
+              style={{
+                alignItems: 'center',
+                borderRadius: 14,
+                margin: 12,
+              }}
+              onPress={handleOpenPreview}
+            >
+              <Image
+                style={{
+                  width: 25,
+                  height: 25,
+                }}
+                source={require('@/files/preview.png')}
+              />
+              <Text style={{
+                color: Colors.black,
+                fontSize: 12,
+              }}>Preview</Text>
+            </Pressable>
+            <Pressable
+              style={{
+                alignItems: 'center',
+                borderRadius: 14,
+                margin: 12,
+              }}
+              onPress={() => copyToClipboard(chat)}
+            >
+              <Image
+                style={{
+                  width: 25,
+                  height: 25,
+                }}
+                source={require('@/files/copy-to-clipboard.png')}
+              />
+              <Text style={{
+                color: Colors.black,
+                fontSize: 12,
+              }}>Copy link</Text>
+            </Pressable>
+            <Pressable
+              style={{
+                alignItems: 'center',
+                borderRadius: 14,
+                margin: 12,
+              }}
+              onPress={() => previewFile(chat)}
+            >
+              <Image
+                style={{
+                  width: 25,
+                  height: 25,
+                }}
+                source={require('@/files/share.png')}
+              />
+              <Text style={{
+                color: Colors.black,
+                fontSize: 12,
+              }}>Share</Text>
+            </Pressable>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
     </Pressable>
   );
 }
 
 function ImageViewer({chat, setPosition, setVisible}) {
   const [open, setOpen] = React.useState(false);
+
+  const previewFile = (chat) => {
+    const uri = chat.fileURL;
+    const fileName = chat.fileName;
+    const localFile = `${RNFS.DocumentDirectoryPath}/${fileName}`;
+    const options = {
+      fromUrl: getFileURL(uri),
+      toFile: localFile,
+    };
+
+    RNFS.downloadFile(options)
+      .promise.then(() => {
+        FileViewer.open(localFile)
+        .then(() => {
+          // Success
+        })
+        .catch((error) => {
+          setOpen(true);
+          showAlert('This file type is not supported.');
+        });
+      })
+      .then(() => {
+        // success
+      })
+      .catch((error) => {
+        // error
+        console.log('Error-----', error);
+        showAlert(error.message);
+      });
+  };
+
   return (
     <Pressable
-      onPress={() => setOpen(true)}
-      onLongPress={
-        setPosition && setVisible
-          ? ({nativeEvent}) => {
-              // setPosition({
-              //   x: Number(nativeEvent.pageX.toFixed(2)),
-              //   y: Number(nativeEvent.pageY.toFixed(2)),
-              // });
-              setVisible(true);
-            }
-          : null
-      }>
+      onPress={() => previewFile(chat)}
+      onLongPress={() => setVisible(true)}>
       <Image
         style={{
           resizeMode: 'cover',
@@ -269,22 +442,91 @@ function ImageViewer({chat, setPosition, setVisible}) {
   );
 }
 
-function FileViewer({chat, setVisible}) {
+function FilePreviewer({chat, setVisible}) {
   const [open, setOpen] = React.useState(false);
+  const [openSelect, setOpenSelect] = React.useState(false);
+  const [localFile, setLocalFile] = React.useState(null);
+
+  const previewFile = async (chat) => {
+    const uri = chat.fileURL;
+    setOpenSelect(false);
+    const fileName = chat.fileName;
+    const file = `${RNFS.DownloadDirectoryPath}/${fileName}`;
+    setLocalFile(`${RNFS.DownloadDirectoryPath}/${fileName}`);
+    const options = {
+      fromUrl: getFileURL(uri),
+      toFile: file,
+    };
+
+    try {
+      if (Platform.OS === 'android') {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+          {
+            title: 'Storage Permission Required',
+            message: 'App needs access to your storage to download the file',
+            buttonNeutral: 'Ask Me Later',
+            buttonNegative: 'Cancel',
+            buttonPositive: 'OK',
+          }
+        );
+
+        if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+          Alert.alert('Permission Denied!', 'You need to give storage permission to download the file');
+          return;
+        }
+      }
+
+      // Download the file
+      const downloadResult = await RNFS.downloadFile(options).promise;
+
+      if (downloadResult.statusCode === 200) {
+        // Share the file
+        handleOpenWithOtherApp(file);
+      } else {
+        showAlert('Download failed');
+      }
+    } catch (error) {
+      // error
+      console.log('Error-----', error);
+      showAlert(error.message);
+    }
+  };
+
+  const handleOpenWithOtherApp = async (url) => {
+    console.log(`file://${url}`)
+    try {
+      await Share.open({
+        url: `file://${url}`,
+        type: '*/*',
+      });
+    } catch (error) {
+      if (error.message !== 'User did not share') {
+        showAlert('Could not share the file');
+        console.error(error);
+      }
+    }
+  };
+
+  const handleOpenPreview = () => {
+    setOpen(true);
+    setOpenSelect(false);
+  }
+  
+  const copyToClipboard = async (chat) => {
+    try {
+      await Clipboard.setStringAsync(`https://im.flybird360.com:3003${chat.fileURL}`);
+      setOpenSelect(false);
+      showAlert('File link copied to clipboard.');
+    } catch (error) {
+      showAlert(error.message);
+    }
+  };
+
   return (
     <Pressable
-      onPress={() => setOpen(true)}
-      onLongPress={
-        setVisible
-          ? ({nativeEvent}) => {
-              // setPosition({
-              //   x: Number(nativeEvent.pageX.toFixed(2)),
-              //   y: Number(nativeEvent.pageY.toFixed(2)),
-              // });
-              setVisible(true);
-            }
-          : null
-      }>
+      onPress={() => setOpenSelect(true)}
+      onLongPress={() => setVisible(true)}>
       <Text
         style={{
           paddingHorizontal: 12,
@@ -307,6 +549,97 @@ function FileViewer({chat, setVisible}) {
           chat={chat}
         />
       )}
+      
+      <Portal>
+        <Dialog
+          visible={openSelect}
+          onDismiss={() => setOpenSelect(false)}
+          style={{
+            borderRadius: 16,
+          }}
+        >
+          <View style={{
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}>
+            <Dialog.Title>File Preview</Dialog.Title>
+            <IconButton
+              icon="window-close"
+              color={Colors.black}
+              size={25}
+              onPress={() => setOpenSelect(false)}
+            />
+          </View>
+          <Dialog.Actions style={{
+            marginTop: 0,
+            paddingTop: 0,
+          }}>
+            <Pressable
+              style={{
+                alignItems: 'center',
+                borderRadius: 14,
+                margin: 12,
+              }}
+              onPress={handleOpenPreview}
+            >
+              <Image
+                style={{
+                  width: 25,
+                  height: 25,
+                }}
+                source={require('@/files/preview.png')}
+              />
+              <Text style={{
+                color: Colors.black,
+                fontSize: 12,
+              }}>Preview</Text>
+            </Pressable>
+            <Pressable
+              style={{
+                alignItems: 'center',
+                borderRadius: 14,
+                margin: 12,
+              }}
+              onPress={() => copyToClipboard(chat)}
+            >
+              <Image
+                style={{
+                  width: 25,
+                  height: 25,
+                }}
+                source={require('@/files/copy-to-clipboard.png')}
+              />
+              <Text style={{
+                color: Colors.black,
+                fontSize: 12,
+              }}>Copy link</Text>
+            </Pressable>
+            <Pressable
+              style={{
+                alignItems: 'center',
+                borderRadius: 14,
+                margin: 12,
+              }}
+              onPress={() => previewFile(chat)}
+            >
+              <Image
+                style={{
+                  width: 25,
+                  height: 25,
+                }}
+                source={require('@/files/share.png')}
+              />
+              <Text style={{
+                color: Colors.black,
+                fontSize: 12,
+              }}>Share</Text>
+            </Pressable>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
     </Pressable>
   );
 }
@@ -412,6 +745,8 @@ export default function Message({
     return groups;
   }, [messageReactions]);
 
+  const [openFeature, setOpenFeature] = useState(false);
+
   const {showActionSheetWithOptions} = useActionSheet();
   const selectAction = () => {
     if (senderIsUser) {
@@ -507,6 +842,7 @@ export default function Message({
       setCheckedMessages([...checkedMessages, chat]);
     }
     setIsSelecting(true);
+    setVisible(false)
   }
 
   const reactMessage = async (e) => {
@@ -540,6 +876,47 @@ export default function Message({
       showAlert(err.message);
     }
   }
+
+  const downloadFile = async (uri) => {
+    const fileName = uri.split('/').pop().split('?')[0];
+    const file = `${RNFS.DownloadDirectoryPath}/${fileName}`;
+    const options = {
+      fromUrl: getFileURL(uri),
+      toFile: file,
+    };
+
+    try {
+      if (Platform.OS === "android") {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+          {
+            title: 'Storage Permission Required',
+            message: 'App needs access to your storage to download the file',
+            buttonNeutral: 'Ask Me Later',
+            buttonNegative: 'Cancel',
+            buttonPositive: 'OK',
+          }
+        );
+
+        if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+          showAlert('Permission Denied! You need to give storage permission to download the file');
+          return;
+        }
+      }
+      const downloadResult = await RNFS.downloadFile(options)
+        .promise;
+      if (downloadResult.statusCode === 200) {
+        // Share the file to open it with an appropriate app
+        showAlert('File downloaded successfully');
+        setVisible(false);
+      } else {
+        showAlert('Download failed');
+      }
+    } catch (error) {
+      console.log(error);
+      showAlert(error.message);
+    }
+  };
 
   return (
     <View>
@@ -662,7 +1039,7 @@ export default function Message({
               //   y: Number(nativeEvent.pageY.toFixed(2)),
               // });
               // setVisible(true);
-              selectAction();
+              setVisible(true);
             }
           }
           style={{display: 'flex', flexDirection: 'row', marginTop: 8}}>
@@ -759,7 +1136,8 @@ export default function Message({
                         mediaHeight: chat.replyMediaHeight,
                         mediaWidth: chat.replyMediaWidth,
                       }}
-                      {...(senderIsUser && {setPosition, setVisible})}
+                      setPosition={setPosition}
+                      setVisible={setVisible}
                     />
                   )}
                   {replyMessageType === 'video' && (
@@ -767,7 +1145,8 @@ export default function Message({
                       chat={{
                         fileURL: chat.replyFileURL,
                       }}
-                      {...(senderIsUser && {setPosition, setVisible})}
+                      setPosition={setPosition}
+                      setVisible={setVisible}
                     />
                   )}
                   {replyMessageType === 'audio' && (
@@ -776,15 +1155,16 @@ export default function Message({
                         fileURL: chat.replyFileURL,
                         mediaDuration: chat.replyMediaDuration,
                       }}
-                      {...(senderIsUser && {setPosition, setVisible})}
+                      setPosition={setPosition}
+                      setVisible={setVisible}
                     />
                   )}
                   {replyMessageType === 'sticker' && <StickerViewer chat={chat} />}
                   {isReplyText && <Text style={styles.replyText}>{removeHtml(chat?.replyText)}</Text>}
                   {replyMessageType === 'file' && (
-                    <FileViewer
+                    <FilePreviewer
                       chat={chat}
-                      {...(senderIsUser && {setVisible})}
+                      setVisible={setVisible}
                     />
                   )}
                 </View>
@@ -834,25 +1214,28 @@ export default function Message({
                   {messageType === 'picture' && (
                     <ImageViewer
                       chat={chat}
-                      {...(senderIsUser && {setPosition, setVisible})}
+                      setPosition={setPosition}
+                      setVisible={setVisible}
                     />
                   )}
                   {messageType === 'video' && (
                     <VideoPlayer
                       chat={chat}
-                      {...(senderIsUser && {setPosition, setVisible})}
+                      setPosition={setPosition}
+                      setVisible={setVisible}
                     />
                   )}
                   {messageType === 'audio' && (
                     <AudioPlayer
                       chat={chat}
-                      {...(senderIsUser && {setPosition, setVisible})}
+                      setPosition={setPosition}
+                      setVisible={setVisible}
                     />
                   )}
                   {messageType === 'file' && (
-                    <FileViewer
+                    <FilePreviewer
                       chat={chat}
-                      {...(senderIsUser && {setVisible})}
+                      setVisible={setVisible}
                     />
                   )}
                   {messageType === 'sticker' && <StickerViewer chat={chat} />}
@@ -874,25 +1257,28 @@ export default function Message({
               {messageType === 'picture' && (
                 <ImageViewer
                   chat={chat}
-                  {...(senderIsUser && {setPosition, setVisible})}
+                  setPosition={setPosition}
+                  setVisible={setVisible}
                 />
               )}
               {messageType === 'video' && (
                 <VideoPlayer
                   chat={chat}
-                  {...(senderIsUser && {setPosition, setVisible})}
+                  setPosition={setPosition}
+                  setVisible={setVisible}
                 />
               )}
               {messageType === 'audio' && (
                 <AudioPlayer
                   chat={chat}
-                  {...(senderIsUser && {setPosition, setVisible})}
+                  setPosition={setPosition}
+                  setVisible={setVisible}
                 />
               )}
               {messageType === 'file' && (
-                <FileViewer
+                <FilePreviewer
                   chat={chat}
-                  {...(senderIsUser && {setVisible})}
+                  setVisible={setVisible}
                 />
               )}
               {messageType === 'sticker' && <StickerViewer chat={chat} />}
@@ -1028,6 +1414,176 @@ export default function Message({
               />
             ))}
           </List.Section>
+        </Modal>
+      </Portal>
+      <Portal>
+        <Modal
+          visible={visible}
+          onDismiss={() => setVisible(false)}
+          contentContainerStyle={styles.modalContainer}
+          style={styles.modalWrapper}
+        >
+        <List.Section title="Actions" titleStyle={{
+          color: Colors.grey800,
+        }}>
+          <List.Item
+            title="Reaction"
+            style={{
+              padding: 2,
+            }}
+            left={props => (
+              <List.Icon
+                {...props}
+                icon={() => (
+                  <MaterialCommunityIcons name="emoticon-outline" size={24} style={{color: Colors.black}} />
+                )}
+              />
+            )}
+            onPress={() => {
+              setOpenReactionModal(true);
+              setVisible(false)
+            }}
+          />
+          {chat?.fileURL && <List.Item
+            title="Download"
+            style={{
+              padding: 2,
+            }}
+            left={props => (
+              <List.Icon
+                {...props}
+                icon={() => (
+                  <MaterialCommunityIcons name="download" size={24} style={{color: Colors.black}} />
+                )}
+              />
+            )}
+            onPress={() => downloadFile(chat?.fileURL)}
+          />}
+          {(senderIsUser && isText) && <List.Item
+            title="Edit"
+            style={{
+              padding: 2,
+            }}
+            left={props => (
+              <List.Icon
+                {...props}
+                icon={() => (
+                  <MaterialCommunityIcons name="pencil" size={24} style={{color: Colors.black}} />
+                )}
+              />
+            )}
+            onPress={() => {
+              setMessageToEdit(chat);
+              setOpenEditMessage(true);
+              setVisible(false)
+            }}
+          />}
+          {senderIsUser && <List.Item
+            title="Delete"
+            style={{
+              padding: 2,
+            }}
+            left={props => (
+              <List.Icon
+                {...props}
+                icon={() => (
+                  <MaterialCommunityIcons name="delete" size={24} style={{color: Colors.black}} />
+                )}
+              />
+            )}
+            onPress={() => {
+              setOpenDeleteConfirm(true);
+              setVisible(false)
+            }}
+          />}
+          <List.Item
+            title="Check"
+            style={{
+              padding: 2,
+            }}
+            left={props => (
+              <List.Icon
+                {...props}
+                icon={() => (
+                  <MaterialCommunityIcons name="check" size={24} style={{color: Colors.black}} />
+                )}
+              />
+            )}
+            onPress={initializeSelect}
+          />
+          <List.Item
+            title="Reply"
+            style={{
+              padding: 2,
+            }}
+            left={props => (
+              <List.Icon
+                {...props}
+                icon={() => (
+                  <MaterialCommunityIcons name="reply" size={24} style={{color: Colors.black}} />
+                )}
+              />
+            )}
+            onPress={() => {
+              setMessageToReply(chat);
+              setOpenReplyMessage(true);
+              setVisible(false)
+            }}
+          />
+          <List.Item
+            title="Forward"
+            style={{
+              padding: 2,
+            }}
+            left={props => (
+              <List.Icon
+                {...props}
+                icon={() => (
+                  <MaterialCommunityIcons name="forward" size={24} style={{color: Colors.black}} />
+                )}
+              />
+            )}
+            onPress={() => {
+              setMessageToForward(chat);
+              setOpenForwardMessage(true);
+              setVisible(false)
+            }}
+          />
+          {chat?.fileURL && <List.Item
+            title="Send Mail"
+            style={{
+              padding: 2,
+            }}
+            left={props => (
+              <List.Icon
+                {...props}
+                icon={() => (
+                  <MaterialCommunityIcons name="email" size={24} style={{color: Colors.black}} />
+                )}
+              />
+            )}
+            onPress={() => {
+              setMessageToSendMail(chat?.fileURL);
+              setOpenSendMail(true);
+              setVisible(false)
+            }}
+          />}
+          {chat?.fileURL && <List.Item
+            title="Favorite"
+            style={{
+              padding: 2,
+            }}
+            left={props => (
+              <List.Icon
+                {...props}
+                icon={() => (
+                  <MaterialCommunityIcons name="bookmark" size={24} style={{color: Colors.black}} />
+                )}
+              />
+            )}
+            onPress={() => {}}
+          />}
+        </List.Section>
         </Modal>
       </Portal>
     </View>

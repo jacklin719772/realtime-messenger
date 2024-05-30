@@ -22,6 +22,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useParams } from '@/contexts/ParamsContext';
 import { getFileSize, getFormattedDate, getFormattedTime, getPassedDays } from '@/lib/convert';
 import { postData } from '@/lib/api-helpers';
+import { cacheThumbnails } from '@/lib/thumbnails';
 
 function AudioPlayer({chat, setPosition, setVisible}) {
   const [sound, setSound] = React.useState(null);
@@ -167,8 +168,8 @@ function VideoPlayer({chat, setPosition, setVisible}) {
         imageStyle={{
           resizeMode: 'cover',
           borderRadius: 10,
-          width: 285,
-          height: 285,
+          width: 150,
+          height: 150,
         }}
         style={{
           alignItems: 'center',
@@ -176,7 +177,7 @@ function VideoPlayer({chat, setPosition, setVisible}) {
           height: '100%',
         }}
         defaultSource={require('@/files/placeholder_600.jpg')}
-        source={file ? {uri: file} : require('@/files/placeholder_600.jpg')}>
+        source={chat?.thumbnailURL ? {uri: getFileURL(chat?.thumbnailURL)} : require('@/files/placeholder_600.jpg')}>
         <MaterialIcons
           name="play-arrow"
           size={60}

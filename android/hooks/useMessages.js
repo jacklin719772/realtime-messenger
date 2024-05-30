@@ -52,6 +52,7 @@ export function useMessagesByChat(id, page = 1) {
 
   useEffect(() => {
     if (dataPush) {
+      console.log('Updated', dataPush.onUpdateMessage);
       setMessages([
         ...messages.filter(
           item => item.objectId !== dataPush.onUpdateMessage.objectId,

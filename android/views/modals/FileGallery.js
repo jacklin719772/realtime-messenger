@@ -2,7 +2,7 @@ import {useModal} from '@/contexts/ModalContext';
 import {modalStyles} from '@/styles/styles';
 import React, { useState } from 'react';
 import {FlatList, Image, ImageBackground, Modal, Pressable, StyleSheet, Text, View} from 'react-native';
-import {Appbar, Colors, Divider, IconButton, Modal as RNPModal, Portal, ProgressBar, List} from 'react-native-paper';
+import {Appbar, Colors, Divider, IconButton, Modal as RNPModal, Portal, ProgressBar, List, Dialog, Button} from 'react-native-paper';
 import {MaterialIcons, MaterialCommunityIcons} from '@expo/vector-icons';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useParams } from '@/contexts/ParamsContext';
@@ -23,6 +23,10 @@ import { postData } from '@/lib/api-helpers';
 import { now } from '@/lib/auth';
 import {v4 as uuidv4} from 'uuid';
 import * as mime from 'react-native-mime-types';
+import FileViewer from 'react-native-file-viewer';
+import RNFS from "react-native-fs";
+import Share from 'react-native-share';
+import * as Clipboard from 'expo-clipboard';
 
 function AudioPlayer({chat, setPosition, setVisible}) {
   const [sound, setSound] = React.useState(null);
@@ -142,6 +146,84 @@ function AudioPlayer({chat, setPosition, setVisible}) {
 function VideoPlayer({chat, setPosition, setVisible}) {
   const [file, setFile] = React.useState('');
   const [open, setOpen] = React.useState(false);
+  const [openSelect, setOpenSelect] = React.useState(false);
+  const [localFile, setLocalFile] = React.useState(null);
+
+  const previewFile = async (chat) => {
+    const uri = chat.fileURL;
+    setOpenSelect(false);
+    const fileName = chat.fileName;
+    const file = `${RNFS.DownloadDirectoryPath}/${fileName}`;
+    setLocalFile(`${RNFS.DownloadDirectoryPath}/${fileName}`);
+    const options = {
+      fromUrl: getFileURL(uri),
+      toFile: file,
+    };
+
+    try {
+      if (Platform.OS === 'android') {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+          {
+            title: 'Storage Permission Required',
+            message: 'App needs access to your storage to download the file',
+            buttonNeutral: 'Ask Me Later',
+            buttonNegative: 'Cancel',
+            buttonPositive: 'OK',
+          }
+        );
+
+        if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+          Alert.alert('Permission Denied!', 'You need to give storage permission to download the file');
+          return;
+        }
+      }
+
+      // Download the file
+      const downloadResult = await RNFS.downloadFile(options).promise;
+
+      if (downloadResult.statusCode === 200) {
+        // Share the file
+        handleOpenWithOtherApp(file);
+      } else {
+        showAlert('Download failed');
+      }
+    } catch (error) {
+      // error
+      console.log('Error-----', error);
+      showAlert(error.message);
+    }
+  };
+
+  const handleOpenWithOtherApp = async (url) => {
+    console.log(`file://${url}`)
+    try {
+      await Share.open({
+        url: `file://${url}`,
+        type: '*/*',
+      });
+    } catch (error) {
+      if (error.message !== 'User did not share') {
+        showAlert('Could not share the file');
+        console.error(error);
+      }
+    }
+  };
+
+  const handleOpenPreview = () => {
+    setOpen(true);
+    setOpenSelect(false);
+  }
+  
+  const copyToClipboard = async (chat) => {
+    try {
+      await Clipboard.setStringAsync(`https://im.flybird360.com:3003${chat.fileURL}`);
+      setOpenSelect(false);
+      showAlert('File link copied to clipboard.');
+    } catch (error) {
+      showAlert(error.message);
+    }
+  };
 
   React.useEffect(() => {
     if (chat?.fileURL) {
@@ -166,7 +248,7 @@ function VideoPlayer({chat, setPosition, setVisible}) {
         height: 150,
         maxWidth: '100%',
       }}
-      onPress={() => setOpen(true)}
+      onPress={() => setOpenSelect(true)}
       onLongPress={
         setPosition && setVisible
           ? ({nativeEvent}) => {
@@ -182,8 +264,8 @@ function VideoPlayer({chat, setPosition, setVisible}) {
         imageStyle={{
           resizeMode: 'cover',
           borderRadius: 10,
-          width: 300,
-          height: 300,
+          width: 150,
+          height: 150,
         }}
         style={{
           alignItems: 'center',
@@ -213,15 +295,150 @@ function VideoPlayer({chat, setPosition, setVisible}) {
           uri={getFileURL(chat?.fileURL)}
         />
       )}
+      
+      <Modal
+      animationType="fade"
+      transparent={true}
+      visible={openSelect}
+      onRequestClose={() => {
+        setOpenMenu(!openSelect);
+      }}>
+        <View
+          style={{
+            flex: 1,
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: 'rgba(0, 0, 0, 0.3)',
+          }}
+        >
+          <Dialog
+            visible={openSelect}
+            onDismiss={() => setOpenSelect(false)}
+            style={{
+              borderRadius: 16,
+            }}
+          >
+            <View style={{
+              width: '100%',
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}>
+              <Dialog.Title>File Preview</Dialog.Title>
+              <IconButton
+                icon="window-close"
+                color={Colors.black}
+                size={25}
+                onPress={() => setOpenSelect(false)}
+              />
+            </View>
+            <Dialog.Actions>
+              <Pressable
+                style={{
+                  alignItems: 'center',
+                  borderRadius: 14,
+                  margin: 12,
+                }}
+                onPress={handleOpenPreview}
+              >
+                <Image
+                  style={{
+                    width: 25,
+                    height: 25,
+                  }}
+                  source={require('@/files/preview.png')}
+                />
+                <Text style={{
+                  color: Colors.black,
+                  fontSize: 12,
+                }}>Preview</Text>
+              </Pressable>
+              <Pressable
+                style={{
+                  alignItems: 'center',
+                  borderRadius: 14,
+                  margin: 12,
+                }}
+                onPress={() => copyToClipboard(chat)}
+              >
+                <Image
+                  style={{
+                    width: 25,
+                    height: 25,
+                  }}
+                  source={require('@/files/copy-to-clipboard.png')}
+                />
+                <Text style={{
+                  color: Colors.black,
+                  fontSize: 12,
+                }}>Copy link</Text>
+              </Pressable>
+              <Pressable
+                style={{
+                  alignItems: 'center',
+                  borderRadius: 14,
+                  margin: 12,
+                }}
+                onPress={() => previewFile(chat)}
+              >
+                <Image
+                  style={{
+                    width: 25,
+                    height: 25,
+                  }}
+                  source={require('@/files/share.png')}
+                />
+                <Text style={{
+                  color: Colors.black,
+                  fontSize: 12,
+                }}>Share</Text>
+              </Pressable>
+            </Dialog.Actions>
+          </Dialog>
+        </View>
+      </Modal>
     </Pressable>
   );
 }
 
 function ImageViewer({chat, setPosition, setVisible}) {
   const [open, setOpen] = React.useState(false);
+
+  const previewFile = (chat) => {
+    const uri = chat.fileURL;
+    const fileName = chat.fileName;
+    const localFile = `${RNFS.DocumentDirectoryPath}/${fileName}`;
+    const options = {
+      fromUrl: getFileURL(uri),
+      toFile: localFile,
+    };
+
+    RNFS.downloadFile(options)
+      .promise.then(() => {
+        FileViewer.open(localFile)
+        .then(() => {
+          // Success
+        })
+        .catch((error) => {
+          setOpen(true);
+          showAlert('This file type is not supported.');
+        });
+      })
+      .then(() => {
+        // success
+      })
+      .catch((error) => {
+        // error
+        console.log('Error-----', error);
+        showAlert(error.message);
+      });
+  };
+
   return (
     <Pressable
-      onPress={() => setOpen(true)}
+      onPress={() => previewFile(chat)}
       onLongPress={
         setPosition && setVisible
           ? ({nativeEvent}) => {
@@ -258,11 +475,90 @@ function ImageViewer({chat, setPosition, setVisible}) {
   );
 }
 
-function FileViewer({chat, setVisible}) {
+function FilePreviewer({chat, setVisible}) {
   const [open, setOpen] = React.useState(false);
+  const [openSelect, setOpenSelect] = React.useState(false);
+  const [localFile, setLocalFile] = React.useState(null);
+
+  const previewFile = async (chat) => {
+    const uri = chat.fileURL;
+    setOpenSelect(false);
+    const fileName = chat.fileName;
+    const file = `${RNFS.DownloadDirectoryPath}/${fileName}`;
+    setLocalFile(`${RNFS.DownloadDirectoryPath}/${fileName}`);
+    const options = {
+      fromUrl: getFileURL(uri),
+      toFile: file,
+    };
+
+    try {
+      if (Platform.OS === 'android') {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+          {
+            title: 'Storage Permission Required',
+            message: 'App needs access to your storage to download the file',
+            buttonNeutral: 'Ask Me Later',
+            buttonNegative: 'Cancel',
+            buttonPositive: 'OK',
+          }
+        );
+
+        if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+          Alert.alert('Permission Denied!', 'You need to give storage permission to download the file');
+          return;
+        }
+      }
+
+      // Download the file
+      const downloadResult = await RNFS.downloadFile(options).promise;
+
+      if (downloadResult.statusCode === 200) {
+        // Share the file
+        handleOpenWithOtherApp(file);
+      } else {
+        showAlert('Download failed');
+      }
+    } catch (error) {
+      // error
+      console.log('Error-----', error);
+      showAlert(error.message);
+    }
+  };
+
+  const handleOpenWithOtherApp = async (url) => {
+    console.log(`file://${url}`)
+    try {
+      await Share.open({
+        url: `file://${url}`,
+        type: '*/*',
+      });
+    } catch (error) {
+      if (error.message !== 'User did not share') {
+        showAlert('Could not share the file');
+        console.error(error);
+      }
+    }
+  };
+
+  const handleOpenPreview = () => {
+    setOpen(true);
+    setOpenSelect(false);
+  }
+  
+  const copyToClipboard = async (chat) => {
+    try {
+      await Clipboard.setStringAsync(`https://im.flybird360.com:3003${chat.fileURL}`);
+      setOpenSelect(false);
+      showAlert('File link copied to clipboard.');
+    } catch (error) {
+      showAlert(error.message);
+    }
+  };
+
   return (
     <Pressable
-      onPress={() => setOpen(true)}
+      onPress={() => setOpenSelect(true)}
       onLongPress={
         setVisible
           ? ({nativeEvent}) => {
@@ -284,6 +580,7 @@ function FileViewer({chat, setVisible}) {
           borderRadius: 8,
           width: 300,
           maxWidth: '100%',
+          flexWrap: 'wrap',
         }}
       >
         {chat?.fileName} ({getFileSize(chat?.fileSize)})
@@ -295,6 +592,110 @@ function FileViewer({chat, setVisible}) {
           chat={chat}
         />
       )}
+      
+      <Modal
+      animationType="fade"
+      transparent={true}
+      visible={openSelect}
+      onRequestClose={() => {
+        setOpenMenu(!openSelect);
+      }}>
+        <View
+          style={{
+            flex: 1,
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: 'rgba(0, 0, 0, 0.3)',
+          }}
+        >
+          <Dialog
+            visible={openSelect}
+            onDismiss={() => setOpenSelect(false)}
+            style={{
+              borderRadius: 16,
+            }}
+          >
+            <View style={{
+              width: '100%',
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}>
+              <Dialog.Title>File Preview</Dialog.Title>
+              <IconButton
+                icon="window-close"
+                color={Colors.black}
+                size={25}
+                onPress={() => setOpenSelect(false)}
+              />
+            </View>
+            <Dialog.Actions>
+              <Pressable
+                style={{
+                  alignItems: 'center',
+                  borderRadius: 14,
+                  margin: 12,
+                }}
+                onPress={handleOpenPreview}
+              >
+                <Image
+                  style={{
+                    width: 25,
+                    height: 25,
+                  }}
+                  source={require('@/files/preview.png')}
+                />
+                <Text style={{
+                  color: Colors.black,
+                  fontSize: 12,
+                }}>Preview</Text>
+              </Pressable>
+              <Pressable
+                style={{
+                  alignItems: 'center',
+                  borderRadius: 14,
+                  margin: 12,
+                }}
+                onPress={() => copyToClipboard(chat)}
+              >
+                <Image
+                  style={{
+                    width: 25,
+                    height: 25,
+                  }}
+                  source={require('@/files/copy-to-clipboard.png')}
+                />
+                <Text style={{
+                  color: Colors.black,
+                  fontSize: 12,
+                }}>Copy link</Text>
+              </Pressable>
+              <Pressable
+                style={{
+                  alignItems: 'center',
+                  borderRadius: 14,
+                  margin: 12,
+                }}
+                onPress={() => previewFile(chat)}
+              >
+                <Image
+                  style={{
+                    width: 25,
+                    height: 25,
+                  }}
+                  source={require('@/files/share.png')}
+                />
+                <Text style={{
+                  color: Colors.black,
+                  fontSize: 12,
+                }}>Share</Text>
+              </Pressable>
+            </Dialog.Actions>
+          </Dialog>
+        </View>
+      </Modal>
     </Pressable>
   );
 }
@@ -385,7 +786,7 @@ function FileGalleryItem({message}) {
           />
         )}
         {getMessageType(message) === 'file' && (
-          <FileViewer
+          <FilePreviewer
             chat={message}
           />
         )}

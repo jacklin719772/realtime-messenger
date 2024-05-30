@@ -30,6 +30,7 @@ import MeetingModal from './modals/Meeting';
 import { Audio } from 'expo-av';
 import { useMessageFeature } from '@/contexts/MessageContext';
 import { useMessages } from '@/hooks/useMessages';
+import { useKeepAwake } from 'expo-keep-awake';
 
 const DrawerNav = createDrawerNavigator();
 
@@ -142,6 +143,7 @@ function CustomDrawerContent(props) {
 }
 
 export default function Main() {
+  useKeepAwake();
   const {chatId, chatType, workspaceId} = useParams();
   const {userdata} = useUser();
   const {value, loading} = useMyWorkspaces();

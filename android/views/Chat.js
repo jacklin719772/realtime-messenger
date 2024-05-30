@@ -494,6 +494,10 @@ export default function Chat({navigation}) {
   const {value: messages, loading} = useMessagesByChat(chatId, page);
 
   React.useEffect(() => {
+    console.log(messages[0]);
+  }, [messages]);
+
+  React.useEffect(() => {
     setPage(1);
   }, [chatId]);
   // --------------------------------------------------------------------
@@ -501,6 +505,7 @@ export default function Chat({navigation}) {
   const [messageTypeOpen, setMessageTypeOpen] = React.useState(false);
   const [audioOpen, setAudioOpen] = React.useState(false);
   const [videoOpen, setVideoOpen] = React.useState(false);
+  const [fileLoading, setFileLoading] = React.useState(false);
 
   // FORM ----------------------------------------------------------------
   const {handleSubmit, setFieldValue, values, isSubmitting, resetForm} =
@@ -652,6 +657,7 @@ export default function Chat({navigation}) {
           chatType,
         });
         setMessageSent(true);
+        showAlert('File uploaded successfully.');
       }
     } catch (err) {
       showAlert(err.message);
@@ -659,12 +665,18 @@ export default function Chat({navigation}) {
   };
 
   const lauchCamera = async () => {
-    const result = await ImagePicker.launchCameraAsync({
-      quality: 1,
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-    });
-    await handlePickerResult(result);
+    setFileLoading(true);
+    try {
+      const result = await ImagePicker.launchCameraAsync({
+        quality: 1,
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+      });
+      await handlePickerResult(result);
+    } catch (err) {
+      showAlert(err);
+    }
+    setFileLoading(false);
   };
 
   const pickImage = async () => {
@@ -685,6 +697,7 @@ export default function Chat({navigation}) {
   };
 
   const pickDocument = async () => {
+    setFileLoading(true);
     try {
       const result = await DocumentPicker.getDocumentAsync({});
       if (result.type === 'success') {
@@ -693,6 +706,7 @@ export default function Chat({navigation}) {
     } catch (err) {
       showAlert(err);
     }
+    setFileLoading(false);
   }
 
   const openChannelCalendar = () => {
@@ -758,7 +772,7 @@ export default function Chat({navigation}) {
         />
       </View>
       )}
-      {loading && <ActivityIndicator style={{paddingVertical: 10}} />}
+      {loading || fileLoading && <ActivityIndicator style={{paddingVertical: 10}} />}
       {/* MESSAGES */}
       <FlatList
         style={{paddingHorizontal: 10}}
@@ -931,7 +945,7 @@ export default function Chat({navigation}) {
               icon="send"
               color={Colors.grey800}
               size={25}
-              disabled={!values.text || isSubmitting}
+              disabled={!values.text || isSubmitting || fileLoading}
               onPress={handleSubmit}
             />
           </View>

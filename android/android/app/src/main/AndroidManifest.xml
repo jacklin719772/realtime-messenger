@@ -13,8 +13,7 @@
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.VIDEO_CAPTURE" />
     <uses-permission android:name="android.permission.AUDIO_CAPTURE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
@@ -55,4 +54,11 @@
         </intent-filter>
       </activity>
     </application>
+    <queries>
+      <intent>
+        <action android:name="android.intent.action.VIEW" />
+        <!-- If you don't know the MIME type in advance, set "mimeType" to "*/*". -->
+        <data android:mimeType="*/*" />
+      </intent>
+    </queries>
 </manifest>
