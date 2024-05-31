@@ -12,6 +12,7 @@ import {Audio} from 'expo-av';
 import * as FileSystem from 'expo-file-system';
 import React from 'react';
 import {Modal, Text, View} from 'react-native';
+import CircularProgress from 'react-native-circular-progress-indicator';
 import * as mime from 'react-native-mime-types';
 import {
   ActivityIndicator,
@@ -179,8 +180,8 @@ export default function AudioModal({open, setOpen}) {
           },
           onUploadProgress: (progressEvent) => {
             const { loaded, total } = progressEvent;
-            setPercentage(Math.floor(loaded / total * 100) / 100);
-            console.log(Math.floor(loaded / total * 100) / 100);
+            setPercentage(Math.floor(loaded / total * 100));
+            console.log(Math.floor(loaded / total * 100));
           },
         },
       );
@@ -304,6 +305,10 @@ export default function AudioModal({open, setOpen}) {
             {loading &&
               <View
                 style={{
+                  width: '100%',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-around',
                   paddingVertical: 8,
                 }}
               >
@@ -313,14 +318,14 @@ export default function AudioModal({open, setOpen}) {
                     color: Colors.black,
                     textAlign: 'center',
                   }}
-                >{percentage * 100}% uploading... </Text>
-                <ProgressBar
-                  progress={percentage}
-                  color={Colors.red500}
-                  style={{
-                    height: 8,
-                    borderRadius: 4,
-                  }}
+                >{percentage}% uploading... </Text>
+                <CircularProgress
+                  value={percentage}
+                  radius={30}
+                  inActiveStrokeColor={Colors.green500}
+                  inActiveStrokeOpacity={0.2}
+                  progressValueColor={Colors.green500}
+                  valueSuffix={'%'}
                 />
               </View>
             }

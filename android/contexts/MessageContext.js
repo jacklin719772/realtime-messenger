@@ -27,6 +27,9 @@ export const MessageContext = createContext({
 
     searchText: "",
     setSearchText: () => {},
+
+    messageToFavorite: null,
+    setMessageToFavorite: () => {},
 });
 
 export function useMessageFeature() {
@@ -43,6 +46,7 @@ export function MessageProvider({children}) {
   const [messageSent, setMessageSent] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [searchText, setSearchText] = useState(false);
+  const [messageToFavorite, setMessageToFavorite] = useState(false);
 
   return (
     <MessageContext.Provider
@@ -73,6 +77,9 @@ export function MessageProvider({children}) {
 
         searchText,
         setSearchText,
+
+        messageToFavorite,
+        setMessageToFavorite,
       }}>
       {children}
     </MessageContext.Provider>

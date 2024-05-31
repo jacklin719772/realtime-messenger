@@ -54,6 +54,9 @@ export const ModalContext = createContext({
 
   webOfficeSrc: '',
   setWebOfficeSrc: () => {},
+
+  openFavorite: false,
+  setOpenFavorite: () => {},
 });
 
 export function useModal() {
@@ -79,6 +82,7 @@ export function ModalProvider({children}) {
   const [openAddChat, setOpenAddChat] = useState(false);
   const [openWebOffice, setOpenWebOffice] = useState(false);
   const [webOfficeSrc, setWebOfficeSrc] = useState('');
+  const [openFavorite, setOpenFavorite] = useState(false);
 
   return (
     <ModalContext.Provider
@@ -136,6 +140,9 @@ export function ModalProvider({children}) {
 
         webOfficeSrc,
         setWebOfficeSrc,
+
+        openFavorite,
+        setOpenFavorite,
       }}>
       {children}
     </ModalContext.Provider>

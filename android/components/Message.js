@@ -40,6 +40,7 @@ import FileViewer from 'react-native-file-viewer';
 import RNFS from "react-native-fs";
 import Share from 'react-native-share';
 import * as Clipboard from 'expo-clipboard';
+import CircularProgress from 'react-native-circular-progress-indicator';
 
 function AudioPlayer({chat, setPosition, setVisible}) {
   const [sound, setSound] = React.useState(null);
@@ -151,6 +152,8 @@ function VideoPlayer({chat, setPosition, setVisible}) {
   const [open, setOpen] = React.useState(false);
   const [openSelect, setOpenSelect] = React.useState(false);
   const [localFile, setLocalFile] = React.useState(null);
+  const [downloading, setDownloading] = React.useState(false);
+  const [progress, setProgress] = React.useState(0);
 
   const previewFile = async (chat) => {
     const uri = chat.fileURL;
@@ -161,6 +164,11 @@ function VideoPlayer({chat, setPosition, setVisible}) {
     const options = {
       fromUrl: getFileURL(uri),
       toFile: file,
+      progress: (res) => {
+        // Handle download progress updates if needed
+        const progress = (res.bytesWritten / res.contentLength) * 100;
+        setProgress(Math.floor(progress));
+      },
     };
 
     try {
@@ -181,9 +189,11 @@ function VideoPlayer({chat, setPosition, setVisible}) {
           return;
         }
       }
+      setDownloading(true);
 
       // Download the file
       const downloadResult = await RNFS.downloadFile(options).promise;
+      setDownloading(false);
 
       if (downloadResult.statusCode === 200) {
         // Share the file
@@ -376,6 +386,37 @@ function VideoPlayer({chat, setPosition, setVisible}) {
           </Dialog.Actions>
         </Dialog>
       </Portal>
+      <Portal>
+        <Modal
+          visible={downloading}
+          onDismiss={() => {}}
+          contentContainerStyle={styles.modalContainer}
+          style={styles.modalWrapper}
+        >
+          <View
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              width: '100%',
+            }}
+          >
+            <Text style={{
+              fontSize: 16,
+              color: Colors.black,
+            }}>Downloading file...</Text>
+            <CircularProgress
+              value={progress}
+              radius={30}
+              inActiveStrokeColor={Colors.green500}
+              inActiveStrokeOpacity={0.2}
+              progressValueColor={Colors.green500}
+              valueSuffix={'%'}
+            />
+          </View>
+        </Modal>
+      </Portal>
     </Pressable>
   );
 }
@@ -446,6 +487,8 @@ function FilePreviewer({chat, setVisible}) {
   const [open, setOpen] = React.useState(false);
   const [openSelect, setOpenSelect] = React.useState(false);
   const [localFile, setLocalFile] = React.useState(null);
+  const [downloading, setDownloading] = React.useState(false);
+  const [progress, setProgress] = React.useState(0);
 
   const previewFile = async (chat) => {
     const uri = chat.fileURL;
@@ -456,6 +499,11 @@ function FilePreviewer({chat, setVisible}) {
     const options = {
       fromUrl: getFileURL(uri),
       toFile: file,
+      progress: (res) => {
+        // Handle download progress updates if needed
+        const progress = (res.bytesWritten / res.contentLength) * 100;
+        setProgress(Math.floor(progress));
+      },
     };
 
     try {
@@ -476,9 +524,11 @@ function FilePreviewer({chat, setVisible}) {
           return;
         }
       }
+      setDownloading(true);
 
       // Download the file
       const downloadResult = await RNFS.downloadFile(options).promise;
+      setDownloading(false);
 
       if (downloadResult.statusCode === 200) {
         // Share the file
@@ -640,6 +690,37 @@ function FilePreviewer({chat, setVisible}) {
           </Dialog.Actions>
         </Dialog>
       </Portal>
+      <Portal>
+        <Modal
+          visible={downloading}
+          onDismiss={() => {}}
+          contentContainerStyle={styles.modalContainer}
+          style={styles.modalWrapper}
+        >
+          <View
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              width: '100%',
+            }}
+          >
+            <Text style={{
+              fontSize: 16,
+              color: Colors.black,
+            }}>Downloading file...</Text>
+            <CircularProgress
+              value={progress}
+              radius={30}
+              inActiveStrokeColor={Colors.green500}
+              inActiveStrokeOpacity={0.2}
+              progressValueColor={Colors.green500}
+              valueSuffix={'%'}
+            />
+          </View>
+        </Modal>
+      </Portal>
     </Pressable>
   );
 }
@@ -705,8 +786,8 @@ export default function Message({
   const [openReactionModal, setOpenReactionModal] = useState(false);
   const [loadingOperation, setLoadingOperation] = useState(false);
 
-  const {setOpenEditMessage, setOpenReplyMessage, setOpenForwardMessage, setOpenSendMail} = useModal();
-  const {setMessageToEdit, setMessageToReply, setMessageToForward, setMessageToSendMail, checkedMessages, setCheckedMessages, isSelecting, setIsSelecting, searchText} = useMessageFeature();
+  const {setOpenEditMessage, setOpenReplyMessage, setOpenForwardMessage, setOpenSendMail, setOpenFavorite} = useModal();
+  const {setMessageToEdit, setMessageToReply, setMessageToForward, setMessageToSendMail, checkedMessages, setCheckedMessages, isSelecting, setIsSelecting, searchText, setMessageToFavorite} = useMessageFeature();
   const {setOpenCalling, setRecipientInfo, setSenderInfo, setRoomName, setIsVideoDisabled} = useMeeting();
 
   const messageType = getMessageType(chat);
@@ -746,84 +827,6 @@ export default function Message({
   }, [messageReactions]);
 
   const [openFeature, setOpenFeature] = useState(false);
-
-  const {showActionSheetWithOptions} = useActionSheet();
-  const selectAction = () => {
-    if (senderIsUser) {
-      showActionSheetWithOptions(
-        {
-          icons: [icon('insert-emoticon'), icon('edit'), icon('delete'), icon('check'), icon('reply'), icon('forward'), icon('email')],
-          options: ['Reaction', 'Edit', 'Delete', 'Check', 'Reply', 'Forward', 'Send Mail'],
-          cancelButtonIndex: 7,
-          useModal: true,
-        },
-        buttonIndex => {
-          if (buttonIndex === 0) {
-            setOpenReactionModal(true);
-          }
-          if (buttonIndex === 1) {
-            setMessageToEdit(chat);
-            setOpenEditMessage(true);
-          }
-          if (buttonIndex === 2) {
-            setOpenDeleteConfirm(true);
-          }
-          if (buttonIndex === 3) {
-            initializeSelect();
-          }
-          if (buttonIndex === 4) {
-            setMessageToReply(chat);
-            setOpenReplyMessage(true);
-          }
-          if (buttonIndex === 5) {
-            setMessageToForward(chat);
-            setOpenForwardMessage(true);
-          }
-          if (buttonIndex === 6) {
-            if (chat?.fileURL) {
-              setMessageToSendMail(chat?.fileURL);
-              setOpenSendMail(true);
-            } else {
-              showAlert("Select file message to send email");
-            }
-          }
-        },
-      );
-    } else {
-      showActionSheetWithOptions(
-        {
-          icons: [icon('insert-emoticon'), icon('check'), icon('reply'), icon('forward'), icon('email')],
-          options: ['Reaction', 'Check', 'Reply', 'Forward', 'Send Mail'],
-          cancelButtonIndex: 5,
-          useModal: true,
-        },
-        buttonIndex => {
-          if (buttonIndex === 0) {
-            setOpenReactionModal(true);
-          }
-          if (buttonIndex === 1) {
-            initializeSelect();
-          }
-          if (buttonIndex === 2) {
-            setMessageToReply(chat);
-            setOpenReplyMessage(true);
-          }
-          if (buttonIndex === 3) {
-            setMessageToForward(chat);
-            setOpenForwardMessage(true);
-          }
-          if (buttonIndex === 4) {
-            if (chat?.fileURL) {
-              setMessageToSendMail(chat?.fileURL);
-              setOpenSendMail(true);
-            } else {
-              showAlert("Select file message to send email");
-            }
-          }
-        },
-      );
-    }
-  };
 
   const deleteMessage = async () => {
     setLoadingOperation(true);
@@ -877,8 +880,9 @@ export default function Message({
     }
   }
 
-  const downloadFile = async (uri) => {
-    const fileName = uri.split('/').pop().split('?')[0];
+  const downloadFile = async (chat) => {
+    const uri = chat.fileURL;
+    const fileName = chat.fileName;
     const file = `${RNFS.DownloadDirectoryPath}/${fileName}`;
     const options = {
       fromUrl: getFileURL(uri),
@@ -917,6 +921,22 @@ export default function Message({
       showAlert(error.message);
     }
   };
+
+  const initializeFavorite = () => {
+    setMessageToFavorite(chat);
+    setOpenFavorite(true);
+    setVisible(false);
+  }
+
+  const removeFavorite = async () => {
+    try {
+      await postData(`/messages/${chat?.objectId}/favorites/${user?.uid}`);
+      showAlert('The file has been removed from your private folder.');
+    } catch (error) {
+      showAlert(error.message);
+    }
+    setVisible(false);
+  }
 
   return (
     <View>
@@ -1423,7 +1443,254 @@ export default function Message({
           contentContainerStyle={styles.modalContainer}
           style={styles.modalWrapper}
         >
-        <List.Section title="Actions" titleStyle={{
+          <Text
+            style={{
+              color: Colors.black,
+              fontSize: 14,
+              fontWeight: 'bold',
+              paddingLeft: 12,
+            }}
+          >More Actions</Text>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-around',
+              alignItems: 'flex-start',
+              flexWrap: 'wrap',
+            }}
+          >
+            <Pressable
+              style={{
+                alignItems: 'center',
+                borderRadius: 14,
+                margin: 12,
+                width: 55,
+              }}
+              onPress={() => {
+                setOpenReactionModal(true);
+                setVisible(false)
+              }}
+            >
+              <Image
+                style={{
+                  width: 25,
+                  height: 25,
+                }}
+                source={require('@/files/reaction.png')}
+              />
+              <Text style={{
+                color: Colors.black,
+                fontSize: 12,
+                textAlign: 'center',
+              }}>Reaction</Text>
+            </Pressable>
+            {chat?.fileURL && <Pressable
+              style={{
+                alignItems: 'center',
+                borderRadius: 14,
+                margin: 12,
+                width: 55,
+              }}
+              onPress={() => downloadFile(chat)}
+            >
+              <Image
+                style={{
+                  width: 25,
+                  height: 25,
+                }}
+                source={require('@/files/download.png')}
+              />
+              <Text style={{
+                color: Colors.black,
+                fontSize: 12,
+                textAlign: 'center',
+              }}>Download</Text>
+            </Pressable>}
+            <Pressable
+              style={{
+                alignItems: 'center',
+                borderRadius: 14,
+                margin: 12,
+                width: 55,
+              }}
+              onPress={initializeSelect}
+            >
+              <Image
+                style={{
+                  width: 25,
+                  height: 25,
+                }}
+                source={require('@/files/check.png')}
+              />
+              <Text style={{
+                color: Colors.black,
+                fontSize: 12,
+                textAlign: 'center',
+              }}>Select Msg</Text>
+            </Pressable>            
+            {(senderIsUser && isText) && <Pressable
+              style={{
+                alignItems: 'center',
+                borderRadius: 14,
+                margin: 12,
+                 width: 55,
+              }}
+              onPress={() => {
+                setMessageToEdit(chat);
+                setOpenEditMessage(true);
+                setVisible(false)
+              }}
+            >
+              <MaterialCommunityIcons name="pencil" size={25} style={{color: Colors.blue500}} />
+              <Text style={{
+                color: Colors.black,
+                fontSize: 12,
+                textAlign: 'center',
+              }}>Edit</Text>
+            </Pressable>}
+            {senderIsUser && <Pressable
+              style={{
+                alignItems: 'center',
+                borderRadius: 14,
+                margin: 12,
+                width: 55,
+              }}
+              onPress={() => {
+                setOpenDeleteConfirm(true);
+                setVisible(false)
+              }}
+            >
+              <MaterialCommunityIcons name="delete" size={25} style={{color: Colors.red500}} />
+              <Text style={{
+                color: Colors.black,
+                fontSize: 12,
+                textAlign: 'center',
+              }}>Delete</Text>
+            </Pressable>}
+            <Pressable
+              style={{
+                alignItems: 'center',
+                borderRadius: 14,
+                margin: 12,
+                 width: 55,
+              }}
+              onPress={() => {
+                setMessageToReply(chat);
+                setOpenReplyMessage(true);
+                setVisible(false)
+              }}
+            >
+              <Image
+                style={{
+                  width: 25,
+                  height: 25,
+                }}
+                source={require('@/files/reply.png')}
+              />
+              <Text style={{
+                color: Colors.black,
+                fontSize: 12,
+                textAlign: 'center',
+              }}>Reply</Text>
+            </Pressable>
+            <Pressable
+              style={{
+                alignItems: 'center',
+                borderRadius: 14,
+                margin: 12,
+                width: 55,
+              }}
+              onPress={() => {
+                setMessageToForward(chat);
+                setOpenForwardMessage(true);
+                setVisible(false)
+              }}
+            >
+              <Image
+                style={{
+                  width: 25,
+                  height: 25,
+                }}
+                source={require('@/files/forward.png')}
+              />
+              <Text style={{
+                color: Colors.black,
+                fontSize: 12,
+                textAlign: 'center',
+              }}>Forward</Text>
+            </Pressable>
+            {chat?.fileURL && <Pressable
+              style={{
+                alignItems: 'center',
+                borderRadius: 14,
+                margin: 12,
+                width: 55,
+              }}
+              onPress={() => {
+                setMessageToSendMail(chat?.fileURL);
+                setOpenSendMail(true);
+                setVisible(false)
+              }}
+            >
+              <Image
+                style={{
+                  width: 25,
+                  height: 25,
+                }}
+                source={require('@/files/email.png')}
+              />
+              <Text style={{
+                color: Colors.black,
+                fontSize: 12,
+                textAlign: 'center',
+              }}>Send email</Text>
+            </Pressable>}
+            {(chat?.fileURL && !chat?.favorites.includes(user?.uid)) && <Pressable
+              style={{
+                alignItems: 'center',
+                borderRadius: 14,
+                margin: 12,
+                width: 55,
+              }}
+              onPress={initializeFavorite}
+            >
+              <Image
+                style={{
+                  width: 25,
+                  height: 25,
+                }}
+                source={require('@/files/favorite.png')}
+              />
+              <Text style={{
+                color: Colors.black,
+                fontSize: 12,
+                textAlign: 'center',
+              }}>Add Favorite</Text>
+            </Pressable>}
+            {(chat?.fileURL && chat?.favorites.includes(user?.uid)) && <Pressable
+              style={{
+                alignItems: 'center',
+                borderRadius: 14,
+                margin: 12,
+                width: 55,
+              }}
+              onPress={removeFavorite}
+            >
+              <Image
+                style={{
+                  width: 25,
+                  height: 25,
+                }}
+                source={require('@/files/favorite.png')}
+              />
+              <Text style={{
+                color: Colors.red500,
+                fontSize: 12,
+                textAlign: 'center',
+              }}>Remove Favorite</Text>
+            </Pressable>}
+          </View>
+        {/* <List.Section title="Actions" titleStyle={{
           color: Colors.grey800,
         }}>
           <List.Item
@@ -1457,7 +1724,7 @@ export default function Message({
                 )}
               />
             )}
-            onPress={() => downloadFile(chat?.fileURL)}
+            onPress={() => downloadFile(chat)}
           />}
           {(senderIsUser && isText) && <List.Item
             title="Edit"
@@ -1568,8 +1835,23 @@ export default function Message({
               setVisible(false)
             }}
           />}
-          {chat?.fileURL && <List.Item
-            title="Favorite"
+          {(chat?.fileURL && chat?.favorites.includes(user?.uid)) && <List.Item
+            title="Remove Favorite"
+            style={{
+              padding: 2,
+            }}
+            left={props => (
+              <List.Icon
+                {...props}
+                icon={() => (
+                  <MaterialCommunityIcons name="bookmark" size={24} style={{color: Colors.red500}} />
+                )}
+              />
+            )}
+            onPress={removeFavorite}
+          />}
+          {(chat?.fileURL && !chat?.favorites.includes(user?.uid)) && <List.Item
+            title="Add Favorite"
             style={{
               padding: 2,
             }}
@@ -1581,9 +1863,9 @@ export default function Message({
                 )}
               />
             )}
-            onPress={() => {}}
+            onPress={initializeFavorite}
           />}
-        </List.Section>
+        </List.Section> */}
         </Modal>
       </Portal>
     </View>

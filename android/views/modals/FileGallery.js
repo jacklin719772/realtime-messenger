@@ -1,7 +1,7 @@
 import {useModal} from '@/contexts/ModalContext';
 import {modalStyles} from '@/styles/styles';
 import React, { useState } from 'react';
-import {FlatList, Image, ImageBackground, Modal, Pressable, StyleSheet, Text, View} from 'react-native';
+import {FlatList, Image, ImageBackground, Modal, Platform, Pressable, StyleSheet, Text, View} from 'react-native';
 import {Appbar, Colors, Divider, IconButton, Modal as RNPModal, Portal, ProgressBar, List, Dialog, Button} from 'react-native-paper';
 import {MaterialIcons, MaterialCommunityIcons} from '@expo/vector-icons';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -27,6 +27,8 @@ import FileViewer from 'react-native-file-viewer';
 import RNFS from "react-native-fs";
 import Share from 'react-native-share';
 import * as Clipboard from 'expo-clipboard';
+import CircularProgress from 'react-native-circular-progress-indicator';
+import { PermissionsAndroid } from 'react-native';
 
 function AudioPlayer({chat, setPosition, setVisible}) {
   const [sound, setSound] = React.useState(null);
@@ -148,16 +150,23 @@ function VideoPlayer({chat, setPosition, setVisible}) {
   const [open, setOpen] = React.useState(false);
   const [openSelect, setOpenSelect] = React.useState(false);
   const [localFile, setLocalFile] = React.useState(null);
+  const [downloading, setDownloading] = React.useState(false);
+  const [progress, setProgress] = React.useState(0);
 
   const previewFile = async (chat) => {
     const uri = chat.fileURL;
     setOpenSelect(false);
-    const fileName = chat.fileName;
+    const fileName = chat?.fileName;
     const file = `${RNFS.DownloadDirectoryPath}/${fileName}`;
     setLocalFile(`${RNFS.DownloadDirectoryPath}/${fileName}`);
     const options = {
       fromUrl: getFileURL(uri),
       toFile: file,
+      progress: (res) => {
+        // Handle download progress updates if needed
+        const progress = (res.bytesWritten / res.contentLength) * 100;
+        setProgress(Math.floor(progress));
+      },
     };
 
     try {
@@ -178,9 +187,11 @@ function VideoPlayer({chat, setPosition, setVisible}) {
           return;
         }
       }
+      setDownloading(true);
 
       // Download the file
       const downloadResult = await RNFS.downloadFile(options).promise;
+      setDownloading(false);
 
       if (downloadResult.statusCode === 200) {
         // Share the file
@@ -399,6 +410,51 @@ function VideoPlayer({chat, setPosition, setVisible}) {
           </Dialog>
         </View>
       </Modal>
+      <Modal
+      animationType="fade"
+      transparent={true}
+      visible={downloading}
+      onRequestClose={() => {}}>
+        <View
+          style={{
+            flex: 1,
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: 'rgba(0, 0, 0, 0.3)',
+          }}
+        >
+          <RNPModal
+            visible={downloading}
+            onDismiss={() => {}}
+            contentContainerStyle={styles.modalContainer}
+            style={styles.modalWrapper}
+          >
+            <View
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                width: '100%',
+              }}
+            >
+              <Text style={{
+                fontSize: 16,
+                color: Colors.black,
+              }}>Downloading file...</Text>
+              <CircularProgress
+                value={progress}
+                radius={30}
+                inActiveStrokeColor={Colors.green500}
+                inActiveStrokeOpacity={0.2}
+                progressValueColor={Colors.green500}
+                valueSuffix={'%'}
+              />
+            </View>
+          </RNPModal>
+        </View>
+      </Modal>
     </Pressable>
   );
 }
@@ -479,16 +535,23 @@ function FilePreviewer({chat, setVisible}) {
   const [open, setOpen] = React.useState(false);
   const [openSelect, setOpenSelect] = React.useState(false);
   const [localFile, setLocalFile] = React.useState(null);
+  const [downloading, setDownloading] = React.useState(false);
+  const [progress, setProgress] = React.useState(0);
 
   const previewFile = async (chat) => {
     const uri = chat.fileURL;
     setOpenSelect(false);
-    const fileName = chat.fileName;
+    const fileName = chat?.fileName;
     const file = `${RNFS.DownloadDirectoryPath}/${fileName}`;
     setLocalFile(`${RNFS.DownloadDirectoryPath}/${fileName}`);
     const options = {
       fromUrl: getFileURL(uri),
       toFile: file,
+      progress: (res) => {
+        // Handle download progress updates if needed
+        const progress = (res.bytesWritten / res.contentLength) * 100;
+        setProgress(Math.floor(progress));
+      },
     };
 
     try {
@@ -509,9 +572,11 @@ function FilePreviewer({chat, setVisible}) {
           return;
         }
       }
+      setDownloading(true);
 
       // Download the file
       const downloadResult = await RNFS.downloadFile(options).promise;
+      setDownloading(false);
 
       if (downloadResult.statusCode === 200) {
         // Share the file
@@ -694,6 +759,51 @@ function FilePreviewer({chat, setVisible}) {
               </Pressable>
             </Dialog.Actions>
           </Dialog>
+        </View>
+      </Modal>
+      <Modal
+      animationType="fade"
+      transparent={true}
+      visible={downloading}
+      onRequestClose={() => {}}>
+        <View
+          style={{
+            flex: 1,
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: 'rgba(0, 0, 0, 0.3)',
+          }}
+        >
+          <RNPModal
+            visible={downloading}
+            onDismiss={() => {}}
+            contentContainerStyle={styles.modalContainer}
+            style={styles.modalWrapper}
+          >
+            <View
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                width: '100%',
+              }}
+            >
+              <Text style={{
+                fontSize: 16,
+                color: Colors.black,
+              }}>Downloading file...</Text>
+              <CircularProgress
+                value={progress}
+                radius={30}
+                inActiveStrokeColor={Colors.green500}
+                inActiveStrokeOpacity={0.2}
+                progressValueColor={Colors.green500}
+                valueSuffix={'%'}
+              />
+            </View>
+          </RNPModal>
         </View>
       </Modal>
     </Pressable>

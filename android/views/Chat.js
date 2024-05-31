@@ -70,6 +70,7 @@ import { randomRoomName } from '@/lib/jitsiGenerator';
 import {MaterialCommunityIcons} from '@expo/vector-icons';
 import WebOfficeModal from './modals/WebOffice';
 import FileGalleryModal from './modals/FileGallery';
+import FavoriteModal from './modals/Favorite';
 
 function ChannelHeader({channel}) {
   const {setOpenChannelDetails} = useModal();
@@ -145,6 +146,7 @@ export default function Chat({navigation}) {
     setOpenWebOffice,
     webOfficeSrc,
     setWebOfficeSrc,
+    openFavorite,
   } = useModal();
   const {messageToEdit, messageToReply, messageToForward, messageToSendMail, setMessageToSendMail, checkedMessages, setCheckedMessages, isSelecting, setIsSelecting, setMessageSent, searchText, setSearchText, isSearching, setIsSearching} = useMessageFeature();
   const { openCalling, setOpenCalling, recipientInfo, setRecipientInfo, senderInfo, setSenderInfo, setRoomName, setIsVideoDisabled, openMeetingModal, isVideoDisabled } = useMeeting();
@@ -1044,6 +1046,7 @@ export default function Chat({navigation}) {
       {(openMultipleForwardMessage && checkedMessages.length > 0) && <MultipleForwardMessage />}
       {openWebOffice && <WebOfficeModal open={openWebOffice} setOpen={setOpenWebOffice} src={webOfficeSrc} />}
       {openFileGallery && <FileGalleryModal />}
+      {openFavorite && <FavoriteModal />}
       <Portal>
           <Dialog visible={openDeleteConfirm} onDismiss={() => setOpenDeleteConfirm(false)}>
             <Dialog.Title>Delete</Dialog.Title>
