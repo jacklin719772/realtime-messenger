@@ -22,3 +22,8 @@ export const updateGQLUser = async (
     Authorization: `Bearer ${token}`,
   });
 };
+
+export const getGQLUserFcmToken = async (params: any) => {
+  const res = await postData(`${GQL_SERVER_URL}/auth/getFcmToken`, params);
+  return res;
+};

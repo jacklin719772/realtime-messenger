@@ -16,13 +16,16 @@ import {
   GET_DIRECT,
   GET_MESSAGE,
   GET_REACTION,
-  LIST_MESSAGES
+  LIST_MESSAGES,
+  LIST_USERS
 } from "graphql/queries";
 import { getMessageType, lastMessageTextGenerator, sha256 } from "utils";
 import { arrayRemove, arrayUnion } from "utils/array-helpers";
+import { getGQLUserFcmToken } from "utils/auth";
 import graphQLClient from "utils/graphql";
 import { getFileMetadata, saveImageThumbnail } from "utils/storage";
 import { v4 as uuidv4 } from "uuid";
+import admin from 'lib/firebaseConfig';
 
 export const createMessage = async (
   req: express.Request,
@@ -63,7 +66,7 @@ export const createMessage = async (
       throw new Error("Arguments are missing.");
     }
 
-    let chat;
+    let chat: { members: string | any[]; lastMessageCounter: number; typing: any[]; };
     if (chatType === "Direct") {
       const { getDirect: direct } = await graphQLClient(
         res.locals.token
@@ -216,6 +219,34 @@ export const createMessage = async (
     }
 
     await Promise.all(promises);
+
+    const { listUsers: users } = await graphQLClient(res.locals.token).request(
+      LIST_USERS,
+      {
+        workspaceId,
+      }
+    );
+
+    const chatUsers = users.filter((u: any) => (u.objectId !== uid && chat.members.includes(uid)));
+
+    let tokens = [];
+
+    for (const item of chatUsers) {
+      let { fcmToken } = await getGQLUserFcmToken({
+        email: item.email,
+      });
+      tokens.push(fcmToken);
+    }
+
+    admin.messaging().send
+
+    admin.messaging().sendMulticast({
+      tokens,
+      notification: {
+        title: 'New message',
+        body: text ? text : sticker ? "[Sticker]" : `[File] ${fileName}`,
+      }
+    });
 
     res.locals.data = {
       success: true,

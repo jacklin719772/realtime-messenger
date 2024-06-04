@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "532341590361",
+    "project_id": "uteamwork-messenger",
+    "storage_bucket": "uteamwork-messenger.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:532341590361:android:effc99d8674eb7ea916448",
+        "android_client_info": {
+          "package_name": "com.messenger"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZwRWvfwvevS87RZ3apA2_iKi5XDN3rOg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

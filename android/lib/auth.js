@@ -98,10 +98,12 @@ export async function logout() {
   return true;
 }
 
-export async function login(email, password) {
+export async function login(email, password, fcmToken) {
+  console.log('++++++-----: ', email, password, fcmToken);
   const {idToken, refreshToken, expires, uid} = await postData('/auth/login', {
     email,
     password,
+    fcmToken
   });
   await AsyncStorage.setItem('idToken', idToken);
   await AsyncStorage.setItem('refreshToken', refreshToken);

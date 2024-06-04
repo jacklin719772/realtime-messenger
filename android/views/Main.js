@@ -22,7 +22,7 @@ import {
 } from '@react-navigation/drawer';
 import * as Application from 'expo-application';
 import React, { useState } from 'react';
-import {ActivityIndicator, Image, SafeAreaView, View} from 'react-native';
+import {ActivityIndicator, Image, PermissionsAndroid, Platform, SafeAreaView, View} from 'react-native';
 import {Colors, Dialog, Divider, IconButton, Portal, Text, TouchableRipple} from 'react-native-paper';
 import { io } from 'socket.io-client';
 import {v4 as uuidv4} from 'uuid';
@@ -313,10 +313,27 @@ export default function Main() {
     }
   }
 
+  // const requestUserPermission = async () => {
+  //   try {
+  //     if (Platform.OS === 'android') {
+  //       const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
+  
+  //       if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+  //         showAlert('Permission Denied! You need to give post notification permission to get the notification.');
+  //         return;
+  //       }
+  //     }
+
+  //   } catch (error) {
+      
+  //   }
+  // }
+
   React.useEffect(() => {
     loadSound();
     loadSoundSend();
     loadSoundArrive();
+    // requestUserPermission();
     return sound
       ? () => {
           unloadSound();

@@ -4,17 +4,22 @@ import {globalStyles} from '@/styles/styles';
 import {useFormik} from 'formik';
 import {SafeAreaView, View} from 'react-native';
 import {Button, TextInput, Title} from 'react-native-paper';
+import messaging from '@react-native-firebase/messaging';
+import{ HmsPushInstanceId }from "@hmscore/react-native-hms-push";
+import React from 'react';
 
 export default function Login() {
   const {login} = useAuth();
 
-  const {handleSubmit, handleChange, values, isSubmitting} = useFormik({
+  const {handleSubmit, handleChange, setFieldValue, values, isSubmitting} = useFormik({
     initialValues: {
       email: '',
       password: '',
+      fcmToken: '',
     },
     enableReinitialize: true,
     onSubmit: async val => {
+      console.log(val);
       try {
         if (!val.email) {
           showAlert('Email must be set.');
@@ -24,14 +29,38 @@ export default function Login() {
           showAlert('Password must be set.');
           return;
         }
+        if (!val.fcmToken) {
+          showAlert('Please check the connection to network.');
+          return;
+        }
 
-        await login(val.email, val.password);
+        await login(val.email, val.password, val.fcmToken);
       } catch (err) {
         // showAlert('Invalid password.');
         showAlert(err.message);
       }
     },
   });
+
+  const onAppBootStrap = async () => {
+    HmsPushInstanceId.getToken("")
+      .then((result) => {
+        console.log("getToken", result.result);
+        setFieldValue('fcmToken', result.result);
+      })
+      .catch((err) => {
+        console.log(err);
+        alert("[getToken] Error/Exception: " + JSON.stringify(err));
+      });
+    // await messaging().registerDeviceForRemoteMessages();
+    // const token = await messaging().getToken();
+    // console.log('messaging token: ', token);
+    // setFieldValue('fcmToken', token);
+  };
+
+  React.useEffect(() => {
+    onAppBootStrap();
+  }, []);
 
   return (
     <SafeAreaView

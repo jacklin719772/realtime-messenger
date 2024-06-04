@@ -1183,7 +1183,15 @@ export default function Message({
                   {isReplyText && <Text style={styles.replyText}>{removeHtml(chat?.replyText)}</Text>}
                   {replyMessageType === 'file' && (
                     <FilePreviewer
-                      chat={chat}
+                      chat={{
+                        objectId: chat?.replyId,
+                        fileName: chat?.replyFileName,
+                        fileType: chat?.replyFileType,
+                        fileSize: chat?.replyFileSize,
+                        fileURL: chat?.replyFileURL,
+                        senderId: chat?.replySenderId,
+                        createdAt: chat?.replyCreatedAt
+                      }}
                       setVisible={setVisible}
                     />
                   )}
@@ -1454,7 +1462,7 @@ export default function Message({
           <View
             style={{
               flexDirection: 'row',
-              justifyContent: 'space-around',
+              justifyContent: 'flex-start',
               alignItems: 'flex-start',
               flexWrap: 'wrap',
             }}
@@ -1464,7 +1472,7 @@ export default function Message({
                 alignItems: 'center',
                 borderRadius: 14,
                 margin: 12,
-                width: 55,
+                width: 58,
               }}
               onPress={() => {
                 setOpenReactionModal(true);
@@ -1480,7 +1488,7 @@ export default function Message({
               />
               <Text style={{
                 color: Colors.black,
-                fontSize: 12,
+                fontSize: 10,
                 textAlign: 'center',
               }}>Reaction</Text>
             </Pressable>
@@ -1489,7 +1497,7 @@ export default function Message({
                 alignItems: 'center',
                 borderRadius: 14,
                 margin: 12,
-                width: 55,
+                width: 58,
               }}
               onPress={() => downloadFile(chat)}
             >
@@ -1502,7 +1510,7 @@ export default function Message({
               />
               <Text style={{
                 color: Colors.black,
-                fontSize: 12,
+                fontSize: 10,
                 textAlign: 'center',
               }}>Download</Text>
             </Pressable>}
@@ -1511,7 +1519,7 @@ export default function Message({
                 alignItems: 'center',
                 borderRadius: 14,
                 margin: 12,
-                width: 55,
+                width: 58,
               }}
               onPress={initializeSelect}
             >
@@ -1524,7 +1532,7 @@ export default function Message({
               />
               <Text style={{
                 color: Colors.black,
-                fontSize: 12,
+                fontSize: 10,
                 textAlign: 'center',
               }}>Select Msg</Text>
             </Pressable>            
@@ -1533,7 +1541,7 @@ export default function Message({
                 alignItems: 'center',
                 borderRadius: 14,
                 margin: 12,
-                 width: 55,
+                 width: 58,
               }}
               onPress={() => {
                 setMessageToEdit(chat);
@@ -1544,7 +1552,7 @@ export default function Message({
               <MaterialCommunityIcons name="pencil" size={25} style={{color: Colors.blue500}} />
               <Text style={{
                 color: Colors.black,
-                fontSize: 12,
+                fontSize: 10,
                 textAlign: 'center',
               }}>Edit</Text>
             </Pressable>}
@@ -1553,7 +1561,7 @@ export default function Message({
                 alignItems: 'center',
                 borderRadius: 14,
                 margin: 12,
-                width: 55,
+                width: 58,
               }}
               onPress={() => {
                 setOpenDeleteConfirm(true);
@@ -1563,7 +1571,7 @@ export default function Message({
               <MaterialCommunityIcons name="delete" size={25} style={{color: Colors.red500}} />
               <Text style={{
                 color: Colors.black,
-                fontSize: 12,
+                fontSize: 10,
                 textAlign: 'center',
               }}>Delete</Text>
             </Pressable>}
@@ -1572,7 +1580,7 @@ export default function Message({
                 alignItems: 'center',
                 borderRadius: 14,
                 margin: 12,
-                 width: 55,
+                 width: 58,
               }}
               onPress={() => {
                 setMessageToReply(chat);
@@ -1589,7 +1597,7 @@ export default function Message({
               />
               <Text style={{
                 color: Colors.black,
-                fontSize: 12,
+                fontSize: 10,
                 textAlign: 'center',
               }}>Reply</Text>
             </Pressable>
@@ -1598,7 +1606,7 @@ export default function Message({
                 alignItems: 'center',
                 borderRadius: 14,
                 margin: 12,
-                width: 55,
+                width: 58,
               }}
               onPress={() => {
                 setMessageToForward(chat);
@@ -1615,7 +1623,7 @@ export default function Message({
               />
               <Text style={{
                 color: Colors.black,
-                fontSize: 12,
+                fontSize: 10,
                 textAlign: 'center',
               }}>Forward</Text>
             </Pressable>
@@ -1624,10 +1632,10 @@ export default function Message({
                 alignItems: 'center',
                 borderRadius: 14,
                 margin: 12,
-                width: 55,
+                width: 58,
               }}
               onPress={() => {
-                setMessageToSendMail(chat?.fileURL);
+                setMessageToSendMail(getFileURL(chat?.fileURL));
                 setOpenSendMail(true);
                 setVisible(false)
               }}
@@ -1641,7 +1649,7 @@ export default function Message({
               />
               <Text style={{
                 color: Colors.black,
-                fontSize: 12,
+                fontSize: 10,
                 textAlign: 'center',
               }}>Send email</Text>
             </Pressable>}
@@ -1650,7 +1658,7 @@ export default function Message({
                 alignItems: 'center',
                 borderRadius: 14,
                 margin: 12,
-                width: 55,
+                width: 58,
               }}
               onPress={initializeFavorite}
             >
@@ -1663,7 +1671,7 @@ export default function Message({
               />
               <Text style={{
                 color: Colors.black,
-                fontSize: 12,
+                fontSize: 10,
                 textAlign: 'center',
               }}>Add Favorite</Text>
             </Pressable>}
@@ -1672,7 +1680,7 @@ export default function Message({
                 alignItems: 'center',
                 borderRadius: 14,
                 margin: 12,
-                width: 55,
+                width: 58,
               }}
               onPress={removeFavorite}
             >
@@ -1685,187 +1693,11 @@ export default function Message({
               />
               <Text style={{
                 color: Colors.red500,
-                fontSize: 12,
+                fontSize: 10,
                 textAlign: 'center',
-              }}>Remove Favorite</Text>
+              }}>Remove Fav</Text>
             </Pressable>}
           </View>
-        {/* <List.Section title="Actions" titleStyle={{
-          color: Colors.grey800,
-        }}>
-          <List.Item
-            title="Reaction"
-            style={{
-              padding: 2,
-            }}
-            left={props => (
-              <List.Icon
-                {...props}
-                icon={() => (
-                  <MaterialCommunityIcons name="emoticon-outline" size={24} style={{color: Colors.black}} />
-                )}
-              />
-            )}
-            onPress={() => {
-              setOpenReactionModal(true);
-              setVisible(false)
-            }}
-          />
-          {chat?.fileURL && <List.Item
-            title="Download"
-            style={{
-              padding: 2,
-            }}
-            left={props => (
-              <List.Icon
-                {...props}
-                icon={() => (
-                  <MaterialCommunityIcons name="download" size={24} style={{color: Colors.black}} />
-                )}
-              />
-            )}
-            onPress={() => downloadFile(chat)}
-          />}
-          {(senderIsUser && isText) && <List.Item
-            title="Edit"
-            style={{
-              padding: 2,
-            }}
-            left={props => (
-              <List.Icon
-                {...props}
-                icon={() => (
-                  <MaterialCommunityIcons name="pencil" size={24} style={{color: Colors.black}} />
-                )}
-              />
-            )}
-            onPress={() => {
-              setMessageToEdit(chat);
-              setOpenEditMessage(true);
-              setVisible(false)
-            }}
-          />}
-          {senderIsUser && <List.Item
-            title="Delete"
-            style={{
-              padding: 2,
-            }}
-            left={props => (
-              <List.Icon
-                {...props}
-                icon={() => (
-                  <MaterialCommunityIcons name="delete" size={24} style={{color: Colors.black}} />
-                )}
-              />
-            )}
-            onPress={() => {
-              setOpenDeleteConfirm(true);
-              setVisible(false)
-            }}
-          />}
-          <List.Item
-            title="Check"
-            style={{
-              padding: 2,
-            }}
-            left={props => (
-              <List.Icon
-                {...props}
-                icon={() => (
-                  <MaterialCommunityIcons name="check" size={24} style={{color: Colors.black}} />
-                )}
-              />
-            )}
-            onPress={initializeSelect}
-          />
-          <List.Item
-            title="Reply"
-            style={{
-              padding: 2,
-            }}
-            left={props => (
-              <List.Icon
-                {...props}
-                icon={() => (
-                  <MaterialCommunityIcons name="reply" size={24} style={{color: Colors.black}} />
-                )}
-              />
-            )}
-            onPress={() => {
-              setMessageToReply(chat);
-              setOpenReplyMessage(true);
-              setVisible(false)
-            }}
-          />
-          <List.Item
-            title="Forward"
-            style={{
-              padding: 2,
-            }}
-            left={props => (
-              <List.Icon
-                {...props}
-                icon={() => (
-                  <MaterialCommunityIcons name="forward" size={24} style={{color: Colors.black}} />
-                )}
-              />
-            )}
-            onPress={() => {
-              setMessageToForward(chat);
-              setOpenForwardMessage(true);
-              setVisible(false)
-            }}
-          />
-          {chat?.fileURL && <List.Item
-            title="Send Mail"
-            style={{
-              padding: 2,
-            }}
-            left={props => (
-              <List.Icon
-                {...props}
-                icon={() => (
-                  <MaterialCommunityIcons name="email" size={24} style={{color: Colors.black}} />
-                )}
-              />
-            )}
-            onPress={() => {
-              setMessageToSendMail(chat?.fileURL);
-              setOpenSendMail(true);
-              setVisible(false)
-            }}
-          />}
-          {(chat?.fileURL && chat?.favorites.includes(user?.uid)) && <List.Item
-            title="Remove Favorite"
-            style={{
-              padding: 2,
-            }}
-            left={props => (
-              <List.Icon
-                {...props}
-                icon={() => (
-                  <MaterialCommunityIcons name="bookmark" size={24} style={{color: Colors.red500}} />
-                )}
-              />
-            )}
-            onPress={removeFavorite}
-          />}
-          {(chat?.fileURL && !chat?.favorites.includes(user?.uid)) && <List.Item
-            title="Add Favorite"
-            style={{
-              padding: 2,
-            }}
-            left={props => (
-              <List.Icon
-                {...props}
-                icon={() => (
-                  <MaterialCommunityIcons name="bookmark" size={24} style={{color: Colors.black}} />
-                )}
-              />
-            )}
-            onPress={initializeFavorite}
-          />}
-        </List.Section> */}
         </Modal>
       </Portal>
     </View>

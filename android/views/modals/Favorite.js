@@ -279,33 +279,71 @@ export default function FavoriteModal() {
             }}
           >
             {isSubmitting && <ActivityIndicator style={{paddingVertical: 10}} />}
+            <TextInput
+              label="File ID"
+              style={styles.input}
+              value={values.document_id}
+              placeholder='File ID'
+              editable={false}
+            />
+            <TextInput
+              label="Title"
+              style={styles.input}
+              value={values.title}
+              onChangeText={text => setFieldValue("title", text)}
+              placeholder=''
+            />
+            <TextInput
+              label="File Version"
+              style={styles.input}
+              value={values.version}
+              onChangeText={text => setFieldValue("version", text)}
+              placeholder='1.0'
+            />
             <View
               style={{
                 width: '100%',
                 flexDirection: 'row',
                 alignItems: 'center',
                 justifyContent: 'space-between',
+                marginBottom: 12,
               }}
             >
               <TextInput
-                label="File ID"
+                label="Keyword"
                 style={[styles.input, {
-                  width: '48%',
+                  width: '32%',
                 }]}
-                value={values.document_id}
-                placeholder='File ID'
-                editable={false}
+                value={values.keyword1}
+                onChangeText={text => setFieldValue("keyword1", text)}
               />
               <TextInput
-                label="File Version"
+                label=" "
                 style={[styles.input, {
-                  width: '48%',
+                  width: '32%',
                 }]}
-                value={values.version}
-                onChangeText={text => setFieldValue("version", text)}
-                placeholder='v1.0'
+                value={values.keyword2}
+                onChangeText={text => setFieldValue("keyword2", text)}
+              />
+              <TextInput
+                label=" "
+                style={[styles.input, {
+                  width: '32%',
+                }]}
+                value={values.keyword3}
+                onChangeText={text => setFieldValue("keyword3", text)}
               />
             </View>
+            <TextInput
+              label="Abstract"
+              style={styles.input}
+              numberOfLines={4}
+              multiline
+              textAlignVertical='top'
+              value={values.abstract}
+              onChangeText={text => setFieldValue("abstract", text)}
+              placeholder='Abstract'
+            />
             <TextInput
               label="Category"
               style={styles.input}
@@ -347,83 +385,14 @@ export default function FavoriteModal() {
                 setFieldValue("category_id", e.node.id);
               }}
             />
-            <TextInput
-              label="Title"
-              style={styles.input}
-              value={values.title}
-              onChangeText={text => setFieldValue("title", text)}
-              placeholder='Title'
-            />
-            <View
-              style={{
-                width: '100%',
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                marginBottom: 12,
-              }}
-            >
-              <TextInput
-                label="Keyword1"
-                style={[styles.input, {
-                  width: '48%',
-                }]}
-                value={values.keyword1}
-                onChangeText={text => setFieldValue("keyword1", text)}
-              />
-              <TextInput
-                label="Keyword2"
-                style={[styles.input, {
-                  width: '48%',
-                }]}
-                value={values.keyword2}
-                onChangeText={text => setFieldValue("keyword2", text)}
-              />
-            </View>
-            <View
-              style={{
-                width: '100%',
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                marginBottom: 12,
-              }}
-            >
-              <TextInput
-                label="Keyword3"
-                style={[styles.input, {
-                  width: '48%',
-                }]}
-                value={values.keyword3}
-                onChangeText={text => setFieldValue("keyword3", text)}
-              />
-              <TextInput
-                label="Keyword4"
-                style={[styles.input, {
-                  width: '48%',
-                }]}
-                value={values.keyword4}
-                onChangeText={text => setFieldValue("keyword4", text)}
-              />
-            </View>
-            <TextInput
+            {/* <TextInput
               label="File"
               style={styles.input}
               value={values.file_path}
               onChangeText={text => setFieldValue("file_path", text)}
               placeholder='File'
               editable={false}
-            />
-            <TextInput
-              label="Abstract"
-              style={styles.input}
-              numberOfLines={4}
-              multiline
-              textAlignVertical='top'
-              value={values.abstract}
-              onChangeText={text => setFieldValue("abstract", text)}
-              placeholder='Abstract'
-            />
+            /> */}
           </ScrollView>
         </View>
       </View>

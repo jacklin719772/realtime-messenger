@@ -87,8 +87,9 @@ export const AuthProvider = props => {
     initialize();
   }, []);
 
-  const login = async (email, password) => {
-    const user = await GQLLogin(email, password);
+  const login = async (email, password, fcmToken) => {
+    console.log(email, password, fcmToken);
+    const user = await GQLLogin(email, password, fcmToken);
     dispatch({
       type: 'LOGIN',
       payload: {

@@ -183,7 +183,7 @@ function VideoPlayer({chat, setPosition, setVisible}) {
         );
 
         if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-          Alert.alert('Permission Denied!', 'You need to give storage permission to download the file');
+          showAlert('Permission Denied!', 'You need to give storage permission to download the file');
           return;
         }
       }
@@ -900,26 +900,6 @@ function FileGalleryItem({message}) {
             chat={message}
           />
         )}
-        {/* <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-          }}
-        >
-          <IconButton
-            icon="eye"
-            color={Colors.grey800}
-            onPress={() => setOpen(true)}
-          />
-          <IconButton
-            icon="send"
-            color={Colors.grey800}
-            onPress={() => {
-              setMessageToSendMail(message?.fileURL);
-              setOpenSendMail(true);
-            }}
-          />
-        </View> */}
       </View>
       <View
         style={{
@@ -954,51 +934,6 @@ function FileGalleryItem({message}) {
             backgroundColor: 'rgba(0, 0, 0, 0.3)',
           }}
         >
-          {/* <View
-            style={styles.modalContainer}
-          >
-            <List.Section title="Actions" titleStyle={{
-              color: Colors.grey800,
-            }}>
-              <List.Item
-                title="Preview"
-                style={{
-                  padding: 0,
-                }}
-                left={props => (
-                  <List.Icon
-                    {...props}
-                    icon={() => (
-                      <MaterialCommunityIcons name="eye" size={24} style={{color: Colors.black}} />
-                    )}
-                  />
-                )}
-                onPress={() => {
-                  setOpen(true);
-                  setOpenMenu(false);
-                }}
-              />
-              <List.Item
-                title="Send E-mail"
-                style={{
-                  padding: 0,
-                }}
-                left={props => (
-                  <List.Icon
-                    {...props}
-                    icon={() => (
-                      <MaterialCommunityIcons name="send" size={24} style={{color: Colors.black}} />
-                    )}
-                  />
-                )}
-                onPress={() => {
-                  setMessageToSendMail(message?.fileURL);
-                  setOpenSendMail(true);
-                  setOpenMenu(false);
-                }}
-              />
-            </List.Section>
-          </View> */}
         <RNPModal
           visible={openMenu}
           onDismiss={() => setOpenMenu(false)}
@@ -1040,7 +975,7 @@ function FileGalleryItem({message}) {
                 />
               )}
               onPress={() => {
-                setMessageToSendMail(message?.fileURL);
+                setMessageToSendMail(getFileURL(message?.fileURL));
                 setOpenSendMail(true);
                 setOpenMenu(false);
               }}
@@ -1092,7 +1027,7 @@ function FileGalleryItem({message}) {
                 />
               )}
               onPress={() => {
-                setMessageToSendMail(message?.fileURL);
+                setMessageToSendMail(getFileURL(message?.fileURL));
                 setOpenSendMail(true);
                 setOpenMenu(false);
               }}
