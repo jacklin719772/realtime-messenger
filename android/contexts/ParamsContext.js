@@ -7,12 +7,15 @@ export const ParamsContext = createContext({
   setChatId: () => {},
   chatType: '',
   setChatType: () => {},
+  messageId: '',
+  setMessageId: () => {},
 });
 
 export function ParamsProvider({children}) {
   const [workspaceId, setWorkspaceId] = useState('');
   const [chatId, setChatId] = useState('');
   const [chatType, setChatType] = useState('');
+  const [messageId, setMessageId] = useState('');
 
   return (
     <ParamsContext.Provider
@@ -23,6 +26,8 @@ export function ParamsProvider({children}) {
         setChatId,
         chatType,
         setChatType,
+        messageId,
+        setMessageId,
       }}>
       {children}
     </ParamsContext.Provider>

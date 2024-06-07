@@ -19,6 +19,7 @@ import {
   Pressable,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import {ActivityIndicator, Avatar, Button, Checkbox, Colors, Dialog, IconButton, List, Modal, Portal, ProgressBar} from 'react-native-paper';
@@ -205,6 +206,7 @@ function VideoPlayer({chat, setPosition, setVisible}) {
       // error
       console.log('Error-----', error);
       showAlert(error.message);
+      setDownloading(false);
     }
   };
 
@@ -423,6 +425,8 @@ function VideoPlayer({chat, setPosition, setVisible}) {
 
 function ImageViewer({chat, setPosition, setVisible}) {
   const [open, setOpen] = React.useState(false);
+  const [downloading, setDownloading] = React.useState(false);
+  const [progress, setProgress] = React.useState(0);
 
   const previewFile = (chat) => {
     const uri = chat.fileURL;
@@ -431,10 +435,18 @@ function ImageViewer({chat, setPosition, setVisible}) {
     const options = {
       fromUrl: getFileURL(uri),
       toFile: localFile,
+      progress: (res) => {
+        // Handle download progress updates if needed
+        const progress = (res.bytesWritten / res.contentLength) * 100;
+        setProgress(Math.floor(progress));
+      },
     };
+
+    setDownloading(true);
 
     RNFS.downloadFile(options)
       .promise.then(() => {
+        setDownloading(false);
         FileViewer.open(localFile)
         .then(() => {
           // Success
@@ -451,6 +463,7 @@ function ImageViewer({chat, setPosition, setVisible}) {
         // error
         console.log('Error-----', error);
         showAlert(error.message);
+        setDownloading(false);
       });
   };
 
@@ -479,6 +492,37 @@ function ImageViewer({chat, setPosition, setVisible}) {
           height={chat?.mediaHeight}
         />
       )}
+      <Portal>
+        <Modal
+          visible={downloading}
+          onDismiss={() => {}}
+          contentContainerStyle={styles.modalContainer}
+          style={styles.modalWrapper}
+        >
+          <View
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              width: '100%',
+            }}
+          >
+            <Text style={{
+              fontSize: 16,
+              color: Colors.black,
+            }}>Downloading file...</Text>
+            <CircularProgress
+              value={progress}
+              radius={30}
+              inActiveStrokeColor={Colors.green500}
+              inActiveStrokeOpacity={0.2}
+              progressValueColor={Colors.green500}
+              valueSuffix={'%'}
+            />
+          </View>
+        </Modal>
+      </Portal>
     </Pressable>
   );
 }
@@ -574,10 +618,13 @@ function FilePreviewer({chat, setVisible}) {
   };
 
   return (
-    <Pressable
+    <TouchableOpacity
       onPress={() => setOpenSelect(true)}
       onLongPress={() => setVisible(true)}>
       <Text
+        textBreakStrategy='simple'
+        numberOfLines={1}
+        ellipsizeMode='middle'
         style={{
           paddingHorizontal: 12,
           paddingVertical: 8,
@@ -721,7 +768,7 @@ function FilePreviewer({chat, setVisible}) {
           </View>
         </Modal>
       </Portal>
-    </Pressable>
+    </TouchableOpacity>
   );
 }
 
@@ -836,8 +883,6 @@ export default function Message({
     } catch (err) {
       showAlert(err.message);
     }
-    setOpenDeleteConfirm(false);
-    setLoadingOperation(false);
   };
 
   const initializeSelect = () => {
@@ -937,6 +982,13 @@ export default function Message({
     }
     setVisible(false);
   }
+
+  React.useEffect(() => {
+    return () => {
+      setOpenDeleteConfirm(false);
+      setLoadingOperation(false);
+    }
+  }, []);
 
   return (
     <View>
@@ -1109,7 +1161,14 @@ export default function Message({
               </View>
             )}
             {chat?.replyId && (
-              <View style={{display: 'flex', flexDirection: 'row', marginTop: 4}}>
+              <View style={{
+                display: 'flex', 
+                flexDirection: 'row', 
+                backgroundColor: Colors.grey200,
+                paddingVertical: 2,
+                paddingRight: 2,
+                borderRadius: 4,
+              }}>
                 {/* PROFILE PICTURE LEFT PART */}
                 <View
                   style={{
@@ -1199,7 +1258,14 @@ export default function Message({
               </View>
             )}
             {(chat?.forwardId && forward && !loading) ? (
-              <View style={{display: 'flex', flexDirection: 'row', marginTop: 0}}>
+              <View style={{
+                display: 'flex', 
+                flexDirection: 'row',
+                backgroundColor: Colors.grey200,
+                paddingVertical: 2,
+                paddingRight: 2,
+                borderRadius: 4,
+              }}>
                 {/* PROFILE PICTURE LEFT PART */}
                 <View
                   style={{
@@ -1348,14 +1414,15 @@ export default function Message({
             alignItems: 'center',
             width: 36,
             borderRadius: 20,
-            padding: 2,
-            backgroundColor: reaction.bgColor,
+            borderWidth: 1.5,
+            borderColor: reaction.bgColor,
+            padding: 1,
             marginRight: 2,
           }}>
-            <MaterialCommunityIcons name={reaction.icon} color={reaction.iconColor} size={18} />
+            <MaterialCommunityIcons name={reaction.icon} color={reaction.bgColor} size={18} />
             <Text style={{
               fontSize: 12,
-              color: Colors.white,
+              color: reaction.bgColor,
             }}>
               {groupedReactions[(reaction.value) || ""].length || 0}
             </Text>

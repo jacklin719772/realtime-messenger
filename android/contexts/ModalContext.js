@@ -40,11 +40,17 @@ export const ModalContext = createContext({
   openSendMail: false,
   setOpenSendMail: () => {},
 
+  initialUsers: false,
+  setInitialUsers: () => {},
+
   openMultipleForwardMessage: false,
   setOpenMultipleForwardMessage: () => {},
 
   openFileGallery: false,
   setOpenFileGallery: () => {},
+
+  openSearchMessage: false,
+  setOpenSearchMessage: () => {},
 
   openAddChat: false,
   setOpenAddChat: () => {},
@@ -77,8 +83,10 @@ export function ModalProvider({children}) {
   const [openReplyMessage, setOpenReplyMessage] = useState(false);
   const [openForwardMessage, setOpenForwardMessage] = useState(false);
   const [openSendMail, setOpenSendMail] = useState(false);
+  const [initialUsers, setInitialUsers] = useState([]);
   const [openMultipleForwardMessage, setOpenMultipleForwardMessage] = useState(false);
   const [openFileGallery, setOpenFileGallery] = useState(false);
+  const [openSearchMessage, setOpenSearchMessage] = useState(false);
   const [openAddChat, setOpenAddChat] = useState(false);
   const [openWebOffice, setOpenWebOffice] = useState(false);
   const [webOfficeSrc, setWebOfficeSrc] = useState('');
@@ -126,11 +134,17 @@ export function ModalProvider({children}) {
         openSendMail,
         setOpenSendMail,
 
+        initialUsers,
+        setInitialUsers,
+
         openMultipleForwardMessage,
         setOpenMultipleForwardMessage,
 
         openFileGallery,
         setOpenFileGallery,
+
+        openSearchMessage,
+        setOpenSearchMessage,
 
         openAddChat,
         setOpenAddChat,

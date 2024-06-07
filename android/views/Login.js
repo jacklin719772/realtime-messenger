@@ -4,9 +4,12 @@ import {globalStyles} from '@/styles/styles';
 import {useFormik} from 'formik';
 import {SafeAreaView, View} from 'react-native';
 import {Button, TextInput, Title} from 'react-native-paper';
-import messaging from '@react-native-firebase/messaging';
-import{ HmsPushInstanceId }from "@hmscore/react-native-hms-push";
+import {HmsPushInstanceId} from "@hmscore/react-native-hms-push";
 import React from 'react';
+import HMSAvailability, { ErrorCode } from '@hmscore/react-native-hms-availability';
+// import { getIpAddressSync } from "react-native-device-info";
+// import * as Network from 'expo-network';
+import Geolocation from '@react-native-community/geolocation';
 
 export default function Login() {
   const {login} = useAuth();
@@ -29,10 +32,6 @@ export default function Login() {
           showAlert('Password must be set.');
           return;
         }
-        if (!val.fcmToken) {
-          showAlert('Please check the connection to network.');
-          return;
-        }
 
         await login(val.email, val.password, val.fcmToken);
       } catch (err) {
@@ -43,19 +42,105 @@ export default function Login() {
   });
 
   const onAppBootStrap = async () => {
-    HmsPushInstanceId.getToken("")
-      .then((result) => {
-        console.log("getToken", result.result);
-        setFieldValue('fcmToken', result.result);
-      })
-      .catch((err) => {
-        console.log(err);
-        alert("[getToken] Error/Exception: " + JSON.stringify(err));
-      });
-    // await messaging().registerDeviceForRemoteMessages();
-    // const token = await messaging().getToken();
-    // console.log('messaging token: ', token);
-    // setFieldValue('fcmToken', token);
+    Geolocation.getCurrentPosition(
+      position => {
+        const { latitude, longitude } = position.coords;
+        console.log('Current position:', latitude, longitude);
+
+        // Check if the location is china
+        if (
+          latitude >= 3.86 &&
+          latitude <= 53.55 &&
+          longitude >= 73.66 &&
+          longitude <= 135.05
+        ) {
+          HMSAvailability.isHuaweiMobileServicesAvailable()
+          .then((res) => {
+            if (res === 0) {
+              HmsPushInstanceId.getToken("")
+                .then((result) => {
+                  console.log("getToken", result.result);
+                  setFieldValue('fcmToken', result.result);
+                })
+                .catch((err) => {
+                  console.log("[getToken] Error/Exception: " + JSON.stringify(err));
+                  alert("[getToken] Error/Exception: " + JSON.stringify(err));
+                });
+            } else if (res === 1) {
+              alert('No HMS Core (APK) is found on the device.');
+            } else if (res === 2) {
+              alert('HMS Core (APK) installed is out of date.');
+            } else if (res === 3) {
+              alert('HMS Core (APK) installed on the device is unavailable.');
+            } else if (res === 9) {
+              alert('HMS Core (APK) installed on the device is not the official version.');
+            } else if (res === 21) {
+              alert('The device is too old to support HMS Core (APK).');
+            }
+          })
+          .catch((err) => { console.log(JSON.stringify(err)) });
+        } else {
+          HMSAvailability.isHuaweiMobileServicesAvailable()
+          .then((res) => {
+            if (res === 0) {
+              HmsPushInstanceId.getToken("")
+                .then((result) => {
+                  console.log("getToken", result.result);
+                  setFieldValue('fcmToken', result.result);
+                })
+                .catch((err) => {
+                  console.log("[getToken] Error/Exception: " + JSON.stringify(err));
+                  alert("[getToken] Error/Exception: " + JSON.stringify(err));
+                });
+            } else if (res === 1) {
+              alert('No HMS Core (APK) is found on the device.');
+            } else if (res === 2) {
+              alert('HMS Core (APK) installed is out of date.');
+            } else if (res === 3) {
+              alert('HMS Core (APK) installed on the device is unavailable.');
+            } else if (res === 9) {
+              alert('HMS Core (APK) installed on the device is not the official version.');
+            } else if (res === 21) {
+              alert('The device is too old to support HMS Core (APK).');
+            }
+          })
+          .catch((err) => { console.log(JSON.stringify(err)) });
+        }
+      },
+      error => {
+        console.error('Getting position failed: ', error.message);
+        HMSAvailability.isHuaweiMobileServicesAvailable()
+        .then((res) => {
+          if (res === 0) {
+            HmsPushInstanceId.getToken("")
+              .then((result) => {
+                console.log("getToken", result.result);
+                setFieldValue('fcmToken', result.result);
+              })
+              .catch((err) => {
+                console.log("[getToken] Error/Exception: " + JSON.stringify(err));
+                alert("[getToken] Error/Exception: " + JSON.stringify(err));
+              });
+          } else if (res === 1) {
+            alert('No HMS Core (APK) is found on the device.');
+          } else if (res === 2) {
+            alert('HMS Core (APK) installed is out of date.');
+          } else if (res === 3) {
+            alert('HMS Core (APK) installed on the device is unavailable.');
+          } else if (res === 9) {
+            alert('HMS Core (APK) installed on the device is not the official version.');
+          } else if (res === 21) {
+            alert('The device is too old to support HMS Core (APK).');
+          }
+        })
+        .catch((err) => { console.log(JSON.stringify(err)) });
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 30000,
+        maximumAge: 1000,
+      }
+    );
   };
 
   React.useEffect(() => {

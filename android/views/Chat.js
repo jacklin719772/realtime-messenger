@@ -11,7 +11,7 @@ import {
 import {useModal} from '@/contexts/ModalContext';
 import {useParams} from '@/contexts/ParamsContext';
 import {useUser} from '@/contexts/UserContext';
-import {useUserById, useUsers} from '@/contexts/UsersContext';
+import {useUsers} from '@/contexts/UsersContext';
 import {useMessagesByChat} from '@/hooks/useMessages';
 import {showAlert} from '@/lib/alert';
 import {deleteData, postData} from '@/lib/api-helpers';
@@ -27,6 +27,7 @@ import {
   FlatList,
   Image,
   Pressable,
+  Modal as RNModal,
   SafeAreaView,
   StyleSheet,
   TextInput,
@@ -43,11 +44,10 @@ import {
   Divider,
   IconButton,
   List,
-  Menu,
   Modal,
   Portal,
-  Provider,
   Text,
+  TextInput as RNPInput
 } from 'react-native-paper';
 import * as mime from 'react-native-mime-types';
 import * as ImagePicker from 'expo-image-picker';
@@ -67,10 +67,13 @@ import EmojiSelector, { Categories } from '@manu_omg/react-native-emoji-selector
 import VideoRecorder from './modals/VideoRecorder';
 import { useMeeting } from '@/contexts/MeetingContext';
 import { randomRoomName } from '@/lib/jitsiGenerator';
-import {MaterialCommunityIcons} from '@expo/vector-icons';
+import {MaterialCommunityIcons, MaterialIcons} from '@expo/vector-icons';
 import WebOfficeModal from './modals/WebOffice';
 import FileGalleryModal from './modals/FileGallery';
 import FavoriteModal from './modals/Favorite';
+import ChatActionModal from './modals/ChatAction';
+import UserListModal from './modals/UserList';
+import MessageSearchModal from './modals/MessageSearch';
 
 function ChannelHeader({channel}) {
   const {setOpenChannelDetails} = useModal();
@@ -112,10 +115,11 @@ function DirectHeader({otherUser, isMe}) {
             display: 'flex',
             flexDirection: 'row',
             alignItems: 'center',
+            marginLeft: -16,
           }}>
           <PresenceIndicator isPresent={isPresent} absolute={false} />
           <Text
-            style={{fontSize: 20, fontWeight: 'bold', paddingHorizontal: 10}}>
+            style={{fontSize: 20, fontWeight: 'bold', paddingHorizontal: 8}}>
             {otherUser.displayName}
             {isMe ? ' (me)' : ''}
           </Text>
@@ -127,7 +131,7 @@ function DirectHeader({otherUser, isMe}) {
 
 export default function Chat({navigation}) {
   const {userdata, user} = useUser();
-  const {chatId, chatType, workspaceId} = useParams();
+  const {chatId, chatType, workspaceId, messageId, setChatId, setChatType} = useParams();
   const {
     openChannelDetails, 
     openDirectDetails, 
@@ -138,10 +142,13 @@ export default function Chat({navigation}) {
     openForwardMessage, 
     openSendMail, 
     setOpenSendMail, 
+    setInitialUsers,
     openMultipleForwardMessage, 
     setOpenMultipleForwardMessage, 
     openFileGallery, 
     setOpenFileGallery,
+    openSearchMessage,
+    setOpenSearchMessage,
     openWebOffice,
     setOpenWebOffice,
     webOfficeSrc,
@@ -155,11 +162,24 @@ export default function Chat({navigation}) {
   const [openMemberModal, setOpenMemberModal] = useState(false);
   const [isAudioOnly, setIsAudioOnly] = useState(true);
   const [openMenu, setOpenMenu] = useState(false);
+  const [openMembers, setOpenMembers] = useState(false);
   const {value: users} = useUsers();
+
+  const flatListRef = React.useRef(null);
 
   React.useEffect(() => {
     console.log('openMenu: ', openMenu);
   }, [openMenu]);
+
+  React.useEffect(() => {
+    if (messageId) {
+      const index = messages.findIndex(msg => msg.objectId === messageId);
+      console.log('Message Exist: ', messageId, index);
+      if (index !== -1) {
+        flatListRef.current.scrollToIndex({ animated: true, index });
+      }
+    }
+  }, [messageId]);
 
   // CHANNELS ------------------------------------------------------------
   const {value: channel} = useChannelById(chatId);
@@ -206,18 +226,18 @@ export default function Chat({navigation}) {
               flexDirection: 'row',
               alignItems: 'center',
             }}>
-              <IconButton
-                icon="cloud-search-outline"
-                color={Colors.grey800}
-                size={25}
+              <TouchableOpacity
+                style={{
+                  borderRadius: 14,
+                  margin: 4,
+                }}
                 onPress={() => {
-                  setIsSearching(!isSearching);
+                  setOpenSearchMessage(true);
                   setSearchText("");
                 }}
-                style={{
-                  margin: 0,
-                }}
-              />
+              >
+                <MaterialIcons name="search" size={25} color={Colors.grey800} />
+              </TouchableOpacity>
               <IconButton
                 icon="phone"
                 color={Colors.grey800}
@@ -293,18 +313,18 @@ export default function Chat({navigation}) {
               flexDirection: 'row',
               alignItems: 'center',
             }}>
-              <IconButton
-                icon="cloud-search-outline"
-                color={Colors.grey800}
-                size={25}
+              <TouchableOpacity
+                style={{
+                  borderRadius: 14,
+                  margin: 4,
+                }}
                 onPress={() => {
-                  setIsSearching(!isSearching);
+                  setOpenSearchMessage(true);
                   setSearchText("");
                 }}
-                style={{
-                  margin: 0,
-                }}
-              />
+              >
+                <MaterialIcons name="search" size={25} color={Colors.grey800} />
+              </TouchableOpacity>
               {!isMe &&
               <IconButton
                 icon="phone"
@@ -607,24 +627,40 @@ export default function Chat({navigation}) {
   }
 
   const [openAddChannelConfirm, setOpenAddChannelConfirm] = useState(false);
+  const [channelName, setChannelName] = useState(`${userdata?.displayName.split(" ")[0]}, ${otherUser?.displayName}`);
+  const [isCreateLoading, setIsCreateLoading] = useState(false);
 
   const createChannelAndInviteMember = async () => {
     try {
+      setIsCreateLoading(true);
       const { channelId } = await postData("/channels", {
-        name: `${userdata?.displayName.split(" ")[0]}, ${otherUser?.displayName}`,
+        name: channelName,
         description: "",
         workspaceId,
       });
       await postData(`/channels/${channelId}/members`, {
         email: otherUser?.email,
       });
-      showAlert("Channel created and member added.");
+      for (const member of checkedMembers) {
+        await postData(`/channels/${channelId}/members`, {
+          email: member?.email,
+        });
+      }
+      console.log('Channel ID: ', channelId);
+      setOpenMenu(false);
+      setOpenMembers(false);
+      setChatId(channelId);
+      setChatType('Channel');
       navigation.navigate('Chat', {
         objectId: channelId,
       });
+      showAlert("Channel created and member added.");
+      setCheckedMembers([]);
+      setChannelName(`${userdata?.displayName.split(" ")[0]}, ${otherUser?.displayName}`);
     } catch (err) {
       showAlert(err.message);
     }
+    setIsCreateLoading(false);
     setOpenAddChannelConfirm(false);
   }
 
@@ -718,6 +754,61 @@ export default function Chat({navigation}) {
     });
   }
 
+  const openCreateChannel = () => {
+    setOpenAddChannelConfirm(true);
+  }
+
+  const openGallery = () => {
+    setOpenFileGallery(true);
+    setOpenMenu(false);
+  }
+
+  const openMailComposer = () => {
+    setMessageToSendMail('<p></p>');
+    setInitialUsers([otherUser.email]);
+    setOpenSendMail(true);
+    setOpenMenu(false);
+  }
+
+  const openWebOfficeView = () => {
+    setOpenWebOffice(true);
+    setWebOfficeSrc(`https://www.uteamwork.com/webmessenger/ecard1.html?account=${otherUser?.email}&lang=ch&server=https://www.uteamwork.com&name=${userdata?.displayName}&email=${userdata?.email}`);
+    setOpenMenu(false);
+  }
+  //-------Invite members to Create Channel--------
+  const [checkedMembers, setCheckedMembers] = useState([]);
+
+  const isChecked = (item) => checkedMembers.includes(item);
+
+  const handleCheckMembers = (item) => {
+    console.log(checkedMembers);
+    if (isChecked(item)) {
+      setCheckedMembers(checkedMembers.filter(c => c !== item));
+    } else {
+      setCheckedMembers([...checkedMembers, item]);
+    }
+  }
+  //------Clear Chat History---------------
+  const [openClear, setOpenClear] = useState(false);
+  const [clearLoading, setClearLoading] = useState(false);
+
+  const clearMyMessages = async () => {
+    const myMessages = messages.filter(m => m.senderId === user.uid);
+    try {
+      setClearLoading(true);
+      for (const m of myMessages) {
+        await deleteData(`/messages/${m?.objectId}`);
+      }
+      showAlert('All your messages have been deleted successfully.');
+      setOpenMenu(false);
+      setOpenMembers(false);
+    } catch (error) {
+      showAlert(error.message);
+    }
+    setOpenClear(false);
+    setClearLoading(false);
+  }
+
   useEffect(() => {
     return () => {
       setLastRead(null);
@@ -777,6 +868,7 @@ export default function Chat({navigation}) {
       {loading || fileLoading && <ActivityIndicator style={{paddingVertical: 10}} />}
       {/* MESSAGES */}
       <FlatList
+      ref={flatListRef}
         style={{paddingHorizontal: 10}}
         overScrollMode="always"
         ListHeaderComponent={() => (
@@ -970,7 +1062,7 @@ export default function Chat({navigation}) {
               size={25}
               onPress={() => setVideoOpen(true)}
             />
-            <Pressable
+            <TouchableOpacity
               style={{
                 borderRadius: 14,
                 margin: 12,
@@ -978,14 +1070,8 @@ export default function Chat({navigation}) {
               onPress={() => setOpenStickers(true)}
             >
               <Avatar.Image size={25} source={require('@/files/sticker.png')} style={{backgroundColor: Colors.transparent}} />
-            </Pressable>
-            {/* <IconButton
-              icon="sticker-emoji"
-              color={Colors.black}
-              size={25}
-              onPress={() => setOpenStickers(true)}
-            /> */}
-            <Pressable
+            </TouchableOpacity>
+            <TouchableOpacity
               style={{
                 borderRadius: 0,
                 margin: 12,
@@ -993,13 +1079,7 @@ export default function Chat({navigation}) {
               onPress={pickDocument}
             >
               <Avatar.Image size={25} source={require('@/files/upload-file.png')} style={{backgroundColor: Colors.transparent}} />
-            </Pressable>
-            {/* <IconButton
-              icon="file-upload-outline"
-              color={Colors.black}
-              size={25}
-              onPress={pickDocument}
-            /> */}
+            </TouchableOpacity>
           </View>
           <View style={{
             display: openEmojiPicker ? 'flex' : 'none',
@@ -1047,6 +1127,7 @@ export default function Chat({navigation}) {
       {openWebOffice && <WebOfficeModal open={openWebOffice} setOpen={setOpenWebOffice} src={webOfficeSrc} />}
       {openFileGallery && <FileGalleryModal />}
       {openFavorite && <FavoriteModal />}
+      {openSearchMessage && <MessageSearchModal />}
       <Portal>
           <Dialog visible={openDeleteConfirm} onDismiss={() => setOpenDeleteConfirm(false)}>
             <Dialog.Title>Delete</Dialog.Title>
@@ -1059,18 +1140,85 @@ export default function Chat({navigation}) {
             </Dialog.Actions>
           </Dialog>
       </Portal>
-      <Portal>
+      <RNModal
+      animationType="fade"
+      transparent={true}
+      visible={openAddChannelConfirm}
+      onRequestClose={() => {
+        setOpenAddChannelConfirm(!openAddChannelConfirm);
+      }}>
+        <View
+          style={{
+            flex: 1,
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: 'rgba(0, 0, 0, 0.3)',
+          }}
+        >
           <Dialog visible={openAddChannelConfirm} onDismiss={() => setOpenAddChannelConfirm(false)}>
             <Dialog.Title>Create channel</Dialog.Title>
             <Dialog.Content>
-              <Text variant="bodyMedium">Are you want to create a chennel with this user?</Text>
+              <RNPInput
+                label="Channel name"
+                style={{
+                  fontSize: 16,
+                  color: Colors.black,
+                  width: '100%',
+                  backgroundColor: 'transparent',
+                  paddingHorizontal: 0,
+                }}
+                value={channelName}
+                onChangeText={text => setChannelName(text)}
+              />
             </Dialog.Content>
-            <Dialog.Actions>
-              <Button onPress={createChannelAndInviteMember}>Create</Button>
-              <Button onPress={() => setOpenAddChannelConfirm(false)}>Cancel</Button>
+            <Dialog.Actions style={{
+              marginTop: 0,
+              paddingTop: 0,
+            }}>
+              {isCreateLoading && (
+                <ActivityIndicator size={18} style={{marginHorizontal: 12}} />
+              )}
+              <Button onPress={createChannelAndInviteMember} disabled={!channelName || channelName === ""} uppercase={false}>Create</Button>
+              <Button onPress={() => setOpenAddChannelConfirm(false)} uppercase={false}>Cancel</Button>
             </Dialog.Actions>
           </Dialog>
-      </Portal>
+        </View>
+      </RNModal>
+      <RNModal
+      animationType="fade"
+      transparent={true}
+      visible={openClear}
+      onRequestClose={() => {
+        setOpenClear(!openClear);
+      }}>
+        <View
+          style={{
+            flex: 1,
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: 'rgba(0, 0, 0, 0.3)',
+          }}
+        >
+          <Dialog visible={openClear} onDismiss={() => setOpenClear(false)}>
+            <Dialog.Title>Clear your message</Dialog.Title>
+            <Dialog.Content>
+              <Text>Are you sure you want to delete all your messages?</Text>
+            </Dialog.Content>
+            <Dialog.Actions style={{
+              marginTop: 0,
+              paddingTop: 0,
+            }}>
+              {clearLoading && (
+                <ActivityIndicator size={18} style={{marginHorizontal: 12}} />
+              )}
+              <Button onPress={clearMyMessages} uppercase={false} color={Colors.red500}>Delete</Button>
+              <Button onPress={() => setOpenClear(false)} uppercase={false}>Cancel</Button>
+            </Dialog.Actions>
+          </Dialog>
+        </View>
+      </RNModal>
       {chatType === "Channel" && (
       <Portal>
         <Modal
@@ -1176,114 +1324,32 @@ export default function Chat({navigation}) {
         </Modal>
       </Portal>
       )}
-      {openMenu && (
-      <Portal>
-        <Modal
-          visible={openMenu}
-          onDismiss={() => setOpenMenu(false)}
-          contentContainerStyle={styles.modalContainer}
-          style={styles.modalWrapper}
-        >
-          <List.Section title="More Actions" titleStyle={{
-            color: Colors.grey800,
-          }}>
-            {chatType === "Channel" && 
-            <List.Item
-              title="Calendar"
-              style={{
-                padding: 2,
-              }}
-              left={props => (
-                <List.Icon
-                  {...props}
-                  icon={() => (
-                    <MaterialCommunityIcons name="calendar-month" size={24} style={{color: Colors.black}} />
-                  )}
-                />
-              )}
-              onPress={openChannelCalendar}
-            />}
-            {chatType === "Direct" && !isMe &&
-            <List.Item
-              title="Create Channel"
-              style={{
-                padding: 2,
-              }}
-              left={props => (
-                <List.Icon
-                  {...props}
-                  icon={() => (
-                    <MaterialCommunityIcons name="account-multiple-plus-outline" size={24} style={{color: Colors.black}} />
-                  )}
-                />
-              )}
-              onPress={() => {
-                setOpenAddChannelConfirm(true);
-                setOpenMenu(false);
-              }}
-            />}
-            <List.Item
-              title="Gallery"
-              style={{
-                padding: 2,
-              }}
-              left={props => (
-                <List.Icon
-                  {...props}
-                  icon={() => (
-                    <MaterialCommunityIcons name="image-multiple-outline" size={24} style={{color: Colors.black}} />
-                  )}
-                />
-              )}
-              onPress={() => {
-                setOpenFileGallery(true);
-                setOpenMenu(false);
-              }}
-            />
-            {chatType === "Direct" &&
-            <List.Item
-              title="Send E-mail"
-              style={{
-                padding: 2,
-              }}
-              left={props => (
-                <List.Icon
-                  {...props}
-                  icon={() => (
-                    <MaterialCommunityIcons name="email" size={24} style={{color: Colors.black}} />
-                  )}
-                />
-              )}
-              onPress={() => {
-                setMessageToSendMail('<p></p>');
-                setOpenSendMail(true);
-                setOpenMenu(false);
-              }}
-            />}
-            {chatType === "Direct" &&
-            <List.Item
-              title="Visit weboffice"
-              style={{
-                padding: 2,
-              }}
-              left={props => (
-                <List.Icon
-                  {...props}
-                  icon={() => (
-                    <MaterialCommunityIcons name="office-building" size={24} style={{color: Colors.black}} />
-                  )}
-                />
-              )}
-              onPress={() => {
-                setOpenWebOffice(true);
-                setWebOfficeSrc(`https://www.uteamwork.com/webmessenger/ecard1.html?account=${otherUser?.email}&lang=ch&server=https://www.uteamwork.com&name=${userdata?.displayName}&email=${userdata?.email}`);
-                setOpenMenu(false);
-              }}
-            />}
-          </List.Section>
-        </Modal>
-      </Portal>
-      )}
+      {openMenu &&
+      <ChatActionModal
+        open={openMenu} 
+        setOpen={setOpenMenu} 
+        chatType={chatType} 
+        otherUser={otherUser}
+        isMe={isMe}
+        openChannelCalendar={openChannelCalendar} 
+        openCreateChannel={openCreateChannel}
+        openGallery={openGallery}
+        openMailComposer={openMailComposer}
+        openWebOfficeView={openWebOfficeView}
+        setOpenMembers={setOpenMembers}
+        setOpenClear={setOpenClear}
+      />
+      }
+      {chatType === "Direct" && openMembers &&
+      <UserListModal
+        open={openMembers}
+        setOpen={setOpenMembers}
+        otherUser={otherUser}
+        checkedMembers={checkedMembers}
+        setCheckedMembers={setCheckedMembers}
+        handleCheckMembers={handleCheckMembers}
+        openCreateChannel={openCreateChannel}
+      />}
     </SafeAreaView>
   );
 }

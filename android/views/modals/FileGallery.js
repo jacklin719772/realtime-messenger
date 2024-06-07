@@ -1,8 +1,8 @@
 import {useModal} from '@/contexts/ModalContext';
 import {modalStyles} from '@/styles/styles';
 import React, { useState } from 'react';
-import {FlatList, Image, ImageBackground, Modal, Platform, Pressable, StyleSheet, Text, View} from 'react-native';
-import {Appbar, Colors, Divider, IconButton, Modal as RNPModal, Portal, ProgressBar, List, Dialog, Button} from 'react-native-paper';
+import {FlatList, Image, ImageBackground, Modal, Platform, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import {Appbar, Colors, Divider, IconButton, Modal as RNPModal, Portal, ProgressBar, List, Dialog, TextInput as RNPInput, ActivityIndicator} from 'react-native-paper';
 import {MaterialIcons, MaterialCommunityIcons} from '@expo/vector-icons';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useParams } from '@/contexts/ParamsContext';
@@ -29,6 +29,8 @@ import Share from 'react-native-share';
 import * as Clipboard from 'expo-clipboard';
 import CircularProgress from 'react-native-circular-progress-indicator';
 import { PermissionsAndroid } from 'react-native';
+import dayjs from 'dayjs';
+import DateTimePicker from '@react-native-community/datetimepicker'
 
 function AudioPlayer({chat, setPosition, setVisible}) {
   const [sound, setSound] = React.useState(null);
@@ -940,8 +942,18 @@ function FileGalleryItem({message}) {
           contentContainerStyle={styles.modalContainer}
           style={styles.modalWrapper}
         >
-          <List.Section title="More Actions" titleStyle={{
-            color: Colors.grey800,
+          <List.Section
+          title="More Actions"
+          style={{
+            margin: 0,
+            padding: 0,
+          }}
+          titleStyle={{
+            padding: 0,
+            margin: 0,
+            marginTop: -16,
+            color: Colors.black,
+            fontWeight: 'bold',
           }}>
             <List.Item
               title="Preview"
@@ -984,58 +996,6 @@ function FileGalleryItem({message}) {
         </RNPModal>
         </View>
       </Modal>
-      {openMenu && (
-      <Portal>
-        <RNPModal
-          visible={openMenu}
-          onDismiss={() => setOpenMenu(false)}
-          contentContainerStyle={styles.modalContainer}
-          style={styles.modalWrapper}
-        >
-          <List.Section title="More Actions" titleStyle={{
-            color: Colors.grey800,
-          }}>
-            <List.Item
-              title="Preview"
-              style={{
-                padding: 2,
-              }}
-              left={props => (
-                <List.Icon
-                  {...props}
-                  icon={() => (
-                    <MaterialCommunityIcons name="eye" size={24} style={{color: Colors.black}} />
-                  )}
-                />
-              )}
-              onPress={() => {
-                setOpen(true);
-                setOpenMenu(false);
-              }}
-            />
-            <List.Item
-              title="Send E-mail"
-              style={{
-                padding: 2,
-              }}
-              left={props => (
-                <List.Icon
-                  {...props}
-                  icon={() => (
-                    <MaterialCommunityIcons name="send" size={24} style={{color: Colors.black}} />
-                  )}
-                />
-              )}
-              onPress={() => {
-                setMessageToSendMail(getFileURL(message?.fileURL));
-                setOpenSendMail(true);
-                setOpenMenu(false);
-              }}
-            />
-          </List.Section>
-        </RNPModal>
-      </Portal>
-      )}
       {open && (
         <FilePreviewModal
           open={open}
@@ -1048,17 +1008,25 @@ function FileGalleryItem({message}) {
 }
 
 export default function FileGalleryModal() {
-  const {chatId, workspaceId} = useParams();
+  const {chatId, chatType, workspaceId} = useParams();
   const {openFileGallery: open, setOpenFileGallery: setOpen} = useModal();
   const {userdata, user} = useUser();
   const {setMessageSent} = useMessageFeature();
 
   // const senderIsUser = chat?.senderId === user?.uid;
   // const {value: recipient} = useUserById(chat?.senderId);
+  const today = new Date();
 
   const { value: messages } = useMessagesByChat(chatId);
   const [checked, setChecked] = useState("all");
+  const [search, setSearch] = useState("");
+  const [filterType, setFileterType] = useState(null);
+  const [startDate, setStartDate] = useState(today);
+  const [endDate, setEndDate] = useState(dayjs(today).add(7, 'day').toDate());
+  const [startDateVisible, setStartDateVisible] = useState(false);
+  const [endDateVisible, setEndDateVisible] = useState(false);
   const [openSelect, setOpenSelect] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const renderItems = [
     {
       label: 'All',
@@ -1088,16 +1056,53 @@ export default function FileGalleryModal() {
   ];
 
   const filteredMessages = React.useMemo(() => {
-    const result = (checked === "all") ? messages.filter((message) => message.fileURL) : 
-      (checked !== "others") ? messages.filter((message) => message.fileURL && message.fileType.includes(checked)) : 
-        messages.filter((message) => message.fileURL && !message?.fileType?.includes("audio/") && !message?.fileType?.includes("video/") && !message?.fileType?.includes("image/"));
+    const result = !filterType ? messages.filter((message) => (message.fileURL && message.fileName.toLowerCase().includes(search.toLowerCase()))) : 
+      filterType === "date" ? messages.filter((message) => (message.fileURL && new Date(message.createdAt).getTime() >= startDate.getTime() && new Date(message.createdAt).getTime() <= endDate.getTime())) : 
+      (checked === "all") ? messages.filter((message) => message.fileURL) : 
+        (checked !== "others") ? messages.filter((message) => message.fileURL && message.fileType.includes(checked)) : 
+          messages.filter((message) => message.fileURL && !message?.fileType?.includes("audio/") && !message?.fileType?.includes("video/") && !message?.fileType?.includes("image/"));
     return result;
   },
   [messages, checked]);
 
+  const switchToDate = () => {
+    setSearch("");
+    setFileterType("date");
+    setChecked("all");
+    setStartDate(today);
+    setEndDate(dayjs(today).add(7, 'day').toDate());
+  }
+
+  const switchToFileType = () => {
+    setSearch("");
+    setFileterType("filetype");
+    setChecked("all");
+    setStartDate(today);
+    setEndDate(dayjs(today).add(7, 'day').toDate());
+  }
+
+  const onChangeStartDate = (event, selectedDate) => {
+    setStartDateVisible(false);
+    setStartDate(selectedDate);
+  }
+
+  const showStartDatepicker = () => {
+    setStartDateVisible(true);
+  }
+
+  const onChangeEndDate = (event, selectedDate) => {
+    setEndDateVisible(false);
+    setEndDate(selectedDate);
+  }
+
+  const showEndDatepicker = () => {
+    setEndDateVisible(true);
+  }
+
   const handlePickerResult = async result => {
     try {
       if (!result.cancelled) {
+        setUploading(true);
         // Get file name from URI
         const fileName = result.uri.split('/').pop();
   
@@ -1127,6 +1132,7 @@ export default function FileGalleryModal() {
     } catch (err) {
       showAlert(err.message);
     }
+    setUploading(false);
   };
 
   const pickDocument = async () => {
@@ -1156,7 +1162,15 @@ export default function FileGalleryModal() {
               width: '100%',
               backgroundColor: '#fff',
             }}>
-            <Appbar.Action icon="window-close" onPress={() => setOpen(!open)} />
+            <Appbar.Action icon={filterType ? "window-close" : "arrow-left"} onPress={() => {
+              if (!filterType) {
+                setOpen(!open);
+              } else {
+                setFileterType(null);
+                setSearch("");
+                setChecked("all");
+              }
+            }} />
             <Appbar.Content title="File Gallery" />
           </Appbar.Header>
           <View
@@ -1166,6 +1180,186 @@ export default function FileGalleryModal() {
               height: '100%',
             }}
           >
+            {!filterType &&
+            <View
+              style={{
+                justifyContent: 'center',
+                alignItems: 'center',
+                width: '100%',
+                padding: 16,
+              }}
+            >
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  width: '100%',
+                  borderRadius: 12,
+                  borderWidth: 1,
+                  borderColor: Colors.grey800,
+                  paddingHorizontal: 8,
+                }}
+              >
+                <MaterialIcons
+                  name="search"
+                  color={Colors.grey500}
+                  size={20}
+                />
+                <TextInput
+                  style={{
+                    // borderRadius: 12,
+                    // borderWidth: 1,
+                    // borderColor: Colors.grey200,
+                    width: '100%',
+                    padding: 4,
+                  }}
+                  value={search}
+                  onChangeText={text => setSearch(text)}
+                />
+              </View>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  width: '100%',
+                  marginTop: 12,
+                }}
+              >
+                <TouchableOpacity
+                  style={{
+                    flexDirection: 'row',
+                    width: '48%',
+                    justifyContent: 'space-around',
+                    alignItems: 'center',
+                    borderRadius: 12,
+                    borderWidth: 1,
+                    paddingVertical: 8,
+                  }}
+                  onPress={switchToDate}
+                >
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      textAlign: 'center',
+                      color: Colors.grey800
+                    }}
+                  >
+                    Search by date
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={{
+                    flexDirection: 'row',
+                    width: '48%',
+                    justifyContent: 'space-around',
+                    alignItems: 'center',
+                    borderRadius: 12,
+                    borderWidth: 1,
+                    paddingVertical: 8,
+                  }}
+                  onPress={switchToFileType}
+                >
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      textAlign: 'center',
+                      color: Colors.grey800
+                    }}
+                  >
+                    Search by file type
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>}
+            {filterType === "date" &&
+            <View
+              style={{
+                justifyContent: 'center',
+                alignItems: 'center',
+                width: '100%',
+                padding: 16,
+                paddingTop: 0,
+              }}
+            >
+              <View
+                style={{
+                  width: '100%',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <RNPInput
+                  label="Start time"
+                  style={[styles.input, {
+                    width: '75%',
+                  }]}
+                  value={`${startDate.toLocaleDateString([], {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                  })}`}
+                  placeholder='Start Time'
+                  editable={false}
+                />
+                <IconButton
+                  icon="calendar"
+                  color={Colors.blue500}
+                  size={25}
+                  onPress={showStartDatepicker}
+                  style={{
+                    margin: 0,
+                  }}
+                />
+                {startDateVisible &&
+                <DateTimePicker
+                  mode="date"
+                  value={startDate}
+                  is24Hour={true}
+                  onChange={onChangeStartDate}
+                />}
+              </View>
+              <View
+                style={{
+                  width: '100%',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <RNPInput
+                  label="End time"
+                  style={[styles.input, {
+                    width: '75%',
+                  }]}
+                  value={`${endDate.toLocaleDateString([], {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                  })}`}
+                  placeholder='End Time'
+                  editable={false}
+                />
+                <IconButton
+                  icon="calendar"
+                  color={Colors.blue500}
+                  size={25}
+                  onPress={showEndDatepicker}
+                  style={{
+                    margin: 0,
+                  }}
+                />
+                {endDateVisible &&
+                <DateTimePicker
+                  mode="date"
+                  value={endDate}
+                  is24Hour={true}
+                  onChange={onChangeEndDate}
+                />}
+              </View>
+            </View>}
+            {filterType === "filetype" &&
             <View
               style={{
                 flexDirection: 'row',
@@ -1189,18 +1383,22 @@ export default function FileGalleryModal() {
                   items={renderItems}
                   setOpen={setOpenSelect}
                   setValue={setChecked}
-                  containerStyle={{
-                    height: 50,
+                  style={{
+                    minHeight: 40,
+                    paddingVertical: 0,
+                    margin: 0,
+                    borderRadius: 12,
                   }}
                   dropDownContainerStyle={{
                     backgroundColor: Colors.white,
+                    borderRadius: 12,
                   }}
                   listItemContainerStyle={{
                     padding: 0,
                   }}
                 />
               </View>
-              <Pressable
+              <TouchableOpacity
                 style={{
                   flexDirection: 'row',
                   width: '60%',
@@ -1208,22 +1406,23 @@ export default function FileGalleryModal() {
                   alignItems: 'center',
                   borderRadius: 12,
                   borderWidth: 1,
-                  paddingVertical: 12,
+                  paddingVertical: 6,
                 }}
                 onPress={pickDocument}
               >
+                {uploading && <ActivityIndicator size={18} color={Colors.blue500} />}
                 <Text
                   style={{
-                    fontSize: 16,
+                    fontSize: 14,
                     textAlign: 'center',
-                    color: Colors.grey800
+                    color: Colors.black
                   }}
                 >
                   Upload New File
                 </Text>
                 <MaterialCommunityIcons name="plus" color={Colors.grey800} size={25} />
-              </Pressable>
-            </View>
+              </TouchableOpacity>
+            </View>}
             <View
               style={{
                 flex: 1,
@@ -1286,6 +1485,13 @@ export default function FileGalleryModal() {
 }
 
 const styles = StyleSheet.create({
+  input: {
+    fontSize: 16,
+    color: Colors.black,
+    width: '100%',
+    backgroundColor: 'transparent',
+    paddingHorizontal: 0,
+  },
   rowStyle: {
     margin: 0,
     width: '77%',
@@ -1344,7 +1550,7 @@ const styles = StyleSheet.create({
     color: Colors.black,
   },
   modalContainer: {
-    width: '75%',
+    width: '70%',
     margin: 'auto',
     backgroundColor: Colors.white,
     padding: 12,

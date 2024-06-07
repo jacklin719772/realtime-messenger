@@ -18,11 +18,11 @@ import { showAlert } from '@/lib/alert';
 import { removeHtml } from '@/lib/removeHtml';
 
 function SendMail() {
-  const {openSendMail: open, setOpenSendMail: setOpen} = useModal();
+  const {openSendMail: open, setOpenSendMail: setOpen, initialUsers, setInitialUsers} = useModal();
   const {messageToSendMail: message, setMessageToSendMail: setMessage} = useMessageFeature();
   const {userdata} = useUser();
 
-  const [recipients, setRecipients] = useState([]);
+  const [recipients, setRecipients] = useState(initialUsers);
 
   const richText = useRef(null);
 
@@ -36,6 +36,15 @@ function SendMail() {
       setRecipients(tempEmails);
     }
   }
+
+  React.useEffect(() => {
+    console.log(initialUsers);
+    setRecipients(initialUsers);
+    return () => {
+      setRecipients([]);
+      setInitialUsers([]);
+    }
+  }, []);
 
   // FORM ----------------------------------------------------------------
   const {handleSubmit, setFieldValue, values, isSubmitting} =

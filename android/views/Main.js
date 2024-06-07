@@ -31,6 +31,7 @@ import { Audio } from 'expo-av';
 import { useMessageFeature } from '@/contexts/MessageContext';
 import { useMessages } from '@/hooks/useMessages';
 import { useKeepAwake } from 'expo-keep-awake';
+import HMSAvailability from '@hmscore/react-native-hms-availability';
 
 const DrawerNav = createDrawerNavigator();
 
@@ -190,7 +191,7 @@ export default function Main() {
       soundSource.setIsLoopingAsync(true);
       setSound(soundSource);
     } catch (err) {
-      console.log(err.message);
+      console.log(err.message, 'load-----');
     }
   }
 
@@ -200,7 +201,7 @@ export default function Main() {
       // soundSendSource.setIsLoopingAsync(true);
       setSoundSend(soundSendSource);
     } catch (err) {
-      console.log(err.message);
+      console.log(err.message, 'load++++---');
     }
   }
 
@@ -210,7 +211,7 @@ export default function Main() {
       // soundArriveSource.setIsLoopingAsync(true);
       setSoundArrive(soundArriveSource);
     } catch (err) {
-      console.log(err.message);
+      console.log(err.message, 'load+++++++++++');
     }
   }
 
@@ -223,30 +224,53 @@ export default function Main() {
   }
 
   const pauseSound = async () => {
-    await sound.pauseAsync();
+    try {
+      await sound.pauseAsync();
+    } catch (error) {
+      console.log(error.message, '-------');
+    }
   }
 
   const playSound = async () => {
-    await sound.playAsync();
-    sound
+    try {
+      await sound.playAsync();
+    } catch (error) {
+      console.log(error.message, '-------');
+    }
   }
 
   const pauseSoundSend = async () => {
-    await soundSend.pauseAsync();
-    await soundSend.setPositionAsync(0);
+    try {
+      await soundSend.pauseAsync();
+      await soundSend.setPositionAsync(0);
+    } catch (error) {
+      console.log(error.message, '-------');
+    }
   }
 
   const playSoundSend = async () => {
-    await soundSend.playAsync();
+    try {
+      await soundSend.playAsync();
+    } catch (error) {
+      console.log(error.message, '-------');
+    }
   }
 
   const pauseSoundArrive = async () => {
-    await soundArrive.pauseAsync();
-    await soundArrive.setPositionAsync(0);
+    try {
+      await soundArrive.pauseAsync();
+      await soundArrive.setPositionAsync(0);
+    } catch (error) {
+      console.log(error.message, '-------');
+    }
   }
 
   const playSoundArrive = async () => {
-    await soundArrive.playAsync();
+    try {
+      await soundArrive.playAsync();
+    } catch (error) {
+      console.log(error.message, '-------');
+    }
   }
 
   // MEETING ------------------------------------------
@@ -450,7 +474,11 @@ export default function Main() {
   // MANAGE THE PRESENCE OF THE USER -------------------------------------
   React.useEffect(() => {
     if (user?.uid) {
-      postData(`/users/${user?.uid}/presence`, {}, {}, false);
+      try {
+        postData(`/users/${user?.uid}/presence`, {}, {}, false);
+      } catch (error) {
+        console.log(error.message, '+++++++---------');
+      }
       const intervalId = setInterval(() => {
         postData(`/users/${user?.uid}/presence`, {}, {}, false);
       }, 30000);
@@ -460,6 +488,26 @@ export default function Main() {
     }
   }, [user?.uid]);
   // ---------------------------------------------------------------------
+
+  React.useEffect(() => {
+    HMSAvailability.isHuaweiMobileServicesAvailable()
+      .then((res) => {
+        if (res === 0) {
+          console.log('HMS Core (APK) is available.');
+        } else if (res === 1) {
+          alert('No HMS Core (APK) is found on the device.');
+        } else if (res === 2) {
+          alert('HMS Core (APK) installed is out of date.');
+        } else if (res === 3) {
+          alert('HMS Core (APK) installed on the device is unavailable.');
+        } else if (res === 9) {
+          alert('HMS Core (APK) installed on the device is not the official version.');
+        } else if (res === 21) {
+          alert('The device is too old to support HMS Core (APK).');
+        }
+      })
+      .catch((err) => { console.log(JSON.stringify(err)) });
+  }, []);
 
   if (loading || value.length === 0) return <ActivityIndicator />;
 

@@ -24,7 +24,6 @@ import { MessageProvider } from './contexts/MessageContext';
 import { ReactionProvider } from 'react-native-reactions';
 import { ReactionsProvider } from './contexts/ReactionsContext';
 import { MeetingProvider } from './contexts/MeetingContext';
-import messaging from '@react-native-firebase/messaging';
 import React from 'react';
 
 function Views() {
@@ -50,15 +49,6 @@ const theme = {
 };
 
 export default function App() {
-  // const onAppBootStrap = async () => {
-  //   await messaging().registerDeviceForRemoteMessages();
-  //   const token = await messaging().getToken();
-  //   console.log('messaging token: ', token);
-  // };
-
-  // React.useEffect(() => {
-  //   onAppBootStrap();
-  // }, []);
 
   return (
     <PaperProvider theme={theme}>
