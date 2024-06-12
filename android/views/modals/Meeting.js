@@ -2,17 +2,14 @@ import {modalStyles} from '@/styles/styles';
 import {Image, Modal, StyleSheet, View} from 'react-native';
 import {
   Appbar,
-  Button,
   Colors,
   IconButton,
   List,
   Modal as RNPModal,
   Portal,
-  Text,
 } from 'react-native-paper';
 import WebView from 'react-native-webview';
 import {env} from "@/config/env";
-import { Base64 } from 'js-base64';
 // import JitsiMeet, { JitsiMeetView } from 'react-native-jitsi-meet';
 // import JitsiMeet, { JitsiMeetView } from '@vidit-me/react-native-jitsi-meet';
 import { useMeeting } from '@/contexts/MeetingContext';
@@ -49,6 +46,7 @@ export default function MeetingModal() {
     setIsVideoDisabled, 
     setIframeLoaded, 
     enableMic, 
+    setEnableMic,
     meetingMinimized, 
     setMeetingMinimized,
   } = useMeeting();
@@ -169,6 +167,9 @@ export default function MeetingModal() {
   //     handleClose();
   //   }
   // }, []);
+  React.useEffect(() => {
+    return () => setEnableMic(true);
+  }, []);
 
   return (
     <Modal

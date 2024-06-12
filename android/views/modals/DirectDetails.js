@@ -9,21 +9,30 @@ import {postData} from '@/lib/api-helpers';
 import {getFileURL} from '@/lib/storage';
 import {usePresenceByUserId} from '@/lib/usePresence';
 import {globalStyles, modalStyles} from '@/styles/styles';
-import Feather from '@expo/vector-icons/Feather';
+import {Feather, MaterialCommunityIcons} from '@expo/vector-icons';
 import {useNavigation} from '@react-navigation/native';
 import {Image, Modal, ScrollView, View} from 'react-native';
-import {Appbar, Colors, Divider, IconButton, Text, TouchableRipple} from 'react-native-paper';
+import {Appbar, Colors, Divider, IconButton, List, Text, TouchableRipple} from 'react-native-paper';
 
-export default function DirectDetailsModal() {
+export default function DirectDetailsModal({
+  setOpenClear,
+}) {
   const navigation = useNavigation();
   const {chatId} = useParams();
   const {userdata} = useUser();
-  const {openDirectDetails: open, setOpenDirectDetails: setOpen, setOpenWebOffice, setWebOfficeSrc, setOpenSendMail} = useModal();
+  const {openDirectDetails: open, setOpenDirectDetails: setOpen, setOpenWebOffice, setWebOfficeSrc, setOpenSendMail, setInitialUsers} = useModal();
   const {setMessageToSendMail} = useMessageFeature();
 
   const {value: otherUser} = useDirectRecipient(chatId);
 
   const {isPresent} = usePresenceByUserId(otherUser?.objectId);
+
+  const goToChat = () => {
+    setOpen(false);
+    navigation.navigate('Chat', {
+      objectId: chatId,
+    });
+  }
 
   const closeConversation = async () => {
     try {
@@ -41,6 +50,7 @@ export default function DirectDetailsModal() {
   }
 
   const handleOpenEmail = () => {
+    setInitialUsers([otherUser.email]);
     setOpenSendMail(true);
     setMessageToSendMail('<p></p>');
   }
@@ -79,155 +89,250 @@ export default function DirectDetailsModal() {
                 flex: 1,
                 justifyContent: 'space-between',
               }}>
-              <View>
-                <View style={{
-                  flexDirection: 'row',
-                  width: '100%',
-                  justifyContent: 'center',
-                }}>
-                  <View
-                    style={{
-                      position: 'relative',
-                    }}
-                  >
-                    <Image
-                      style={{
-                        width: 150,
-                        height: 150,
-                        borderRadius: 5,
-                      }}
-                      source={
-                        otherUser?.thumbnailURL
-                          ? {uri: getFileURL(otherUser.photoURL)}
-                          : require('@/files/blank_user.png')
-                      }
-                    />
-                    {/* <PresenceIndicator isPresent={isPresent} /> */}
-                  </View>
-                </View>
+              <View style={{
+                flexDirection: 'row',
+                width: '100%',
+                justifyContent: 'center',
+              }}>
                 <View
                   style={{
-                    paddingTop: 12,
-                    alignItems: 'center',
+                    position: 'relative',
                   }}
                 >
-                  <View
+                  <Image
                     style={{
-                      position: 'relative',
-                      paddingHorizontal: 15,
-                      display: 'flex',
-                      flexDirection: 'column',
-                    }}>
-                    <Text numberOfLines={1} style={{fontSize: 16, fontWeight: 'bold'}}>
-                      {otherUser?.fullName}
-                    </Text>
-                    <PresenceIndicator isPresent={isPresent} />
-                  </View>
-                </View>
-                <View>
-                  <View
-                    style={{
-                      paddingHorizontal: 15,
-                      display: 'flex',
-                      flexDirection: 'column',
-                      overflow: 'scroll',
-                    }}>
-                    <Text numberOfLines={1} style={{fontSize: 15, fontWeight: 'bold', paddingVertical: 4}}>
-                      Display name
-                    </Text>
-                    <Text numberOfLines={1} style={{fontSize: 15}}>
-                      {otherUser?.displayName}
-                    </Text>
-                    <Divider style={{margin: 4, backgroundColor: Colors.white}} />
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <Text numberOfLines={1} style={{fontSize: 15, fontWeight: 'bold'}}>
-                        Email address
-                      </Text>
-                      <IconButton
-                        icon="send"
-                        color={Colors.black}
-                        onPress={handleOpenEmail}
-                        style={{
-                          margin: 0,
-                          padding: 0,
-                        }}
-                      />
-                    </View>
-                    <Text numberOfLines={1} style={{fontSize: 15}}>
-                      {otherUser?.email}
-                    </Text>
-                    <Divider style={{margin: 4, backgroundColor: Colors.white}} />
-                    <Text numberOfLines={1} style={{fontSize: 15, fontWeight: 'bold', paddingVertical: 4}}>
-                      What I do?
-                    </Text>
-                    <Text numberOfLines={1} style={{fontSize: 15}}>
-                      {otherUser?.title}
-                    </Text>
-                    <Divider style={{margin: 4, backgroundColor: Colors.white}} />
-                    <Text numberOfLines={1} style={{fontSize: 15, fontWeight: 'bold', paddingVertical: 4}}>
-                      Phone Number
-                    </Text>
-                    <Text numberOfLines={1} style={{fontSize: 15}}>
-                      {otherUser?.phoneNumber}
-                    </Text>
-                  </View>
+                      width: 150,
+                      height: 150,
+                      borderRadius: 5,
+                    }}
+                    source={
+                      otherUser?.thumbnailURL
+                        ? {uri: getFileURL(otherUser.photoURL)}
+                        : require('@/files/blank_user.png')
+                    }
+                  />
+                  {/* <PresenceIndicator isPresent={isPresent} /> */}
                 </View>
               </View>
               <View
                 style={{
-                  justifyContent: 'space-around',
+                  paddingVertical: 12,
                   alignItems: 'center',
-                  padding: 15,
-                }}>
-                {/* Close conversation */}
-                <TouchableRipple
+                }}
+              >
+                <View
                   style={{
-                    width: '100%',
-                    paddingVertical: 8,
-                    borderRadius: 12,
-                    borderWidth: 2,
-                    borderColor: Colors.red500,
-                    marginVertical: 8,
-                    justifyContent: 'center',
-                  }}
-                  onPress={closeConversation}>
-                  <View style={{
-                    flexDirection: 'row',
-                    justifyContent: 'center',
+                    position: 'relative',
+                    paddingHorizontal: 15,
+                    display: 'flex',
+                    flexDirection: 'column',
                   }}>
-                    <Feather name="log-out" color={Colors.red500} size={18} />
-                    <Text style={{paddingHorizontal: 10, color: Colors.red500}}>
-                      Remove member
-                    </Text>
-                  </View>
-                </TouchableRipple>
-                <TouchableRipple
-                  style={{
-                    width: '100%',
-                    paddingVertical: 8,
-                    borderRadius: 12,
-                    borderWidth: 2,
-                    borderColor: Colors.blue500,
-                    marginVertical: 8,
-                    justifyContent: 'center',
-                  }}
-                  onPress={viewWebOffice}>
-                  <View style={{
-                    flexDirection: 'row',
-                    justifyContent: 'center',
-                  }}>
-                    <Feather name="log-out" color={Colors.blue500} size={18} />
-                    <Text style={{paddingHorizontal: 10, color: Colors.blue500}}>
-                      Visit weboffice
-                    </Text>
-                  </View>
-                </TouchableRipple>
+                  <Text numberOfLines={1} style={{fontSize: 16, fontWeight: 'bold'}}>
+                    {otherUser?.fullName}
+                  </Text>
+                  <PresenceIndicator isPresent={isPresent} />
+                </View>
               </View>
+              <ScrollView style={{
+                flex: 1,
+              }}>
+                <View
+                  style={{
+                    paddingHorizontal: 15,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    overflow: 'scroll',
+                  }}>
+                  <Text numberOfLines={1} style={{fontSize: 15, fontWeight: 'bold', paddingVertical: 4}}>
+                    Display name
+                  </Text>
+                  <Text numberOfLines={1} style={{fontSize: 15}}>
+                    {otherUser?.displayName}
+                  </Text>
+                  <Divider style={{margin: 4, backgroundColor: Colors.white}} />
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <Text numberOfLines={1} style={{fontSize: 15, fontWeight: 'bold'}}>
+                      Email address
+                    </Text>
+                  </View>
+                  <Text numberOfLines={1} style={{fontSize: 15}}>
+                    {otherUser?.email}
+                  </Text>
+                  <Divider style={{margin: 4, backgroundColor: Colors.white}} />
+                  <Text numberOfLines={1} style={{fontSize: 15, fontWeight: 'bold', paddingVertical: 4}}>
+                    What I do?
+                  </Text>
+                  <Text numberOfLines={1} style={{fontSize: 15}}>
+                    {otherUser?.title}
+                  </Text>
+                  <Divider style={{margin: 4, backgroundColor: Colors.white}} />
+                  <Text numberOfLines={1} style={{fontSize: 15, fontWeight: 'bold', paddingVertical: 4}}>
+                    Phone Number
+                  </Text>
+                  <Text numberOfLines={1} style={{fontSize: 15}}>
+                    {otherUser?.phoneNumber}
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    justifyContent: 'space-around',
+                    alignItems: 'center',
+                    marginTop: 32,
+                  }}>
+                  <List.Section
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                  }}>
+                    <List.Item
+                      title="Send message"
+                      style={{
+                        padding: 2,
+                        borderTopWidth: 1,
+                        borderBottomWidth: 1,
+                        borderColor: Colors.grey300,
+                      }}
+                      left={props => (
+                        <List.Icon
+                          {...props}
+                          icon={() => (
+                            <Image
+                              style={{
+                                width: 24,
+                                height: 24,
+                                borderRadius: 5,
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                              }}
+                              source={
+                                require('@/files/message.png')
+                              }
+                            />
+                          )}
+                        />
+                      )}
+                      onPress={goToChat}
+                    />
+                    <List.Item
+                      title="Send email"
+                      style={{
+                        padding: 2,
+                        borderBottomWidth: 1,
+                        borderColor: Colors.grey300,
+                      }}
+                      left={props => (
+                        <List.Icon
+                          {...props}
+                          icon={() => (
+                            <Image
+                              style={{
+                                width: 24,
+                                height: 24,
+                                borderRadius: 5,
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                              }}
+                              source={
+                                require('@/files/email2.png')
+                              }
+                            />
+                          )}
+                        />
+                      )}
+                      onPress={handleOpenEmail}
+                    />
+                    <List.Item
+                      title="Visit his weboffice"
+                      style={{
+                        padding: 2,
+                        borderBottomWidth: 1,
+                        borderColor: Colors.grey300,
+                      }}
+                      left={props => (
+                        <List.Icon
+                          {...props}
+                          icon={() => (
+                            <Image
+                              style={{
+                                width: 24,
+                                height: 24,
+                                borderRadius: 5,
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                              }}
+                              source={
+                                require('@/files/weboffice.png')
+                              }
+                            />
+                          )}
+                        />
+                      )}
+                      onPress={viewWebOffice}
+                    />
+                    <List.Item
+                      title="Clear My Chat History"
+                      style={{
+                        padding: 2,
+                        borderBottomWidth: 1,
+                        borderColor: Colors.grey300,
+                      }}
+                      left={props => (
+                        <List.Icon
+                          {...props}
+                          icon={() => (
+                            <Image
+                              style={{
+                                width: 24,
+                                height: 24,
+                                borderRadius: 5,
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                              }}
+                              source={
+                                require('@/files/clear.png')
+                              }
+                            />
+                          )}
+                        />
+                      )}
+                      onPress={() => setOpenClear(true)}
+                    />
+                    <List.Item
+                      title="Delete contact"
+                      style={{
+                        padding: 2,
+                        borderBottomWidth: 1,
+                        borderColor: Colors.grey300,
+                      }}
+                      left={props => (
+                        <List.Icon
+                          {...props}
+                          icon={() => (
+                            <Image
+                              style={{
+                                width: 24,
+                                height: 24,
+                                borderRadius: 5,
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                              }}
+                              source={
+                                require('@/files/delete.png')
+                              }
+                            />
+                          )}
+                        />
+                      )}
+                      onPress={closeConversation}
+                    />
+                  </List.Section>
+                </View>
+              </ScrollView>
             </View>
           </View>
         </View>

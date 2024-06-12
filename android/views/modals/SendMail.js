@@ -24,6 +24,8 @@ function SendMail() {
 
   const [recipients, setRecipients] = useState(initialUsers);
 
+  console.log(initialUsers);
+
   const richText = useRef(null);
 
   const onChange = (emails) => {

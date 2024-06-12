@@ -19,6 +19,7 @@ import React from 'react';
 import {Image, TouchableOpacity} from 'react-native';
 import {Colors, IconButton} from 'react-native-paper';
 import ChannelCalendar from './ChannelCalendar';
+import Contacts from './Contacts';
 
 function showHeader(route) {
   const routeName = getFocusedRouteNameFromRoute(route) ?? 'Home';
@@ -28,6 +29,8 @@ function showHeader(route) {
       return true;
     case 'DMs':
       return false;
+    case 'Contacts':
+      return false;
     case 'Me':
       return false;
   }
@@ -36,6 +39,7 @@ function showHeader(route) {
 const Tab = createBottomTabNavigator();
 
 function Menu() {
+  const {setOpenAddDirect} = useModal();
   return (
     <Tab.Navigator
       activeColor={Colors.black}
@@ -67,6 +71,41 @@ function Menu() {
           headerStyle: {
             backgroundColor: Colors.blue500,
           },
+          tabBarActiveTintColor: Colors.black,
+          tabBarInactiveTintColor: Colors.grey500,
+        }}
+      />
+      <Tab.Screen
+        name="Contacts"
+        component={Contacts}
+        options={{
+          tabBarIcon: ({color}) => (
+            <Image
+              style={{
+                width: 24,
+                height: 24,
+                alignItems: 'center',
+                justifyContent: 'center',
+                overlayColor: color,
+              }}
+              source={
+                require('@/files/contacts.png')
+              }
+            />
+          ),
+          headerTintColor: Colors.white,
+          headerStyle: {
+            backgroundColor: Colors.blue500,
+          },
+          headerRight: () => (
+            <IconButton
+              icon="account-plus"
+              size={28}
+              color={Colors.white}
+              onPress={() => setOpenAddDirect(true)}
+            />
+          ),
+          tabBarLabelStyle: {marginBottom: 3, fontWeight: 'bold'},
           tabBarActiveTintColor: Colors.black,
           tabBarInactiveTintColor: Colors.grey500,
         }}

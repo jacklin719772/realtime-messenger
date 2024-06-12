@@ -156,7 +156,7 @@ export default function Chat({navigation}) {
     openFavorite,
   } = useModal();
   const {messageToEdit, messageToReply, messageToForward, messageToSendMail, setMessageToSendMail, checkedMessages, setCheckedMessages, isSelecting, setIsSelecting, setMessageSent, searchText, setSearchText, isSearching, setIsSearching} = useMessageFeature();
-  const { openCalling, setOpenCalling, recipientInfo, setRecipientInfo, senderInfo, setSenderInfo, setRoomName, setIsVideoDisabled, openMeetingModal, isVideoDisabled } = useMeeting();
+  const { openCalling, setOpenCalling, recipientInfo, setRecipientInfo, senderInfo, setSenderInfo, setRoomName, setIsVideoDisabled, openMeetingModal, isVideoDisabled, setEnableMic } = useMeeting();
 
   const [checkedUsers, setCheckedUsers] = useState([]);
   const [openMemberModal, setOpenMemberModal] = useState(false);
@@ -452,6 +452,7 @@ export default function Chat({navigation}) {
       setRecipientInfo([]);
       setSenderInfo(null);
       setRoomName("");
+      setEnableMic(true);
       setIsVideoDisabled(false);
       showAlert('Sorry, but the recipient you are calling right now is not responding.');
     } catch (error) {

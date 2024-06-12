@@ -42,105 +42,136 @@ export default function Login() {
   });
 
   const onAppBootStrap = async () => {
-    Geolocation.getCurrentPosition(
-      position => {
-        const { latitude, longitude } = position.coords;
-        console.log('Current position:', latitude, longitude);
-
-        // Check if the location is china
-        if (
-          latitude >= 3.86 &&
-          latitude <= 53.55 &&
-          longitude >= 73.66 &&
-          longitude <= 135.05
-        ) {
-          HMSAvailability.isHuaweiMobileServicesAvailable()
-          .then((res) => {
-            if (res === 0) {
-              HmsPushInstanceId.getToken("")
-                .then((result) => {
-                  console.log("getToken", result.result);
-                  setFieldValue('fcmToken', result.result);
-                })
-                .catch((err) => {
-                  console.log("[getToken] Error/Exception: " + JSON.stringify(err));
-                  alert("[getToken] Error/Exception: " + JSON.stringify(err));
-                });
-            } else if (res === 1) {
-              alert('No HMS Core (APK) is found on the device.');
-            } else if (res === 2) {
-              alert('HMS Core (APK) installed is out of date.');
-            } else if (res === 3) {
-              alert('HMS Core (APK) installed on the device is unavailable.');
-            } else if (res === 9) {
-              alert('HMS Core (APK) installed on the device is not the official version.');
-            } else if (res === 21) {
-              alert('The device is too old to support HMS Core (APK).');
-            }
-          })
-          .catch((err) => { console.log(JSON.stringify(err)) });
-        } else {
-          HMSAvailability.isHuaweiMobileServicesAvailable()
-          .then((res) => {
-            if (res === 0) {
-              HmsPushInstanceId.getToken("")
-                .then((result) => {
-                  console.log("getToken", result.result);
-                  setFieldValue('fcmToken', result.result);
-                })
-                .catch((err) => {
-                  console.log("[getToken] Error/Exception: " + JSON.stringify(err));
-                  alert("[getToken] Error/Exception: " + JSON.stringify(err));
-                });
-            } else if (res === 1) {
-              alert('No HMS Core (APK) is found on the device.');
-            } else if (res === 2) {
-              alert('HMS Core (APK) installed is out of date.');
-            } else if (res === 3) {
-              alert('HMS Core (APK) installed on the device is unavailable.');
-            } else if (res === 9) {
-              alert('HMS Core (APK) installed on the device is not the official version.');
-            } else if (res === 21) {
-              alert('The device is too old to support HMS Core (APK).');
-            }
-          })
-          .catch((err) => { console.log(JSON.stringify(err)) });
+    HMSAvailability.isHuaweiMobileServicesAvailable()
+      .then((res) => {
+        if (res === 0) {
+          HmsPushInstanceId.getToken("")
+            .then((result) => {
+              showAlert("App is using Huawei push channel.");
+              console.log("getToken", result.result);
+              setFieldValue('fcmToken', result.result);
+            })
+            .catch((err) => {
+              // showAlert("Notification feature can't be used now.");
+              console.log("[getToken] Error/Exception: " + JSON.stringify(err));
+              // alert("[getToken] Error/Exception: " + JSON.stringify(err));
+            });
+        } else if (res === 1) {
+          showAlert('No HMS Core (APK) is found on the device.');
+        } else if (res === 2) {
+          showAlert('HMS Core (APK) installed is out of date.');
+        } else if (res === 3) {
+          showAlert('HMS Core (APK) installed on the device is unavailable.');
+        } else if (res === 9) {
+          showAlert('HMS Core (APK) installed on the device is not the official version.');
+        } else if (res === 21) {
+          showAlert('The device is too old to support HMS Core (APK).');
         }
-      },
-      error => {
-        console.error('Getting position failed: ', error.message);
-        HMSAvailability.isHuaweiMobileServicesAvailable()
-        .then((res) => {
-          if (res === 0) {
-            HmsPushInstanceId.getToken("")
-              .then((result) => {
-                console.log("getToken", result.result);
-                setFieldValue('fcmToken', result.result);
-              })
-              .catch((err) => {
-                console.log("[getToken] Error/Exception: " + JSON.stringify(err));
-                alert("[getToken] Error/Exception: " + JSON.stringify(err));
-              });
-          } else if (res === 1) {
-            alert('No HMS Core (APK) is found on the device.');
-          } else if (res === 2) {
-            alert('HMS Core (APK) installed is out of date.');
-          } else if (res === 3) {
-            alert('HMS Core (APK) installed on the device is unavailable.');
-          } else if (res === 9) {
-            alert('HMS Core (APK) installed on the device is not the official version.');
-          } else if (res === 21) {
-            alert('The device is too old to support HMS Core (APK).');
-          }
-        })
-        .catch((err) => { console.log(JSON.stringify(err)) });
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 30000,
-        maximumAge: 1000,
-      }
-    );
+      })
+      .catch((err) => { console.log(JSON.stringify(err)) });
+    // Geolocation.getCurrentPosition(
+    //   position => {
+    //     const { latitude, longitude } = position.coords;
+    //     console.log('Current position:', latitude, longitude);
+
+    //     // Check if the location is china
+    //     if (
+    //       latitude >= 3.86 &&
+    //       latitude <= 53.55 &&
+    //       longitude >= 73.66 &&
+    //       longitude <= 135.05
+    //     ) {
+    //       HMSAvailability.isHuaweiMobileServicesAvailable()
+    //       .then((res) => {
+    //         if (res === 0) {
+    //           HmsPushInstanceId.getToken("")
+    //             .then((result) => {
+    //               showAlert("App is using Huawei push channel.");
+    //               console.log("getToken", result.result);
+    //               setFieldValue('fcmToken', result.result);
+    //             })
+    //             .catch((err) => {
+    //               // showAlert("Notification feature can't be used now.");
+    //               console.log("[getToken] Error/Exception: " + JSON.stringify(err));
+    //               // alert("[getToken] Error/Exception: " + JSON.stringify(err));
+    //             });
+    //         } else if (res === 1) {
+    //           showAlert('No HMS Core (APK) is found on the device.');
+    //         } else if (res === 2) {
+    //           showAlert('HMS Core (APK) installed is out of date.');
+    //         } else if (res === 3) {
+    //           showAlert('HMS Core (APK) installed on the device is unavailable.');
+    //         } else if (res === 9) {
+    //           showAlert('HMS Core (APK) installed on the device is not the official version.');
+    //         } else if (res === 21) {
+    //           showAlert('The device is too old to support HMS Core (APK).');
+    //         }
+    //       })
+    //       .catch((err) => { console.log(JSON.stringify(err)) });
+    //     } else {
+    //       HMSAvailability.isHuaweiMobileServicesAvailable()
+    //       .then((res) => {
+    //         if (res === 0) {
+    //           HmsPushInstanceId.getToken("")
+    //             .then((result) => {
+    //               showAlert("App is using Huawei push channel.");
+    //               console.log("getToken", result.result);
+    //               setFieldValue('fcmToken', result.result);
+    //             })
+    //             .catch((err) => {
+    //               console.log("[getToken] Error/Exception: " + JSON.stringify(err));
+    //               // alert("[getToken] Error/Exception: " + JSON.stringify(err));
+    //             });
+    //         } else if (res === 1) {
+    //           showAlert('No HMS Core (APK) is found on the device.');
+    //         } else if (res === 2) {
+    //           showAlert('HMS Core (APK) installed is out of date.');
+    //         } else if (res === 3) {
+    //           showAlert('HMS Core (APK) installed on the device is unavailable.');
+    //         } else if (res === 9) {
+    //           showAlert('HMS Core (APK) installed on the device is not the official version.');
+    //         } else if (res === 21) {
+    //           showAlert('The device is too old to support HMS Core (APK).');
+    //         }
+    //       })
+    //       .catch((err) => { console.log(JSON.stringify(err)) });
+    //     }
+    //   },
+    //   error => {
+    //     console.log('Getting position failed: ', error.message);
+    //     HMSAvailability.isHuaweiMobileServicesAvailable()
+    //     .then((res) => {
+    //       if (res === 0) {
+    //         HmsPushInstanceId.getToken("")
+    //           .then((result) => {
+    //             console.log("getToken", result.result);
+    //             setFieldValue('fcmToken', result.result);
+    //           })
+    //           .catch((err) => {
+    //             // showAlert("Notification feature can't be used now.");
+    //             console.log("[getToken] Error/Exception: " + JSON.stringify(err));
+    //             // alert("[getToken] Error/Exception: " + JSON.stringify(err));
+    //           });
+    //       } else if (res === 1) {
+    //         showAlert('No HMS Core (APK) is found on the device.');
+    //       } else if (res === 2) {
+    //         showAlert('HMS Core (APK) installed is out of date.');
+    //       } else if (res === 3) {
+    //         showAlert('HMS Core (APK) installed on the device is unavailable.');
+    //       } else if (res === 9) {
+    //         showAlert('HMS Core (APK) installed on the device is not the official version.');
+    //       } else if (res === 21) {
+    //         showAlert('The device is too old to support HMS Core (APK).');
+    //       }
+    //     })
+    //     .catch((err) => { console.log(JSON.stringify(err)) });
+    //   },
+    //   {
+    //     enableHighAccuracy: true,
+    //     timeout: 30000,
+    //     maximumAge: 1000,
+    //   }
+    // );
   };
 
   React.useEffect(() => {

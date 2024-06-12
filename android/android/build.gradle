@@ -37,7 +37,7 @@ buildscript {
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
         // Add dependencies.
-        classpath 'com.huawei.agconnect:agcp:1.4.1.300'
+        classpath('com.huawei.agconnect:agcp:1.4.1.300')
     }
 }
 
@@ -65,7 +65,7 @@ allprojects {
         }
         maven { url 'https://www.jitpack.io' }
         // Add the Maven address.
-        maven {url 'https://developer.huawei.com/repo/'}
+        maven { url 'https://developer.huawei.com/repo/' }
         
         maven {
             url "$rootDir/../node_modules/@notifee/react-native/android/libs"

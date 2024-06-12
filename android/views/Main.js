@@ -298,6 +298,7 @@ export default function Main() {
       setOpenCalling(false);
       setRecipientInfo([]);
       setSenderInfo(null);
+      setEnableMic(true);
       setRoomName("");
     } catch (err) {
       showAlert(err.message);
@@ -331,6 +332,7 @@ export default function Main() {
       setSenderInfo(null);
       setRecipientInfo([]);
       setRoomName("");
+      setEnableMic(true);
       setIsVideoDisabled(false);
     } catch (error) {
       showAlert(err.message);
@@ -421,7 +423,7 @@ export default function Main() {
     socket.on('newMessage', (data) => {
       const { message } = JSON.parse(data);
       const { receiver, sender, type, room, audioOnly } = JSON.parse(message);
-      console.log(JSON.parse(message));
+      console.log('Message: ', JSON.parse(message));
       console.log(receiver);
       console.log(user);
       console.log('openCalling: ', openCalling);
@@ -439,6 +441,7 @@ export default function Main() {
         setSenderInfo(null);
         setRecipientInfo([]);
         setRoomName("");
+        setEnableMic(true);
         setIsVideoDisabled(false);
         showAlert('Sorry, but this call timed out.');
       }
@@ -447,6 +450,7 @@ export default function Main() {
         setSenderInfo(null);
         setRecipientInfo([]);
         setRoomName("");
+        setEnableMic(true);
         setIsVideoDisabled(false);
         showAlert('The caller has interrupted the call.');
       }
@@ -457,6 +461,7 @@ export default function Main() {
           setOpenCalling(false);
           setSenderInfo(null);
           setRoomName("");
+          setEnableMic(true);
           setIsVideoDisabled(false);
           showAlert('The recipient has declined the call.');
         }
@@ -618,14 +623,14 @@ export default function Main() {
                 )}
                 {enableMic ? (
                   <IconButton
-                    icon="microphone-off"
+                    icon="microphone"
                     color={Colors.grey800}
                     size={25}
                     onPress={() => setEnableMic(false)}
                   />
                 ) : (
                   <IconButton
-                    icon="microphone"
+                    icon="microphone-off"
                     color={Colors.grey800}
                     size={25}
                     onPress={() => setEnableMic(true)}
@@ -673,14 +678,14 @@ export default function Main() {
               )}
               {enableMic ? (
                 <IconButton
-                  icon="microphone-off"
+                  icon="microphone"
                   color={Colors.grey800}
                   size={25}
                   onPress={() => setEnableMic(false)}
                 />
               ) : (
                 <IconButton
-                  icon="microphone"
+                  icon="microphone-off"
                   color={Colors.grey800}
                   size={25}
                   onPress={() => setEnableMic(true)}
