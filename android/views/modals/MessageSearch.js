@@ -690,7 +690,6 @@ export default function MessageSearchModal() {
             <View
               style={{
                 justifyContent: 'center',
-                alignItems: 'center',
                 width: '100%',
                 padding: 12,
                 elevation: 5,
@@ -740,8 +739,9 @@ export default function MessageSearchModal() {
                   flexDirection: 'row',
                   alignItems: 'center',
                   justifyContent: 'space-around',
-                  width: '100%',
+                  width: '80%',
                   marginTop: 8,
+                  marginLeft: -4,
                 }}
               >
                 <View
