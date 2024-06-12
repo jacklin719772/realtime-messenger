@@ -38,7 +38,7 @@ export default function DirectDetailsModal({
     try {
       await postData(`/directs/${chatId}/close`);
       setOpen(false);
-      navigation.navigate('Home');
+      // navigation.goBack();
     } catch (err) {
       showAlert(err.message);
     }

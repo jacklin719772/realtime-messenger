@@ -15,9 +15,12 @@ import {Image, ScrollView, View} from 'react-native';
 import {
   ActivityIndicator,
   Colors,
+  List,
   Text,
   TouchableRipple,
 } from 'react-native-paper';
+import { DirectMessageItem } from './Home';
+import AddDirect from './modals/AddDirect';
 
 function Direct({direct}) {
   const navigation = useNavigation();
@@ -87,6 +90,7 @@ function Direct({direct}) {
 export default function DMs() {
   const {value, loading} = useDirectMessages();
   const {setOpenMemberBrowser} = useModal();
+  const {openAddDirect, setOpenAddDirect} = useModal();
 
   if (loading) return <ActivityIndicator />;
 
@@ -99,7 +103,7 @@ export default function DMs() {
         backgroundColor: Colors.white,
       }}>
       <OpenSearchButton />
-      <TouchableRipple
+      {/* <TouchableRipple
         style={{
           paddingHorizontal: 20,
           paddingVertical: 10,
@@ -109,10 +113,16 @@ export default function DMs() {
           <Feather name="plus-circle" color={Colors.grey800} size={18} />
           <Text style={{paddingHorizontal: 10}}>Add members</Text>
         </View>
-      </TouchableRipple>
-      {value.map(dm => (
+      </TouchableRipple> */}
+      {/* {value.map(dm => (
         <Direct key={dm.objectId} direct={dm} />
-      ))}
+      ))} */}
+      <List.Section title="">
+        {value.map(direct => (
+          <DirectMessageItem key={direct.objectId} direct={direct} />
+        ))}
+      </List.Section>
+      {openAddDirect && <AddDirect open={openAddDirect} setOpen={setOpenAddDirect} />}
     </ScrollView>
   );
 }

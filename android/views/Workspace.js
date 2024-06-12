@@ -71,6 +71,14 @@ function Menu() {
           headerStyle: {
             backgroundColor: Colors.blue500,
           },
+          headerRight: () => (
+            <IconButton
+              icon="account-plus"
+              size={28}
+              color={Colors.white}
+              onPress={() => setOpenAddDirect(true)}
+            />
+          ),
           tabBarActiveTintColor: Colors.black,
           tabBarInactiveTintColor: Colors.grey500,
         }}

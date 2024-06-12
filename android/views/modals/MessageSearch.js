@@ -678,7 +678,7 @@ export default function MessageSearchModal() {
                 setChecked("0");
               }
             }} />
-            <Appbar.Content title="File Gallery" />
+            <Appbar.Content title="Search chat history" />
           </Appbar.Header>
           <View
             style={{
@@ -729,7 +729,7 @@ export default function MessageSearchModal() {
                   icon="close"
                   color={Colors.grey800}
                   size={25}
-                  onPress={() => {}}
+                  onPress={() => setSearch("")}
                   style={{
                     margin: 0,
                   }}
@@ -818,10 +818,10 @@ export default function MessageSearchModal() {
                   //     : null
                   // }
                   // onEndReachedThreshold={0.1}
-                  inverted
+                  // inverted
                   renderItem={({item, index}) => (
                     <View key={index}>
-                      {(index === filteredMessages?.length - 1 || (index < filteredMessages?.length - 1 && !equalDate(item?.createdAt, filteredMessages[index + 1]?.createdAt))) && 
+                      {(index === 0 || (index > 0 && !equalDate(item?.createdAt, filteredMessages[index - 1]?.createdAt))) && 
                         <Text
                           style={{
                             fontSize: 15,

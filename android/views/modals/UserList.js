@@ -10,6 +10,7 @@ import { useUsers } from '@/contexts/UsersContext';
 import { useUser } from '@/contexts/UserContext';
 import React from 'react';
 import { getFileURL } from '@/lib/storage';
+import pinyin from 'pinyin';
 
 export default function UserListModal({
   open,
@@ -28,7 +29,7 @@ export default function UserListModal({
     members.filter((m) => ((m?.fullName.toLowerCase().includes(search.toLowerCase()) || m?.displayName.toLowerCase().includes(search.toLowerCase())) && m?.objectId !== user.uid && m?.objectId !== otherUser.objectId)).map((m) => {
       return {
         ...m,
-        value: m.displayName,
+        value: /^[\u4e00-\u9fa5]+$/.test(m.displayName) ? pinyin(m.displayName, { style: pinyin.STYLE_NORMAL }).flat().join('') : m.displayName,
         key: m.objectId,
       }
     }), 

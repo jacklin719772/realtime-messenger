@@ -18,6 +18,7 @@ import { useMessagesByChat } from '@/hooks/useMessages';
 import { showAlert } from '@/lib/alert';
 import { deleteData } from '@/lib/api-helpers';
 import AddDirect from './modals/AddDirect';
+import pinyin from 'pinyin';
 
 export default function Contacts() {
   const [search, setSearch] = React.useState("");
@@ -44,7 +45,9 @@ export default function Contacts() {
     dms.map((dm) => ({
       ...dm,
       userData: members.filter((member) => ((dm.members.length === 1 && dm.members[0] === member.objectId) || (dm.members.length > 1 && dm.members.filter((member) => member !== user?.uid)[0] === member.objectId)))[0],
-      value: members.filter((member) => ((dm.members.length === 1 && dm.members[0] === member.objectId) || (dm.members.length > 1 && dm.members.filter((member) => member !== user?.uid)[0] === member.objectId)))[0].displayName,
+      value: /^[\u4e00-\u9fa5]+$/.test(members.filter((member) => ((dm.members.length === 1 && dm.members[0] === member.objectId) || (dm.members.length > 1 && dm.members.filter((member) => member !== user?.uid)[0] === member.objectId)))[0].displayName) ? 
+        pinyin(members.filter((member) => ((dm.members.length === 1 && dm.members[0] === member.objectId) || (dm.members.length > 1 && dm.members.filter((member) => member !== user?.uid)[0] === member.objectId)))[0].displayName, { style: pinyin.STYLE_NORMAL }).flat().join('') : 
+        members.filter((member) => ((dm.members.length === 1 && dm.members[0] === member.objectId) || (dm.members.length > 1 && dm.members.filter((member) => member !== user?.uid)[0] === member.objectId)))[0].displayName,
       key: members.filter((member) => ((dm.members.length === 1 && dm.members[0] === member.objectId) || (dm.members.length > 1 && dm.members.filter((member) => member !== user?.uid)[0] === member.objectId)))[0].objectId,
     })).filter((m) => (m?.userData.fullName.toLowerCase().includes(search.toLowerCase()) || m?.userData.displayName.toLowerCase().includes(search.toLowerCase()))),
   [dms, members, search]);

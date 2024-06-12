@@ -108,7 +108,7 @@ function ChannelItem({channel}) {
   );
 }
 
-function DirectMessageItem({direct}) {
+export function DirectMessageItem({direct}) {
   const navigation = useNavigation();
   const {setChatId, setChatType} = useParams();
   const {value: otherUser, isMe} = useDirectRecipient(direct?.objectId);

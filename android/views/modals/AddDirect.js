@@ -14,6 +14,7 @@ import { useDirectMessages } from '@/contexts/DirectMessagesContext';
 import { postData } from '@/lib/api-helpers';
 import { useParams } from '@/contexts/ParamsContext';
 import { useNavigation } from '@react-navigation/native';
+import pinyin from 'pinyin';
 
 export default function AddDirect({
   open,
@@ -37,7 +38,7 @@ export default function AddDirect({
       !dmUsers.includes(m?.objectId) && (m?.fullName.toLowerCase().includes(search.toLowerCase()) || m?.displayName.toLowerCase().includes(search.toLowerCase()))
     )).map((m) => ({
       ...m,
-      value: m.displayName,
+      value: /^[\u4e00-\u9fa5]+$/.test(m.displayName) ? pinyin(m.displayName, { style: pinyin.STYLE_NORMAL }).flat().join('') : m.displayName,
       key: m.objectId,
     })),
   [dmUsers, members, search]);

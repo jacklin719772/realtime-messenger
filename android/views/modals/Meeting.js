@@ -221,6 +221,11 @@ export default function MeetingModal() {
                 uri: `${env.MEETING_URL}/${roomName}#userInfo.displayName="${userdata?.displayName}"&config.prejoinConfig.enabled=false&config.startAudioOnly=${isVideoDisabled}&config.startWithAudioMuted=${!enableMic}&config.disableDeepLinking=true${toolbarButtons}`
               }}
               onLoad={onConferenceJoined}
+              allowsInlineMediaPlayback={true}
+              mediaPlaybackRequiresUserAction={false}
+              onError={(err) => {
+                console.log(err)
+              }}
               style={{
                 flex: 1,
                 width: '100%',
