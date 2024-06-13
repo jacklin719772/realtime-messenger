@@ -16,7 +16,7 @@ import {
   createStackNavigator,
 } from '@react-navigation/stack';
 import React from 'react';
-import {Image, TouchableOpacity} from 'react-native';
+import {Image, TouchableOpacity, View} from 'react-native';
 import {Colors, IconButton} from 'react-native-paper';
 import ChannelCalendar from './ChannelCalendar';
 import Contacts from './Contacts';
@@ -39,7 +39,7 @@ function showHeader(route) {
 const Tab = createBottomTabNavigator();
 
 function Menu() {
-  const {setOpenAddDirect} = useModal();
+  const {setOpenAddDirect, setOpenGlobalSearch, setSearchOrigin} = useModal();
   return (
     <Tab.Navigator
       activeColor={Colors.black}
@@ -72,12 +72,36 @@ function Menu() {
             backgroundColor: Colors.blue500,
           },
           headerRight: () => (
-            <IconButton
-              icon="account-plus"
-              size={28}
-              color={Colors.white}
-              onPress={() => setOpenAddDirect(true)}
-            />
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+              }}
+            >
+              <IconButton
+                icon="magnify"
+                size={28}
+                style={{
+                  marginHorizontal: 0,
+                  paddingHorizontal: 0,
+                }}
+                color={Colors.white}
+                onPress={() => {
+                  setOpenGlobalSearch(true);
+                  setSearchOrigin('DMs');
+                }}
+              />
+              <IconButton
+                icon="account-plus"
+                size={28}
+                style={{
+                  marginLeft: 0,
+                  paddingLeft: 0,
+                }}
+                color={Colors.white}
+                onPress={() => setOpenAddDirect(true)}
+              />
+            </View>
           ),
           tabBarActiveTintColor: Colors.black,
           tabBarInactiveTintColor: Colors.grey500,
@@ -147,7 +171,7 @@ export default function Workspace({route, navigation}) {
   const {value: workspace} = useWorkspaceById(objectId);
   const {value: channels} = useChannels();
   const {value: directs} = useDirectMessages();
-  const {setOpenAddChat} = useModal();
+  const {setOpenAddChat, setOpenGlobalSearch, setSearchOrigin} = useModal();
 
   React.useEffect(() => {
     setWorkspaceId(objectId);
@@ -193,12 +217,36 @@ export default function Workspace({route, navigation}) {
             //     source={require('@/files/plus-circle.png')}
             //   />
             // </TouchableOpacity>
-            <IconButton
-              icon="plus-circle-outline"
-              size={28}
-              color={Colors.white}
-              onPress={() => setOpenAddChat(true)}
-            />
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+              }}
+            >
+              <IconButton
+                icon="magnify"
+                size={28}
+                style={{
+                  marginHorizontal: 0,
+                  paddingHorizontal: 0,
+                }}
+                color={Colors.white}
+                onPress={() => {
+                  setOpenGlobalSearch(true);
+                  setSearchOrigin('Home');
+                }}
+              />
+              <IconButton
+                icon="plus-circle-outline"
+                size={28}
+                style={{
+                  marginLeft: 0,
+                  paddingLeft: 0,
+                }}
+                color={Colors.white}
+                onPress={() => setOpenAddChat(true)}
+              />
+            </View>
           ),
           headerShown: showHeader(route),
         })}

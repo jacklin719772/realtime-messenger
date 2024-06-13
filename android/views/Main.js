@@ -32,6 +32,7 @@ import { useMessageFeature } from '@/contexts/MessageContext';
 import { useMessages } from '@/hooks/useMessages';
 import { useKeepAwake } from 'expo-keep-awake';
 import HMSAvailability from '@hmscore/react-native-hms-availability';
+import GlobalSearchModal from './modals/GlobalSearch';
 
 const DrawerNav = createDrawerNavigator();
 

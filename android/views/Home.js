@@ -23,6 +23,7 @@ import {Image, ScrollView, View, Text, StyleSheet} from 'react-native';
 import {Colors, List, Modal, Portal} from 'react-native-paper';
 import {MaterialCommunityIcons} from '@expo/vector-icons';
 import { showAlert } from '@/lib/alert';
+import GlobalSearchModal from './modals/GlobalSearch';
 
 function ChannelItem({channel}) {
   const navigation = useNavigation();
@@ -209,7 +210,7 @@ export function DirectMessageItem({direct}) {
 export default function Home() {
   const {value: channels} = useChannels();
   const {value: directs} = useDirectMessages();
-  const {setOpenChannelBrowser, setOpenMemberBrowser, openAddChat, setOpenAddChat} = useModal();
+  const {setOpenChannelBrowser, setOpenMemberBrowser, openAddChat, setOpenAddChat, openGlobalSearch} = useModal();
   const {setIsSelecting} = useMessageFeature();
 
   const [channelsExpanded, setChannelsExpanded] = React.useState(true);
@@ -264,6 +265,7 @@ export default function Home() {
           />
         </List.Accordion>
       </List.Section>
+      {openGlobalSearch && <GlobalSearchModal type="Home" />}
       {openAddChat && (
       <Portal>
         <Modal
@@ -321,13 +323,14 @@ export default function Home() {
 
 const styles = StyleSheet.create({
   modalWrapper: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-end',
+    paddingRight: 16,
+    paddingTop: 32,
   },
   modalContainer: {
     width: 200,
-    margin: 'auto',
+    marginRight: 0,
     backgroundColor: Colors.white,
     padding: 8,
     borderRadius: 8,

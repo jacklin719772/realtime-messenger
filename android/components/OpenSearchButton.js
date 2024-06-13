@@ -1,11 +1,17 @@
 import {useModal} from '@/contexts/ModalContext';
+import { useNavigation } from '@react-navigation/native';
 import {Colors, Text, TouchableRipple} from 'react-native-paper';
 
 export default function OpenSearchButton() {
-  const {setOpenSearch} = useModal();
+  const navigation = useNavigation();
+
+  const goToContacts = () => {
+    navigation.navigate('Contacts');
+  }
+
   return (
     <TouchableRipple
-      onPress={() => setOpenSearch(true)}
+      onPress={goToContacts}
       borderless
       style={{
         margin: 10,

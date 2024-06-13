@@ -621,14 +621,14 @@ function FileGalleryItem({
 
 export default function MessageSearchModal() {
   const {chatId} = useParams();
-  const {openSearchMessage: open, setOpenSearchMessage: setOpen} = useModal();
+  const {openSearchMessage: open, setOpenSearchMessage: setOpen, originalSearch, searchMessageTitle, setSearchMessageTitle} = useModal();
   const today = new Date();
 
   // LOAD DATA AND PAGINATION --------------------------------------------
   const [page, setPage] = useState(1);
   const { value: messages, loading } = useMessagesByChat(chatId, page);
   const [checked, setChecked] = useState("0");
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(originalSearch);
   const [filterType, setFileterType] = useState(null);
   const [dateFilter, setDateFilter] = useState(dayjs(today).add(-5, 'year').toDate());
 
@@ -652,6 +652,10 @@ export default function MessageSearchModal() {
       console.log(dayjs(today).add(-5, 'year').toDate());
     }
   }, [checked]);
+
+  React.useEffect(() => {
+    return () => setSearchMessageTitle('');
+  }, []);
 
   return (
     <Modal
@@ -678,7 +682,7 @@ export default function MessageSearchModal() {
                 setChecked("0");
               }
             }} />
-            <Appbar.Content title="Search chat history" />
+            <Appbar.Content title={searchMessageTitle !== "" ? searchMessageTitle : "Search chat history"} />
           </Appbar.Header>
           <View
             style={{

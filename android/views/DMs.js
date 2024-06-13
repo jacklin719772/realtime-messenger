@@ -21,6 +21,7 @@ import {
 } from 'react-native-paper';
 import { DirectMessageItem } from './Home';
 import AddDirect from './modals/AddDirect';
+import GlobalSearchModal from './modals/GlobalSearch';
 
 function Direct({direct}) {
   const navigation = useNavigation();
@@ -89,7 +90,7 @@ function Direct({direct}) {
 
 export default function DMs() {
   const {value, loading} = useDirectMessages();
-  const {setOpenMemberBrowser} = useModal();
+  const {setOpenMemberBrowser, openGlobalSearch} = useModal();
   const {openAddDirect, setOpenAddDirect} = useModal();
 
   if (loading) return <ActivityIndicator />;

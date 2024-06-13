@@ -66,6 +66,18 @@ export const ModalContext = createContext({
 
   openAddDirect: false,
   setOpenAddDirect: () => {},
+
+  openGlobalSearch: false,
+  setOpenGlobalSearch: () => {},
+
+  originalSearch: '',
+  setOriginalSearch: () => {},
+
+  searchOrigin: 'Home',
+  setSearchOrigin: () => {},
+
+  searchMessageTitle: '',
+  setSearchMessageTitle: () => {},
 });
 
 export function useModal() {
@@ -95,6 +107,10 @@ export function ModalProvider({children}) {
   const [webOfficeSrc, setWebOfficeSrc] = useState('');
   const [openFavorite, setOpenFavorite] = useState(false);
   const [openAddDirect, setOpenAddDirect] = useState(false);
+  const [openGlobalSearch, setOpenGlobalSearch] = useState(false);
+  const [originalSearch, setOriginalSearch] = useState('');
+  const [searchOrigin, setSearchOrigin] = useState('Home');
+  const [searchMessageTitle, setSearchMessageTitle] = useState('');
 
   return (
     <ModalContext.Provider
@@ -164,6 +180,18 @@ export function ModalProvider({children}) {
 
         openAddDirect,
         setOpenAddDirect,
+
+        openGlobalSearch,
+        setOpenGlobalSearch,
+
+        originalSearch,
+        setOriginalSearch,
+
+        searchOrigin,
+        setSearchOrigin,
+
+        searchMessageTitle,
+        setSearchMessageTitle,
       }}>
       {children}
     </ModalContext.Provider>
