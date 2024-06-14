@@ -109,8 +109,8 @@ export const DIRECT = gql`
 `;
 
 export const MESSAGE = gql`
-  subscription OnUpdateMessage($objectId: String, $chatId: String) {
-    onUpdateMessage(objectId: $objectId, chatId: $chatId) {
+  subscription OnUpdateMessage($objectId: String, $chatId: String, $workspaceId: String) {
+    onUpdateMessage(objectId: $objectId, chatId: $chatId, workspaceId: $workspaceId) {
       objectId
       chatId
       chatType
