@@ -19,11 +19,16 @@ import {usePresenceByUserId} from '@/lib/usePresence';
 import Fontisto from '@expo/vector-icons/Fontisto';
 import {useNavigation} from '@react-navigation/native';
 import React from 'react';
-import {Image, ScrollView, View, Text, StyleSheet} from 'react-native';
-import {Colors, List, Modal, Portal} from 'react-native-paper';
+import {Image, ScrollView, View, Text, StyleSheet, Modal as RNModal} from 'react-native';
+import {Colors, Dialog, TextInput, List, Modal, Portal, ActivityIndicator, Button} from 'react-native-paper';
 import {MaterialCommunityIcons} from '@expo/vector-icons';
 import { showAlert } from '@/lib/alert';
 import GlobalSearchModal from './modals/GlobalSearch';
+import UserListModal from './modals/UserList';
+import AddDirect from './modals/AddDirect';
+import { useUser } from '@/contexts/UserContext';
+import { postData } from '@/lib/api-helpers';
+import JumpToModal from './modals/JumpTo';
 
 function ChannelItem({channel}) {
   const navigation = useNavigation();
@@ -208,13 +213,80 @@ export function DirectMessageItem({direct}) {
 }
 
 export default function Home() {
+  // console.log('+++++', route);
+  const {userdata} = useUser();
   const {value: channels} = useChannels();
   const {value: directs} = useDirectMessages();
-  const {setOpenChannelBrowser, setOpenMemberBrowser, openAddChat, setOpenAddChat, openGlobalSearch} = useModal();
+  const {setChatId, setChatType, workspaceId} = useParams();
+  const {
+    setOpenChannelBrowser, 
+    setOpenMemberBrowser, 
+    openAddChat, 
+    setOpenAddChat, 
+    openGlobalSearch, 
+    openAddDirect, 
+    setOpenAddDirect, 
+    openMembers, 
+    setOpenMembers,
+    openJumpTo,
+    setOpenJumpTo,
+  } = useModal();
   const {setIsSelecting} = useMessageFeature();
+
+  const navigation = useNavigation();
 
   const [channelsExpanded, setChannelsExpanded] = React.useState(true);
   const [directsExpanded, setDirectsExpanded] = React.useState(true);
+
+  const [checkedMembers, setCheckedMembers] = React.useState([]);
+  const [openAddChannelConfirm, setOpenAddChannelConfirm] = React.useState(false);
+  const [channelName, setChannelName] = React.useState(`${userdata?.displayName.split(" ")[0]}'s channel`);
+  const [isCreateLoading, setIsCreateLoading] = React.useState(false);
+
+  const isChecked = (item) => checkedMembers.includes(item);
+
+  const handleCheckMembers = (item) => {
+    console.log(checkedMembers);
+    if (isChecked(item)) {
+      setCheckedMembers(checkedMembers.filter(c => c !== item));
+    } else {
+      setCheckedMembers([...checkedMembers, item]);
+    }
+  }
+
+  const openCreateChannel = () => {
+    setOpenAddChannelConfirm(true);
+  }
+
+  const createChannelAndInviteMember = async () => {
+    try {
+      setIsCreateLoading(true);
+      const { channelId } = await postData("/channels", {
+        name: channelName,
+        description: "",
+        workspaceId,
+      });
+      for (const member of checkedMembers) {
+        await postData(`/channels/${channelId}/members`, {
+          email: member?.email,
+        });
+      }
+      setOpenChannelBrowser(false);
+      setOpenMembers(false);
+      setChatId(channelId);
+      setChatType('Channel');
+      navigation.navigate('Chat', {
+        objectId: channelId,
+      });
+      showAlert("Channel created and member added.");
+      setCheckedMembers([]);
+      setChannelName(`${userdata?.displayName.split(" ")[0]}'s group'`);
+    } catch (err) {
+      showAlert(err.message);
+    }
+    setIsCreateLoading(false);
+    setOpenAddChannelConfirm(false);
+  }
 
   return (
     <ScrollView style={{flex: 1, backgroundColor: Colors.white}}>
@@ -261,7 +333,7 @@ export default function Home() {
                 icon={() => <Fontisto name="plus-a" size={15} />}
               />
             )}
-            onPress={() => setOpenMemberBrowser(true)}
+            onPress={() => setOpenAddDirect(true)}
           />
         </List.Accordion>
       </List.Section>
@@ -304,12 +376,19 @@ export default function Home() {
                 <List.Icon
                   {...props}
                   icon={() => (
-                    <MaterialCommunityIcons name="message" size={24} style={{color: Colors.black}} />
+                    <Image
+                      style={{
+                        width: 24,
+                        height: 24,
+                        borderRadius: 5,
+                      }}
+                      source={require('@/files/add_member.png')}
+                    />
                   )}
                 />
               )}
               onPress={() => {
-                setOpenMemberBrowser(true);
+                setOpenAddDirect(true);
                 setOpenAddChat(false);
               }}
             />
@@ -317,6 +396,63 @@ export default function Home() {
         </Modal>
       </Portal>
       )}
+      {openMembers &&
+      <UserListModal
+        open={openMembers}
+        setOpen={setOpenMembers}
+        otherUser={null}
+        checkedMembers={checkedMembers}
+        setCheckedMembers={setCheckedMembers}
+        handleCheckMembers={handleCheckMembers}
+        openCreateChannel={openCreateChannel}
+      />}
+      <RNModal
+      animationType="fade"
+      transparent={true}
+      visible={openAddChannelConfirm}
+      onRequestClose={() => {
+        setOpenAddChannelConfirm(!openAddChannelConfirm);
+      }}>
+        <View
+          style={{
+            flex: 1,
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: 'rgba(0, 0, 0, 0.3)',
+          }}
+        >
+          <Dialog visible={openAddChannelConfirm} onDismiss={() => setOpenAddChannelConfirm(false)}>
+            <Dialog.Title>Create channel</Dialog.Title>
+            <Dialog.Content>
+              <TextInput
+                label="Channel name"
+                style={{
+                  fontSize: 16,
+                  color: Colors.black,
+                  width: '100%',
+                  backgroundColor: 'transparent',
+                  paddingHorizontal: 0,
+                }}
+                value={channelName}
+                onChangeText={text => setChannelName(text)}
+              />
+            </Dialog.Content>
+            <Dialog.Actions style={{
+              marginTop: 0,
+              paddingTop: 0,
+            }}>
+              {isCreateLoading && (
+                <ActivityIndicator size={18} style={{marginHorizontal: 12}} />
+              )}
+              <Button onPress={createChannelAndInviteMember} disabled={!channelName || channelName === ""} uppercase={false}>Create</Button>
+              <Button onPress={() => setOpenAddChannelConfirm(false)} uppercase={false}>Cancel</Button>
+            </Dialog.Actions>
+          </Dialog>
+        </View>
+      </RNModal>
+      {openAddDirect && <AddDirect open={openAddDirect} setOpen={setOpenAddDirect} />}
+      {openJumpTo && <JumpToModal />}
     </ScrollView>
   );
 }

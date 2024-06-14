@@ -458,6 +458,7 @@ function ImageViewer({chat, setPosition, setVisible}) {
       })
       .then(() => {
         // success
+        setDownloading(false);
       })
       .catch((error) => {
         // error
@@ -584,6 +585,7 @@ function FilePreviewer({chat, setVisible}) {
       // error
       console.log('Error-----', error);
       showAlert(error.message);
+      setDownloading(false);
     }
   };
 

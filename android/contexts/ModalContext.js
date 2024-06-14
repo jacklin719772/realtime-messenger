@@ -78,6 +78,15 @@ export const ModalContext = createContext({
 
   searchMessageTitle: '',
   setSearchMessageTitle: () => {},
+
+  openMembers: false,
+  setOpenMembers: () => {},
+
+  openJumpTo: false,
+  setOpenJumpTo: () => {},
+
+  activeTab: 'Home',
+  setActiveTab: () => {},
 });
 
 export function useModal() {
@@ -111,6 +120,9 @@ export function ModalProvider({children}) {
   const [originalSearch, setOriginalSearch] = useState('');
   const [searchOrigin, setSearchOrigin] = useState('Home');
   const [searchMessageTitle, setSearchMessageTitle] = useState('');
+  const [openMembers, setOpenMembers] = useState(false);
+  const [openJumpTo, setOpenJumpTo] = useState(false);
+  const [activeTab, setActiveTab] = useState('Home');
 
   return (
     <ModalContext.Provider
@@ -192,6 +204,15 @@ export function ModalProvider({children}) {
 
         searchMessageTitle,
         setSearchMessageTitle,
+
+        openMembers,
+        setOpenMembers,
+
+        openJumpTo,
+        setOpenJumpTo,
+
+        activeTab,
+        setActiveTab,
       }}>
       {children}
     </ModalContext.Provider>

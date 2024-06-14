@@ -7,7 +7,7 @@ export default function OpenSearchButton() {
   return (
     <TouchableRipple
       onPress={() => {
-        setActiveTab('Home');
+        setActiveTab('DMs');
         setOpenJumpTo(true);
       }}
       borderless

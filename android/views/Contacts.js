@@ -32,8 +32,6 @@ export default function Contacts() {
     setOpenWebOffice,
     webOfficeSrc,
     openSendMail,
-    openAddDirect,
-    setOpenAddDirect,
   } = useModal();
   const {messageToSendMail} = useMessageFeature();
   const {chatId, setChatType, setChatId} = useParams();
@@ -156,7 +154,6 @@ export default function Contacts() {
       {openDirectDetails && <DirectDetailsModal setOpenClear={setOpenClear} />}
       {openWebOffice && <WebOfficeModal open={openWebOffice} setOpen={setOpenWebOffice} src={webOfficeSrc} />}
       {(openSendMail && messageToSendMail) && <SendMail />}
-      {openAddDirect && <AddDirect open={openAddDirect} setOpen={setOpenAddDirect} />}
       <RNModal
       animationType="fade"
       transparent={true}

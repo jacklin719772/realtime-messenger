@@ -26,7 +26,13 @@ export default function UserListModal({
   const { user, userdata } = useUser();
 
   const allUsers = React.useMemo(() => 
-    members.filter((m) => ((m?.fullName.toLowerCase().includes(search.toLowerCase()) || m?.displayName.toLowerCase().includes(search.toLowerCase())) && m?.objectId !== user.uid && m?.objectId !== otherUser.objectId)).map((m) => {
+    otherUser ? members.filter((m) => ((m?.fullName.toLowerCase().includes(search.toLowerCase()) || m?.displayName.toLowerCase().includes(search.toLowerCase())) && m?.objectId !== user.uid && m?.objectId !== otherUser.objectId)).map((m) => {
+      return {
+        ...m,
+        value: /^[\u4e00-\u9fa5]+$/.test(m.displayName) ? pinyin(m.displayName, { style: pinyin.STYLE_NORMAL }).flat().join('') : m.displayName,
+        key: m.objectId,
+      }
+    }) : members.filter((m) => ((m?.fullName.toLowerCase().includes(search.toLowerCase()) || m?.displayName.toLowerCase().includes(search.toLowerCase())) && m?.objectId !== user.uid)).map((m) => {
       return {
         ...m,
         value: /^[\u4e00-\u9fa5]+$/.test(m.displayName) ? pinyin(m.displayName, { style: pinyin.STYLE_NORMAL }).flat().join('') : m.displayName,

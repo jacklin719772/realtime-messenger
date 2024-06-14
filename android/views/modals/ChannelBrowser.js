@@ -108,7 +108,7 @@ function ChannelItem({item: channel}) {
 }
 
 export default function ChannelBrowserModal() {
-  const {openChannelBrowser: open, setOpenChannelBrowser: setOpen} = useModal();
+  const {openChannelBrowser: open, setOpenChannelBrowser: setOpen, setOpenMembers} = useModal();
 
   const [searchQuery, setSearchQuery] = React.useState('');
   const onChangeSearch = query => setSearchQuery(query);
@@ -142,7 +142,7 @@ export default function ChannelBrowserModal() {
             <Appbar.Content title="Channel Browser" />
             <Appbar.Action
               icon="plus"
-              onPress={() => setAddChannelOpen(true)}
+              onPress={() => setOpenMembers(true)}
             />
           </Appbar.Header>
           <View
