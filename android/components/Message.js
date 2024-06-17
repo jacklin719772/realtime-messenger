@@ -837,7 +837,7 @@ export default function Message({
 
   const {setOpenEditMessage, setOpenReplyMessage, setOpenForwardMessage, setOpenSendMail, setOpenFavorite} = useModal();
   const {setMessageToEdit, setMessageToReply, setMessageToForward, setMessageToSendMail, checkedMessages, setCheckedMessages, isSelecting, setIsSelecting, searchText, setMessageToFavorite} = useMessageFeature();
-  const {setOpenCalling, setRecipientInfo, setSenderInfo, setRoomName, setIsVideoDisabled} = useMeeting();
+  const {setOpenCalling, setRecipientInfo, setSenderInfo, setRoomName, setIsVideoDisabled, setIframeLoaded} = useMeeting();
 
   const messageType = getMessageType(chat);
   const isText = messageType === 'text';
@@ -907,6 +907,7 @@ export default function Message({
   }
 
   const handleCallingButton = async (receiver, audioOnly) => {
+    console.log('Receiver:', receiver);
     try {
       const room = randomRoomName();
       await postData('/send-message', {
@@ -918,6 +919,7 @@ export default function Message({
       });
       console.log('Message sent successfully');
       setOpenCalling(true);
+      setIframeLoaded(false);
       setRecipientInfo(receiver);
       setSenderInfo(userdata);
       setRoomName(room);
@@ -1086,7 +1088,7 @@ export default function Message({
                     color={Colors.green400}
                     size={25}
                     onPress={() => {
-                      if (JSON.parse(chat?.text.substr(19, chat?.text.length)).receiver?.objectId === user?.uid) {
+                      if (JSON.parse(chat?.text.substr(19, chat?.text.length)).receiver?.filter((r) => r?.objectId === user?.uid).length > 0) {
                         handleCallingButton([JSON.parse(chat?.text.substr(19, chat?.text.length)).sender], JSON.parse(chat?.text.substr(19, chat?.text.length)).audioOnly);
                       } else {
                         handleCallingButton([JSON.parse(chat?.text.substr(19, chat?.text.length))?.refusedUser], JSON.parse(chat?.text.substr(19, chat?.text.length)).audioOnly);

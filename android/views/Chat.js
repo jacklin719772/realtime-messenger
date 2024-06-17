@@ -156,7 +156,7 @@ export default function Chat({navigation}) {
     openFavorite,
   } = useModal();
   const {messageToEdit, messageToReply, messageToForward, messageToSendMail, setMessageToSendMail, checkedMessages, setCheckedMessages, isSelecting, setIsSelecting, setMessageSent, searchText, setSearchText, isSearching, setIsSearching} = useMessageFeature();
-  const { openCalling, setOpenCalling, recipientInfo, setRecipientInfo, senderInfo, setSenderInfo, setRoomName, setIsVideoDisabled, openMeetingModal, isVideoDisabled, setEnableMic } = useMeeting();
+  const { openCalling, setOpenCalling, recipientInfo, setRecipientInfo, senderInfo, setSenderInfo, setRoomName, setIsVideoDisabled, openMeetingModal, isVideoDisabled, setEnableMic, setIframeLoaded } = useMeeting();
 
   const [checkedUsers, setCheckedUsers] = useState([]);
   const [openMemberModal, setOpenMemberModal] = useState(false);
@@ -411,6 +411,7 @@ export default function Chat({navigation}) {
       setSenderInfo(userdata);
       setRoomName(room);
       setIsVideoDisabled(audioOnly);
+      setIframeLoaded(false);
       setOpenCalling(true);
     } catch (err) {
       showAlert(err.message);

@@ -7,6 +7,7 @@ import {
   List,
   Modal as RNPModal,
   Portal,
+  ActivityIndicator,
 } from 'react-native-paper';
 import WebView from 'react-native-webview';
 import {env} from "@/config/env";
@@ -23,6 +24,7 @@ import { useUser } from '@/contexts/UserContext';
 import { io } from 'socket.io-client';
 import { useChannelById } from '@/contexts/ChannelsContext';
 import { useUsers } from '@/contexts/UsersContext';
+import { WebViewModal } from 'react-native-webview-modal';
 
 export default function MeetingModal() {
   // console.log("JitsiMeet: ", JitsiMeet);
@@ -44,6 +46,7 @@ export default function MeetingModal() {
     setRoomName, 
     isVideoDisabled, 
     setIsVideoDisabled, 
+    iframeLoaded,
     setIframeLoaded, 
     enableMic, 
     setEnableMic,
@@ -59,6 +62,7 @@ export default function MeetingModal() {
 
   const onConferenceTerminated = async () => {
     if (senderInfo?.objectId === userdata?.objectId) {
+      console.log(startTime);
       sendCallMessage(startTime);
       await handleLeft();
     }
@@ -66,19 +70,19 @@ export default function MeetingModal() {
   }
 
   const onConferenceJoined = () => {
-    setIframeLoaded(true);
+    // setIframeLoaded(true);
     setStartTime(new Date().getTime());
   }
 
   const handleClose = () => {
-    setOpenMeetingModal(false);
-    setOpenCalling(false);
-    setOpenReceiving(false);
     setSenderInfo(null);
     setRecipientInfo([]);
     setRoomName("");
     setIsVideoDisabled(false);
     setIframeLoaded(false);
+    setOpenMeetingModal(false);
+    setOpenCalling(false);
+    setOpenReceiving(false);
   }
 
   const sendCallMessage = async (startTime) => {
@@ -94,6 +98,16 @@ export default function MeetingModal() {
     } catch (err) {
       showAlert(err.message);
     }
+  }
+  const sendCallMessage2 = async (type, startTime) => {
+    const messageId = uuidv4();
+    await postData("/messages", {
+      objectId: messageId,
+      text: `[Jitsi_Call_Log:]: {"sender": ${JSON.stringify(senderInfo)}, "receiver": ${JSON.stringify(recipientInfo)}, "type": "${type}", "duration": "${startTime}", "audioOnly": ${isVideoDisabled}}`,
+      chatId,
+      workspaceId,
+      chatType,
+    });
   }
 
   const handleLeft = async () => {
@@ -122,7 +136,62 @@ export default function MeetingModal() {
   // }
 
   const toolbarButtons = isVideoDisabled ?
-    '&config.toolbarButtons=["microphone","tileview","hangup"]' : '';
+    '&config.toolbarButtons=["microphone","tileview"]' : '&config.toolbarButtons=["microphone","camera","desktop","chat","raisehand","participants-pane","tileview","toggle-camera","profile","invite","videoquality","fullscreen","security","closedcaptions","recording","highlight","livestreaming","sharedvideo","shareaudio","noisesuppression","whiteboard","etherpad","select-background","undock-iframe","dock-iframe","settings","stats","shortcuts","embedmeeting","feedback","download","help","filmstrip"]';
+
+  const handleStopButton = async () => {
+    try {
+      console.log(recipientInfo);
+      await sendCallMessage2("Stopped Call", new Date());
+      await postData('/send-message', {
+        sender: userdata,
+        receiver: recipientInfo,
+        type: "Stop",
+        room: "",
+      });
+      console.log('Message sent successfully');
+      setOpenCalling(false);
+      setRecipientInfo([]);
+      setSenderInfo(null);
+      setEnableMic(true);
+      setRoomName("");
+    } catch (err) {
+      showAlert(err.message);
+    }
+  }
+
+  const handleAcceptButton = async () => {
+    try {
+      await postData('/send-message', {
+        sender: userdata,
+        receiver: [senderInfo],
+        type: "Accept",
+        room: roomName,
+        audioOnly: isVideoDisabled,
+      });
+      setOpenMeetingModal(true);
+    } catch (err) {
+      showAlert(err.message);
+    }
+  }
+  const handleRejectButton = async () => {
+    try {
+      await postData('/send-message', {
+        sender: userdata,
+        receiver: [senderInfo],
+        type: "Reject",
+        room: "",
+      });
+      console.log('Message sent successfully');
+      setOpenReceiving(false);
+      setSenderInfo(null);
+      setRecipientInfo([]);
+      setRoomName("");
+      setEnableMic(true);
+      setIsVideoDisabled(false);
+    } catch (error) {
+      showAlert(err.message);
+    }
+  }
 
   React.useEffect(() => {
     const socket = io(env.API_URL);
@@ -140,33 +209,13 @@ export default function MeetingModal() {
       socket.disconnect();
     }
   }, [user]);
-  // React.useEffect(() => {
-  //   setTimeout(() => {
-  //     try {
-  //       console.log(`${env.MEETING_URL}/${roomName}`);
-  //       const url = `${env.MEETING_URL}/${roomName}`;
-  //       const userInfo = {
-  //         displayName: userdata?.displayName,
-  //       };
-  //       // const options = {
-  //       //   audioMuted: !enableMic,
-  //       //   audioOnly: isVideoDisabled,
-  //       //   videoMuted: false,
-  //       // }
-  //       JitsiMeet.call(url, userInfo);
-  //     } catch (err) {
-  //       console.log(err.message);
-  //       showAlert(err.message);
-  //     }
-  //   }, 2000);
-  // }, []);
 
-  // React.useEffect(() => {
-  //   return () => {
-  //     JitsiMeet.endCall();
-  //     handleClose();
-  //   }
-  // }, []);
+  React.useEffect(() => {
+    if (openMeetingModal) {
+      setIframeLoaded(true);
+    }
+  }, [openMeetingModal]);
+
   React.useEffect(() => {
     return () => setEnableMic(true);
   }, []);
@@ -175,7 +224,7 @@ export default function MeetingModal() {
     <Modal
       animationType="fade"
       transparent={true}
-      visible={openMeetingModal}
+      visible={openCalling || openReceiving}
       onRequestClose={() => {}}>
       <View style={modalStyles.centeredView}>
         <View style={modalStyles.modalView}>
@@ -183,7 +232,7 @@ export default function MeetingModal() {
             statusBarHeight={0}
             style={{
               width: '100%',
-              backgroundColor: '#fff',
+              backgroundColor: Colors.grey900,
             }}>
             <Appbar.Action icon="window-close" onPress={onConferenceTerminated} />
             <Appbar.Content title="Web Meeting" />
@@ -192,12 +241,13 @@ export default function MeetingModal() {
           <View
             style={{
               display: 'flex', 
-              flexDirection: 'row',
+              // flexDirection: 'row',
               flexGrow: 1,
               alignItems: 'center', 
               justifyContent: 'center', 
               width: '100%', 
               height: '50%',
+              backgroundColor: Colors.grey900,
             }}
           >
             {/* <JitsiMeetView
@@ -216,22 +266,162 @@ export default function MeetingModal() {
                 width: '100%',
               }}
             /> */}
-            <WebView
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                height: '90%',
+              }}
+            >
+              <WebView
+                source={{
+                  uri: `${env.MEETING_URL}/${roomName}#userInfo.displayName="${userdata?.displayName}"&config.prejoinConfig.enabled=false&config.startAudioOnly=${isVideoDisabled}&config.startWithAudioMuted=${!enableMic}&config.disableDeepLinking=true${toolbarButtons}`
+                }}
+                onLoad={onConferenceJoined}
+                allowsInlineMediaPlayback={true}
+                mediaPlaybackRequiresUserAction={false}
+                onError={(err) => {
+                  console.log(err)
+                }}
+                renderLoading={() => (
+                  <ActivityIndicator size={18} color={Colors.blue500} />
+                )}
+                style={{
+                  flex: 1,
+                  width: '100%',
+                  height: '0%',
+                }}
+              />
+            </View>
+            {/* <WebViewModal
+              visible={openMeetingModal}
               source={{
                 uri: `${env.MEETING_URL}/${roomName}#userInfo.displayName="${userdata?.displayName}"&config.prejoinConfig.enabled=false&config.startAudioOnly=${isVideoDisabled}&config.startWithAudioMuted=${!enableMic}&config.disableDeepLinking=true${toolbarButtons}`
-              }}
-              onLoad={onConferenceJoined}
-              allowsInlineMediaPlayback={true}
-              mediaPlaybackRequiresUserAction={false}
-              onError={(err) => {
-                console.log(err)
               }}
               style={{
                 flex: 1,
                 width: '100%',
                 height: '100%',
               }}
-            />
+            /> */}
+            {(openCalling && !openMeetingModal) && 
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: '10%',
+              }}
+            >
+              {iframeLoaded ? (
+                <IconButton
+                  icon="bell-off"
+                  color={Colors.grey500}
+                  size={32}
+                  onPress={() => setIframeLoaded(false)}
+                />
+              ) : (
+                <IconButton
+                  icon="bell"
+                  color={Colors.white}
+                  size={32}
+                  onPress={() => setIframeLoaded(true)}
+                />
+              )}
+              {/* {enableMic ? (
+                <IconButton
+                  icon="microphone"
+                  color={Colors.white}
+                  size={32}
+                  onPress={() => setEnableMic(false)}
+                />
+              ) : (
+                <IconButton
+                  icon="microphone-off"
+                  color={Colors.grey500}
+                  size={32}
+                  onPress={() => setEnableMic(true)}
+                />
+              )} */}
+              <IconButton
+                icon="phone-hangup"
+                color={Colors.red500}
+                size={32}
+                onPress={handleStopButton}
+              />
+            </View>}
+            {(openReceiving && !openMeetingModal) &&
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: '10%',
+              }}
+            >
+              {iframeLoaded ? (
+                <IconButton
+                  icon="bell-off"
+                  color={Colors.grey500}
+                  size={32}
+                  onPress={() => setIframeLoaded(false)}
+                />
+              ) : (
+                <IconButton
+                  icon="bell"
+                  color={Colors.white}
+                  size={32}
+                  onPress={() => setIframeLoaded(true)}
+                />
+              )}
+              {/* {enableMic ? (
+                <IconButton
+                  icon="microphone"
+                  color={Colors.white}
+                  size={32}
+                  onPress={() => setEnableMic(false)}
+                />
+              ) : (
+                <IconButton
+                  icon="microphone-off"
+                  color={Colors.grey500}
+                  size={32}
+                  onPress={() => setEnableMic(true)}
+                />
+              )} */}
+              <IconButton
+                icon="phone"
+                color={Colors.green500}
+                size={32}
+                onPress={handleAcceptButton}
+              />
+              <IconButton
+                icon="phone-hangup"
+                color={Colors.red500}
+                size={32}
+                onPress={handleRejectButton}
+              />
+            </View>}
+            {openMeetingModal &&
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '10%',
+              }}
+            >
+              <IconButton
+                icon="phone-hangup"
+                color={Colors.white}
+                size={32}
+                style={{
+                  borderRadius: 8,
+                  backgroundColor: Colors.red500,
+                }}
+                onPress={onConferenceTerminated}
+              />
+            </View>}
           </View>
         </View>
         

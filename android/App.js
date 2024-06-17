@@ -25,6 +25,7 @@ import { ReactionProvider } from 'react-native-reactions';
 import { ReactionsProvider } from './contexts/ReactionsContext';
 import { MeetingProvider } from './contexts/MeetingContext';
 import React from 'react';
+import WebViewModalProvider from 'react-native-webview-modal';
 
 function Views() {
   const {isInitialized, isAuthenticated, user} = useAuth();
@@ -53,37 +54,39 @@ export default function App() {
   return (
     <PaperProvider theme={theme}>
       <ActionSheetProvider>
-        <NavigationContainer>
-          <ApolloProvider client={apolloClient}>
-            <ModalProvider>
-              <AuthProvider>
-                <UserProvider>
-                  <ParamsProvider>
-                    <UsersProvider>
-                      <WorkspacesProvider>
-                        <ChannelsProvider>
-                          <DirectMessagesProvider>
-                            <DetailsProvider>
-                              <MessageProvider>
-                                <ReactionsProvider>
-                                  <MeetingProvider>
-                                    <ReactionProvider>
-                                      <Views />
-                                    </ReactionProvider>
-                                  </MeetingProvider>
-                                </ReactionsProvider>
-                              </MessageProvider>
-                            </DetailsProvider>
-                          </DirectMessagesProvider>
-                        </ChannelsProvider>
-                      </WorkspacesProvider>
-                    </UsersProvider>
-                  </ParamsProvider>
-                </UserProvider>
-              </AuthProvider>
-            </ModalProvider>
-          </ApolloProvider>
-        </NavigationContainer>
+        <WebViewModalProvider>
+          <NavigationContainer>
+            <ApolloProvider client={apolloClient}>
+              <ModalProvider>
+                <AuthProvider>
+                  <UserProvider>
+                    <ParamsProvider>
+                      <UsersProvider>
+                        <WorkspacesProvider>
+                          <ChannelsProvider>
+                            <DirectMessagesProvider>
+                              <DetailsProvider>
+                                <MessageProvider>
+                                  <ReactionsProvider>
+                                    <MeetingProvider>
+                                      <ReactionProvider>
+                                        <Views />
+                                      </ReactionProvider>
+                                    </MeetingProvider>
+                                  </ReactionsProvider>
+                                </MessageProvider>
+                              </DetailsProvider>
+                            </DirectMessagesProvider>
+                          </ChannelsProvider>
+                        </WorkspacesProvider>
+                      </UsersProvider>
+                    </ParamsProvider>
+                  </UserProvider>
+                </AuthProvider>
+              </ModalProvider>
+            </ApolloProvider>
+          </NavigationContainer>
+        </WebViewModalProvider>
       </ActionSheetProvider>
     </PaperProvider>
   );

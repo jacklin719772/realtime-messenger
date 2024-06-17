@@ -33,6 +33,7 @@ import { useMessages } from '@/hooks/useMessages';
 import { useKeepAwake } from 'expo-keep-awake';
 import HMSAvailability from '@hmscore/react-native-hms-availability';
 import GlobalSearchModal from './modals/GlobalSearch';
+import { WebViewModal } from 'react-native-webview-modal';
 
 const DrawerNav = createDrawerNavigator();
 
@@ -275,69 +276,16 @@ export default function Main() {
   }
 
   // MEETING ------------------------------------------
-  const sendCallMessage = async (type, startTime) => {
+  const sendCallMessage = async (type, startTime, refusedUser) => {
     const messageId = uuidv4();
+    console.log('Recipient Info:', recipientInfo, senderInfo);
     await postData("/messages", {
       objectId: messageId,
-      text: `[Jitsi_Call_Log:]: {"sender": ${JSON.stringify(senderInfo)}, "receiver": ${JSON.stringify(recipientInfo)}, "type": "${type}", "duration": "${startTime}", "audioOnly": ${isVideoDisabled}}`,
+      text: `[Jitsi_Call_Log:]: {"sender": ${JSON.stringify(senderInfo)}, "receiver": ${JSON.stringify(recipientInfo)}, "type": "${type}", "duration": "${startTime}", "audioOnly": ${isVideoDisabled}, "refusedUser": ${refusedUser ? JSON.stringify(refusedUser) : null}}`,
       chatId,
       workspaceId,
       chatType,
     });
-  }
-
-  const handleStopButton = async () => {
-    try {
-      await sendCallMessage("Stopped Call", new Date());
-      await postData('/send-message', {
-        sender: userdata,
-        receiver: recipientInfo,
-        type: "Stop",
-        room: "",
-      });
-      console.log('Message sent successfully');
-      setOpenCalling(false);
-      setRecipientInfo([]);
-      setSenderInfo(null);
-      setEnableMic(true);
-      setRoomName("");
-    } catch (err) {
-      showAlert(err.message);
-    }
-  }
-
-  const handleAcceptButton = async () => {
-    try {
-      await postData('/send-message', {
-        sender: userdata,
-        receiver: [senderInfo],
-        type: "Accept",
-        room: roomName,
-        audioOnly: isVideoDisabled,
-      });
-      setOpenMeetingModal(true);
-    } catch (err) {
-      showAlert(err.message);
-    }
-  }
-  const handleRejectButton = async () => {
-    try {
-      await postData('/send-message', {
-        sender: userdata,
-        receiver: [senderInfo],
-        type: "Reject",
-        room: "",
-      });
-      console.log('Message sent successfully');
-      setOpenReceiving(false);
-      setSenderInfo(null);
-      setRecipientInfo([]);
-      setRoomName("");
-      setEnableMic(true);
-      setIsVideoDisabled(false);
-    } catch (error) {
-      showAlert(err.message);
-    }
   }
 
   // const requestUserPermission = async () => {
@@ -430,6 +378,7 @@ export default function Main() {
       console.log('openCalling: ', openCalling);
       console.log('openReceiving: ', openReceiving);
       if (receiver?.filter((r) => r?.objectId === user?.uid).length > 0 && !openCalling && type === "Calling" && !openReceiving) {
+        setIframeLoaded(false);
         setOpenReceiving(true);
         setSenderInfo(sender);
         setRecipientInfo(receiver);
@@ -456,7 +405,7 @@ export default function Main() {
         showAlert('The caller has interrupted the call.');
       }
       if (receiver?.filter((r) => r?.objectId === user?.uid).length > 0 && openCalling && type === "Reject" && !openReceiving) {
-        setRecipientInfo(recipientInfo.filter((u) => u?.objectId !== sender?.objectId));
+        setRecipientInfo(recipientInfo.filter((u) => u?.objectId !== senderInfo?.objectId));
         if (recipientInfo.length < 2) {
           sendCallMessage("Refused Call", new Date(), sender);
           setOpenCalling(false);
@@ -469,6 +418,7 @@ export default function Main() {
       }
       if (receiver?.filter((r) => r?.objectId === user?.uid).length > 0 && openCalling && type === "Accept" && !openReceiving) {
         setOpenMeetingModal(true);
+        setIframeLoaded(true);
         showAlert('The recipient has accepted the call.');
       }
     });
@@ -515,6 +465,9 @@ export default function Main() {
       .catch((err) => { console.log(JSON.stringify(err)) });
   }, []);
 
+  const toolbarButtons = isVideoDisabled ?
+    '&config.toolbarButtons=["microphone","tileview","hangup"]' : '';
+
   if (loading || value.length === 0) return <ActivityIndicator />;
 
   return (
@@ -539,175 +492,7 @@ export default function Main() {
       {openMemberBrowser && <MemberBrowserModal />}
       {openChannelBrowser && <ChannelBrowserModal />}
       {openWorkspaceBrowser && <WorkspaceBrowserModal />}
-      {openMeetingModal && <MeetingModal />}
-      {openCalling && (
-        <Portal>
-          {chatType === "Channel" && (
-            <Dialog
-              visible={openCalling}
-              onDismiss={() => {}}
-              style={{
-                borderRadius: 16,
-              }}
-            >
-              <Dialog.Title>{isVideoDisabled ? `${channel?.name} Voice Call` : `${channel?.name} Video Call`}</Dialog.Title>
-              <Dialog.Content>
-                <Text variant="bodyMedium">Waiting for invitees to accept the invitation</Text>
-              </Dialog.Content>
-              <Dialog.Actions>
-                {iframeLoaded ? (
-                  <IconButton
-                    icon="bell-off"
-                    color={Colors.grey800}
-                    size={25}
-                    onPress={() => setIframeLoaded(false)}
-                  />
-                ) : (
-                  <IconButton
-                    icon="bell"
-                    color={Colors.grey800}
-                    size={25}
-                    onPress={() => setIframeLoaded(true)}
-                  />
-                )}
-                {enableMic ? (
-                  <IconButton
-                    icon="microphone-off"
-                    color={Colors.grey800}
-                    size={25}
-                    onPress={() => setEnableMic(false)}
-                  />
-                ) : (
-                  <IconButton
-                    icon="microphone"
-                    color={Colors.grey800}
-                    size={25}
-                    onPress={() => setEnableMic(true)}
-                  />
-                )}
-                <IconButton
-                  icon="phone-hangup"
-                  color={Colors.red500}
-                  size={25}
-                  onPress={handleStopButton}
-                />
-              </Dialog.Actions>
-            </Dialog>
-          )}
-          {chatType === "Direct" && (
-            <Dialog
-              visible={openCalling}
-              onDismiss={() => {}}
-              style={{
-                borderRadius: 16,
-              }}
-            >
-              <Dialog.Title>{recipientInfo[0]?.displayName}</Dialog.Title>
-              <Dialog.Content>
-                <Text variant="bodyMedium">Waiting for {recipientInfo[0]?.displayName} to accept the invitation</Text>
-              </Dialog.Content>
-              <Dialog.Actions>
-                {iframeLoaded ? (
-                  <IconButton
-                    icon="bell-off"
-                    color={Colors.grey800}
-                    size={25}
-                    onPress={() => setIframeLoaded(false)}
-                  />
-                ) : (
-                  <IconButton
-                    icon="bell"
-                    color={Colors.grey800}
-                    size={25}
-                    onPress={() => setIframeLoaded(true)}
-                  />
-                )}
-                {enableMic ? (
-                  <IconButton
-                    icon="microphone"
-                    color={Colors.grey800}
-                    size={25}
-                    onPress={() => setEnableMic(false)}
-                  />
-                ) : (
-                  <IconButton
-                    icon="microphone-off"
-                    color={Colors.grey800}
-                    size={25}
-                    onPress={() => setEnableMic(true)}
-                  />
-                )}
-                <IconButton
-                  icon="phone-hangup"
-                  color={Colors.red500}
-                  size={25}
-                  onPress={handleStopButton}
-                />
-              </Dialog.Actions>
-            </Dialog>
-          )}
-        </Portal>
-      )}
-      {openReceiving && (
-        <Portal>
-          <Dialog
-            visible={openReceiving}
-            onDismiss={() => {}}
-            style={{
-              borderRadius: 16,
-            }}
-          >
-            <Dialog.Title>{senderInfo?.displayName}</Dialog.Title>
-            <Dialog.Content>
-              <Text variant="bodyMedium">{isVideoDisabled ? "Inviting you to a voice call" : "Inviting you to a video call"}...</Text>
-            </Dialog.Content>
-            <Dialog.Actions>
-              {iframeLoaded ? (
-                <IconButton
-                  icon="bell-off"
-                  color={Colors.grey800}
-                  size={25}
-                  onPress={() => setIframeLoaded(false)}
-                />
-              ) : (
-                <IconButton
-                  icon="bell"
-                  color={Colors.grey800}
-                  size={25}
-                  onPress={() => setIframeLoaded(true)}
-                />
-              )}
-              {enableMic ? (
-                <IconButton
-                  icon="microphone"
-                  color={Colors.grey800}
-                  size={25}
-                  onPress={() => setEnableMic(false)}
-                />
-              ) : (
-                <IconButton
-                  icon="microphone-off"
-                  color={Colors.grey800}
-                  size={25}
-                  onPress={() => setEnableMic(true)}
-                />
-              )}
-              <IconButton
-                icon="phone"
-                color={Colors.green500}
-                size={25}
-                onPress={handleAcceptButton}
-              />
-              <IconButton
-                icon="phone-hangup"
-                color={Colors.red500}
-                size={25}
-                onPress={handleRejectButton}
-              />
-            </Dialog.Actions>
-          </Dialog>
-        </Portal>
-      )}
+      {(openCalling || openReceiving) && <MeetingModal />}
     </SafeAreaView>
   );
 }
